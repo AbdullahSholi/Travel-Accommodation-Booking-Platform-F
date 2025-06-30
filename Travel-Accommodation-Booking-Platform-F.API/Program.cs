@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -14,5 +15,7 @@ app.Urls.Clear();
 app.Urls.Add("http://0.0.0.0:80");
 
 app.MapGet("/", () => "Hello from Travel Accommodation API! - Activate CI/CD Pipeline");
+
+app.MapControllers();
 
 app.Run();
