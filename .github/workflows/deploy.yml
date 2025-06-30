@@ -25,6 +25,8 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v4
       with:
+        context: ./Travel-Accommodation-Booking-Platform-F.API
+        file: ./Travel-Accommodation-Booking-Platform-F.API/Dockerfile
         push: true
         tags: abdullahgsholi/myproject-api:latest
 
