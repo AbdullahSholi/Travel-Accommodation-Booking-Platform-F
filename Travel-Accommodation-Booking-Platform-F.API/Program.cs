@@ -1,4 +1,13 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Travel_Accommodation_Booking_Platform_F.Application.Services;
+using Travel_Accommodation_Booking_Platform_F.Domain.Repositories;
+using Travel_Accommodation_Booking_Platform_F.Infrastructure.Repositories;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+
 var app = builder.Build();
 
 app.Urls.Clear();

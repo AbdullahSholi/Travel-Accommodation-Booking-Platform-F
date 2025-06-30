@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Travel-Accommodation-Booking-Platform-F.Application\Travel-Accommodation-Booking-Platform-F.Application.csproj" />
+      <ProjectReference Include="..\Travel-Accommodation-Booking-Platform-F.Infrastructure\Travel-Accommodation-Booking-Platform-F.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
