@@ -1,0 +1,11 @@
+services:
+  api:
+    image: myproject-api
+    ports:
+      - "5000:80"
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
