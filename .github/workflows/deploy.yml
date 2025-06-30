@@ -39,3 +39,16 @@ jobs:
         script: |
           docker service update --image abdullahgsholi/myproject-api:latest myproject_api || \
           docker service create --name myproject_api --replicas 1 -p 5000:80 abdullahgsholi/myproject-api:latest
+          
+    - name: Send Slack notification
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        fields: repo,message,commit,author
+        custom_payload: |
+          {
+            "text": "🚀 The update was successfully deployed to Docker Swarm!"
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
