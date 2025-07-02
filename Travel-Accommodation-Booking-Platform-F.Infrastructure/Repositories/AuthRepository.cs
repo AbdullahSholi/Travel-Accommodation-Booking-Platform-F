@@ -1,7 +1,4 @@
-﻿using MailKit.Net.Smtp;
-using MailKit.Security;
-using MimeKit;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.Hashing;
 using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
@@ -76,26 +73,7 @@ public class AuthRepository : IAuthRepository
         await _context.OtpRecords.AddAsync(otpRecord);
         await _context.SaveChangesAsync();
     }
-
-    public async Task SendOtpAsync(string toEmail, string otp)
-    {
-        var appPassword = Environment.GetEnvironmentVariable("APP_PASSWORD") ??
-                          throw new InvalidOperationException(CustomMessages.CustomMessages.UnSetAppPassword);
-        var email = new MimeMessage();
-        email.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.SenderEmail));
-        email.To.Add(MailboxAddress.Parse(toEmail));
-        email.Subject = CustomMessages.CustomMessages.YourOtpCode;
-        email.Body = new TextPart(MimeKit.Text.TextFormat.Html)
-            { Text = $"<h3>Your OTP Code is: <b>{otp}</b></h3><p>This code expires in 5 minutes.</p>" };
-
-        using var smtp = new SmtpClient();
-        await smtp.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.Port,
-            SecureSocketOptions.StartTls);
-        await smtp.AuthenticateAsync(_emailSettings.Username, appPassword);
-        await smtp.SendAsync(email);
-        await smtp.DisconnectAsync(true);
-    }
-
+    
     public async Task<OtpRecord?> GetOtpRecordAsync(string email, string otp)
     {
         var record = await _context.OtpRecords

@@ -24,7 +24,6 @@
     </ItemGroup>
     <ItemGroup>
         <Folder Include="DependencyInjection\"/>
-        <Folder Include="Persistence\Configurations\"/>
     </ItemGroup>
 
 </Project>

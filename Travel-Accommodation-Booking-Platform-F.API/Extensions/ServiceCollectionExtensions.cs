@@ -10,7 +10,10 @@ using Travel_Accommodation_Booking_Platform_F.Application.Services.AuthService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.TokenBlacklistService;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.FactoryPattern;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
+using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.OtpSender;
+using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.OtpSenderFactory;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Repositories;
 using Travel_Accommodation_Booking_Platform_F.Utils;
@@ -29,6 +32,10 @@ public static class ServiceCollectionExtensions
         services.AddAutoMapper(typeof(UserProfile).Assembly);
         services.Configure<EmailSettings>(services.BuildServiceProvider().GetRequiredService<IConfiguration>()
             .GetSection("EmailSettings"));
+        services.AddScoped<IOtpSenderFactory, OtpSenderFactory>();
+
+        services.AddScoped<OtpEmailSenderStrategy>();
+        services.AddScoped<OtpWhatsAppSenderStrategy>();
         return services;
     }
 

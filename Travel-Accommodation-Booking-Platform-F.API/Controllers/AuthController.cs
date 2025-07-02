@@ -1,5 +1,4 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
@@ -7,13 +6,13 @@ using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AuthService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.TokenBlacklistService;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions;
-using Travel_Accommodation_Booking_Platform_F.Utils;
 using Travel_Accommodation_Booking_Platform_F.Utils.Auth;
 
 namespace Travel_Accommodation_Booking_Platform_F.Controllers;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
+[ApiVersion("1.0")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;

@@ -11,7 +11,6 @@ public interface IAuthRepository
     public Task<bool> EmailExistsAsync(string email);
     public Task<User?> RegisterUserAsync(User user);
     public Task SaveOtpAsync(OtpRecord otpRecord);
-    public Task SendOtpAsync(string toEmail, string otp);
     public Task<OtpRecord?> GetOtpRecordAsync(string email, string otp);
     public Task HashAndSavePasswordAsync(User? user, string newPassword);
     public Task RemoveAndSaveOtpAsync(OtpRecord record);

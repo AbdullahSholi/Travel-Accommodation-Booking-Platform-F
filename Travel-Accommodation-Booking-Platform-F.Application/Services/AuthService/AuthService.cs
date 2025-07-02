@@ -9,7 +9,10 @@ using Travel_Accommodation_Booking_Platform_F.Application.Utils.LogMessages;
 using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
+using Travel_Accommodation_Booking_Platform_F.Domain.Enums;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.FactoryPattern;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.StrategyPattern;
 
 namespace Travel_Accommodation_Booking_Platform_F.Application.Services.AuthService;
 
@@ -19,14 +22,16 @@ public class AuthService : IAuthService
     private readonly JwtTokenGenerator _jwtTokenGenerator;
     private readonly IMapper _mapper;
     private readonly ILogger<AuthService> _logger;
+    private readonly IOtpSenderFactory _otpSenderFactory;
 
     public AuthService(IAuthRepository authRepository, JwtTokenGenerator jwtTokenGenerator, IMapper mapper,
-        ILogger<AuthService> logger)
+        ILogger<AuthService> logger, IOtpSenderFactory otpSenderFactory)
     {
         _authRepository = authRepository;
         _jwtTokenGenerator = jwtTokenGenerator;
         _mapper = mapper;
         _logger = logger;
+        _otpSenderFactory = otpSenderFactory;
     }
 
     public async Task<LoginReadDto?> LoginAsync(LoginWriteDto dto)
@@ -92,13 +97,14 @@ public class AuthService : IAuthService
         {
             Email = user.Email,
             Code = otpCode,
-            Expiration = DateTime.UtcNow.AddMinutes(Constants.OtpExpirationMinutes)
+            Expiration = DateTime.UtcNow.AddMinutes(Constants.OtpExpirationMinutes).ToUniversalTime()
         };
 
         await _authRepository.SaveOtpAsync(otpRecord);
         _logger.LogInformation(AuthServiceLogMessages.OtpSaved, user.Email);
 
-        await _authRepository.SendOtpAsync(userDto.Email, otpCode);
+        var strategy = _otpSenderFactory.Factory(OtpChannel.Email);
+        await strategy.SendOtpAsync(user.Email, otpRecord.Code);
         _logger.LogInformation(AuthServiceLogMessages.OtpSent, userDto.Email);
 
         var userReadDto = _mapper.Map<UserReadDto>(user);
@@ -123,13 +129,14 @@ public class AuthService : IAuthService
         {
             Email = email,
             Code = otp,
-            Expiration = DateTime.Now.AddMinutes(Constants.OtpExpirationMinutes)
+            Expiration = DateTime.UtcNow.AddMinutes(Constants.OtpExpirationMinutes).ToUniversalTime()
         };
 
         await _authRepository.SaveOtpAsync(otpRecord);
         _logger.LogInformation(AuthServiceLogMessages.OtpSaved, email);
 
-        await _authRepository.SendOtpAsync(email, otpRecord.Code);
+        var strategy = _otpSenderFactory.Factory(OtpChannel.Email);
+        await strategy.SendOtpAsync(email, otpRecord.Code);
         _logger.LogInformation(AuthServiceLogMessages.OtpSent, email);
 
         return true;
@@ -146,7 +153,9 @@ public class AuthService : IAuthService
             throw new Exception(CustomMessages.InvalidOrExpiredOtpCode);
         }
 
-        if (record.Expiration.ToUniversalTime() < DateTime.UtcNow)
+        Console.WriteLine(record.Expiration.ToUniversalTime());
+        Console.WriteLine(DateTime.UtcNow.ToUniversalTime());
+        if (record.Expiration.ToUniversalTime() < DateTime.UtcNow.ToUniversalTime())
         {
             _logger.LogWarning(AuthServiceLogMessages.ExpiredOtpCodeUsed, readDto.Email);
             throw new Exception(CustomMessages.ExpiredOtpCode);
@@ -179,7 +188,7 @@ public class AuthService : IAuthService
             throw new Exception(CustomMessages.OtpNotFound);
         }
 
-        if (otpRecord.Expiration < DateTime.UtcNow)
+        if (otpRecord.Expiration.ToUniversalTime() < DateTime.UtcNow.ToUniversalTime())
         {
             _logger.LogWarning(AuthServiceLogMessages.ExpiredOtpCodeUsed, email);
             throw new Exception(CustomMessages.ExpiredOtpCode);
