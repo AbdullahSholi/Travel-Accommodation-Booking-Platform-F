@@ -2,5 +2,7 @@
 
 public class ValidationAppException : Exception
 {
-    public ValidationAppException(string message) : base(message) { }
+    public ValidationAppException(string message) : base(message)
+    {
+    }
 }

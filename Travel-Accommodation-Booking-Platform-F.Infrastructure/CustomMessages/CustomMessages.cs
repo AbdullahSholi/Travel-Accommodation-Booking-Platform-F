@@ -4,4 +4,7 @@ public static class CustomMessages
 {
     public const string UnSetAppPassword = "APP_PASSWORD environment variable is not set.";
     public const string YourOtpCode = "Your OTP Code";
+
+    public const string NonSetConnectionStringAtEnvironmentVariables =
+        "Environment variable 'TRAVEL_ACCOMMODATION_CONNECTION_STRING' is not set.";
 }

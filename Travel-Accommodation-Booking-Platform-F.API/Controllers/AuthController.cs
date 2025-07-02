@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
@@ -7,6 +6,7 @@ using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AuthService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.TokenBlacklistService;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions;
+using Travel_Accommodation_Booking_Platform_F.Utils;
 
 namespace Travel_Accommodation_Booking_Platform_F.Controllers;
 
@@ -39,7 +39,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { Message = CustomMessages.CustomMessages.InternalServerError });
+            return StatusCode(500, new { Message = CustomMessages.InternalServerError });
         }
     }
 
@@ -50,7 +50,7 @@ public class AuthController : ControllerBase
         {
             var user = await _authService.RegisterAsync(dto);
             if (user == null)
-                return BadRequest(new { Message = CustomMessages.CustomMessages.InvalidCredentials });
+                return BadRequest(new { Message = CustomMessages.InvalidCredentials });
 
             return Ok(new
             {
@@ -71,11 +71,11 @@ public class AuthController : ControllerBase
         {
             var isSent = await _authService.SendOtpAsync(readDto.Email);
 
-            return Ok(new { Message = CustomMessages.CustomMessages.EmailSentSuccessfully });
+            return Ok(new { Message = CustomMessages.EmailSentSuccessfully });
         }
         catch (Exception e)
         {
-            return NotFound( new { Message = e.Message });
+            return NotFound(new { Message = e.Message });
         }
     }
 
@@ -85,25 +85,28 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var success = await _authService.ResetPasswordAsync(readDto);
-            return Ok(new { Message = CustomMessages.CustomMessages.PasswordResetSuccessfully });
+            var isSuccess = await _authService.ResetPasswordAsync(readDto);
+            if (isSuccess)
+                return Ok(new { Message = CustomMessages.PasswordResetSuccessfully });
+
+            return BadRequest(new { Message = CustomMessages.FailedToResetPassword });
         }
         catch (Exception e)
         {
-            return BadRequest(new { Message = e.Message } );
+            return BadRequest(new { Message = e.Message });
         }
     }
-    
+
     [HttpPost("verify-otp")]
     public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpWriteDto dto)
     {
         try
         {
-            var result = await _authService.VerifyOtpAsync(dto.Email, dto.OtpCode);
-            if (result)
-                return Ok(new { Message = "Email verified successfully." });
+            var isVerified = await _authService.VerifyOtpAsync(dto.Email, dto.OtpCode);
+            if (isVerified)
+                return Ok(new { Message = CustomMessages.EmailVerifiedSuccessfully });
 
-            return BadRequest(new { Message = "Failed to verify email." });
+            return BadRequest(new { Message = CustomMessages.EmailVerificationFailed });
         }
         catch (Exception ex)
         {
@@ -115,16 +118,23 @@ public class AuthController : ControllerBase
     [HttpPost("logout")]
     public async Task<IActionResult> Logout([FromServices] ITokenBlacklistService blacklistService)
     {
-        var jti = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-        var exp = User.FindFirst(JwtRegisteredClaimNames.Exp)?.Value;
+        try
+        {
+            var jti = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+            var exp = User.FindFirst(JwtRegisteredClaimNames.Exp)?.Value;
 
-        if (jti == null || exp == null)
-            return BadRequest(new { Message = CustomMessages.CustomMessages.InvalidToken });
+            if (jti == null || exp == null)
+                return BadRequest(new { Message = CustomMessages.InvalidToken });
 
-        var expirationTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(exp)).UtcDateTime;
+            var expirationTime = DateTimeOffset.FromUnixTimeSeconds(long.Parse(exp)).UtcDateTime;
 
-        await blacklistService.AddTokenToBlacklistAsync(jti, expirationTime);
+            await blacklistService.AddTokenToBlacklistAsync(jti, expirationTime);
 
-        return Ok(new { Message = CustomMessages.CustomMessages.LoggedOutSuccessfully });
+            return Ok(new { Message = CustomMessages.LoggedOutSuccessfully });
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new { Message = e.Message });
+        }
     }
 }

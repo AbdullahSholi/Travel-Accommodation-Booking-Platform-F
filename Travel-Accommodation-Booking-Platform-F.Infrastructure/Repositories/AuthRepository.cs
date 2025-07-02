@@ -25,17 +25,17 @@ public class AuthRepository : IAuthRepository
     public async Task<User?> GetUserByEmailAsync(string email)
     {
         var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
-        
+
         return user;
     }
-    
+
     public async Task<User?> GetUserByUsernameAsync(string username)
     {
         var user = await _context.Users.SingleOrDefaultAsync(u => u.Username == username);
-        
+
         return user;
     }
-    
+
     public async Task DeleteExpiredUnconfirmedUsersAsync()
     {
         var expirationLimit = DateTime.UtcNow;
@@ -55,7 +55,7 @@ public class AuthRepository : IAuthRepository
             await _context.SaveChangesAsync();
         }
     }
-    
+
     public async Task<bool> EmailExistsAsync(string email)
     {
         return await _context.Users
@@ -76,7 +76,7 @@ public class AuthRepository : IAuthRepository
         await _context.OtpRecords.AddAsync(otpRecord);
         await _context.SaveChangesAsync();
     }
-    
+
     public async Task SendOtpAsync(string toEmail, string otp)
     {
         var appPassword = Environment.GetEnvironmentVariable("APP_PASSWORD") ??
@@ -95,7 +95,7 @@ public class AuthRepository : IAuthRepository
         await smtp.SendAsync(email);
         await smtp.DisconnectAsync(true);
     }
-    
+
     public async Task<OtpRecord?> GetOtpRecordAsync(string email, string otp)
     {
         var record = await _context.OtpRecords
@@ -105,13 +105,13 @@ public class AuthRepository : IAuthRepository
 
         return record;
     }
-    
+
     public async Task HashAndSavePasswordAsync(User? user, string newPassword)
     {
         user.Password = PasswordHasher.HashPassword(newPassword);
         await _context.SaveChangesAsync();
     }
-    
+
     public async Task RemoveAndSaveOtpAsync(OtpRecord record)
     {
         _context.OtpRecords.Remove(record);
@@ -123,7 +123,7 @@ public class AuthRepository : IAuthRepository
         _context.Users.Update(user);
         await _context.SaveChangesAsync();
     }
-    
+
     public async Task InvalidateOtpAsync(OtpRecord otpRecord)
     {
         _context.OtpRecords.Remove(otpRecord);

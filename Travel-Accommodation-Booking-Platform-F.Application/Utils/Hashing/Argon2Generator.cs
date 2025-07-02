@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace Travel_Accommodation_Booking_Platform_F.Infrastructure.Hashing;
+namespace Travel_Accommodation_Booking_Platform_F.Application.Utils.Hashing;
 
 public static class Argon2Generator
 {

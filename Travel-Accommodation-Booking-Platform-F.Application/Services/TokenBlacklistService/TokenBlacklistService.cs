@@ -1,6 +1,7 @@
-﻿using Travel_Accommodation_Booking_Platform_F.Application.Services.TokenBlacklistService;
-using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
+﻿using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
+
+namespace Travel_Accommodation_Booking_Platform_F.Application.Services.TokenBlacklistService;
 
 public class TokenBlacklistService : ITokenBlacklistService
 {

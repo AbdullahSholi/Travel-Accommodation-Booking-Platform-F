@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
 
-namespace Travel_Accommodation_Booking_Platform_F.Application.Utils;
+namespace Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 
 public class JwtTokenGenerator
 {

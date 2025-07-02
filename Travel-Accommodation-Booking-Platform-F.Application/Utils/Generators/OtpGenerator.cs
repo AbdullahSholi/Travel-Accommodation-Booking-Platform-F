@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Travel_Accommodation_Booking_Platform_F.Application.Utils;
+namespace Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 
 public class OtpGenerator
 {

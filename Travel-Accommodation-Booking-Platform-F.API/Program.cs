@@ -10,12 +10,12 @@ using Microsoft.IdentityModel.Tokens;
 using Travel_Accommodation_Booking_Platform_F.Application.Mapping;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AuthService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.TokenBlacklistService;
-using Travel_Accommodation_Booking_Platform_F.Application.Utils;
+using Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Repositories;
-using CustomMessages = Travel_Accommodation_Booking_Platform_F.CustomMessages.CustomMessages;
+using Travel_Accommodation_Booking_Platform_F.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,16 +97,16 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.Urls.Clear();
-    app.Urls.Add("http://localhost:5000");
+    app.Urls.Add(Constants.LocalUrl);
     app.MapOpenApi();
 }
 else
 {
     app.Urls.Clear();
-    app.Urls.Add("http://0.0.0.0:80");
+    app.Urls.Add(Constants.DockerSwarmUrl);
 }
 
-app.MapGet("/", () => "Hello from Travel Accommodation API!");
+app.MapGet("/", () => CustomMessages.HelloMessage);
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
