@@ -1,4 +1,4 @@
-﻿namespace Travel_Accommodation_Booking_Platform_F.Utils;
+﻿namespace Travel_Accommodation_Booking_Platform_F.Utils.Auth;
 
 public static class CustomMessages
 {
@@ -11,6 +11,7 @@ public static class CustomMessages
     public const string HelloMessage = "Hello from Travel Accommodation API!";
     public const string InvalidCredentials = "Invalid credentials.";
     public const string EmailSentSuccessfully = "Email sent successfully.";
+    public const string EmailSentFailed = "Email sent failed.";
     public const string PasswordResetSuccessfully = "Password reset successfully.";
     public const string InvalidToken = "Invalid token";
     public const string LoggedOutSuccessfully = "Logged out successfully";

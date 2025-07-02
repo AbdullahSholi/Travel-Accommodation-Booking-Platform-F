@@ -14,6 +14,7 @@ using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Repositories;
 using Travel_Accommodation_Booking_Platform_F.Utils;
+using Travel_Accommodation_Booking_Platform_F.Utils.Auth;
 
 namespace Travel_Accommodation_Booking_Platform_F.Extensions;
 
@@ -26,7 +27,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITokenBlacklistedRepository, TokenBlacklistedRepository>();
         services.AddScoped<ITokenBlacklistService, TokenBlacklistService>();
         services.AddAutoMapper(typeof(UserProfile).Assembly);
-        services.Configure<EmailSettings>(services.BuildServiceProvider().GetRequiredService<IConfiguration>().GetSection("EmailSettings"));
+        services.Configure<EmailSettings>(services.BuildServiceProvider().GetRequiredService<IConfiguration>()
+            .GetSection("EmailSettings"));
         return services;
     }
 
@@ -86,7 +88,7 @@ public static class ServiceCollectionExtensions
 
         return services;
     }
-    
+
     public static IServiceCollection AddRateLimiting(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddMemoryCache();
@@ -95,7 +97,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
         return services;
     }
-    
+
     public static IServiceCollection AddApiVersioningSetup(this IServiceCollection services)
     {
         services.AddApiVersioning(options =>
