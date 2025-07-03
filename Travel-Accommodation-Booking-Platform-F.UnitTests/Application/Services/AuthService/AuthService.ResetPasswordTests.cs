@@ -12,10 +12,8 @@ using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.FactoryPattern;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
-using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.StrategyPattern;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Utils;
 using Xunit;
-using Xunit.Abstractions;
 
 public class ResetPasswordTests
 {

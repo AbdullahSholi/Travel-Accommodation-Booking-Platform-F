@@ -19,10 +19,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Application\Utils\"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\Travel-Accommodation-Booking-Platform-F.Infrastructure\Travel-Accommodation-Booking-Platform-F.Infrastructure.csproj"/>
     </ItemGroup>
 
