@@ -4,10 +4,11 @@ using System.Text;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Utils;
 
 namespace Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 
-public class JwtTokenGenerator
+public class JwtTokenGenerator : ITokenGenerator
 {
     private readonly JwtSettings _jwtSettings;
     private readonly string _secretKey;

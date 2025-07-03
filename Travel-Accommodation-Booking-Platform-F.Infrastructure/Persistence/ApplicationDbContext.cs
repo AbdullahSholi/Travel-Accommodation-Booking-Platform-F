@@ -15,12 +15,11 @@ public class ApplicationDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<OtpRecord> OtpRecords => Set<OtpRecord>();
     public DbSet<BlacklistedToken> BlacklistedTokens => Set<BlacklistedToken>();
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new OtpRecordConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }
-
 }

@@ -10,4 +10,5 @@ public static class CustomMessages
     public const string InvalidOrExpiredOtpCode = "Invalid or Expired OTP code";
     public const string ExpiredOtpCode = "Expired OTP code";
     public const string OtpNotFound = "OTP not found. Please request a new one.";
+    public const string InvalidStrategy = "Invalid strategy";
 }

@@ -9,7 +9,7 @@ public class OtpSenderFactory : IOtpSenderFactory
 {
     private readonly OtpEmailSenderStrategy _emailSender;
     private readonly OtpWhatsAppSenderStrategy _whatsAppSender;
-    
+
     public OtpSenderFactory(
         OtpEmailSenderStrategy emailSender,
         OtpWhatsAppSenderStrategy whatsAppSender)
@@ -17,14 +17,14 @@ public class OtpSenderFactory : IOtpSenderFactory
         _emailSender = emailSender;
         _whatsAppSender = whatsAppSender;
     }
-    
+
     public IOtpSenderStrategy Factory(OtpChannel channel)
     {
         return channel switch
         {
             OtpChannel.Email => _emailSender,
             OtpChannel.WhatsApp => _whatsAppSender,
-            _ => throw new NotImplementedException(),
+            _ => throw new NotImplementedException()
         };
     }
 }

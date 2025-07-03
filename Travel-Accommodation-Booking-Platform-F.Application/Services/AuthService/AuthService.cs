@@ -12,19 +12,19 @@ using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
 using Travel_Accommodation_Booking_Platform_F.Domain.Enums;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.FactoryPattern;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
-using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.StrategyPattern;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Utils;
 
 namespace Travel_Accommodation_Booking_Platform_F.Application.Services.AuthService;
 
 public class AuthService : IAuthService
 {
     private readonly IAuthRepository _authRepository;
-    private readonly JwtTokenGenerator _jwtTokenGenerator;
+    private readonly ITokenGenerator _jwtTokenGenerator;
     private readonly IMapper _mapper;
     private readonly ILogger<AuthService> _logger;
     private readonly IOtpSenderFactory _otpSenderFactory;
 
-    public AuthService(IAuthRepository authRepository, JwtTokenGenerator jwtTokenGenerator, IMapper mapper,
+    public AuthService(IAuthRepository authRepository, ITokenGenerator jwtTokenGenerator, IMapper mapper,
         ILogger<AuthService> logger, IOtpSenderFactory otpSenderFactory)
     {
         _authRepository = authRepository;
@@ -104,6 +104,9 @@ public class AuthService : IAuthService
         _logger.LogInformation(AuthServiceLogMessages.OtpSaved, user.Email);
 
         var strategy = _otpSenderFactory.Factory(OtpChannel.Email);
+        if (strategy == null)
+            throw new ValidationAppException(CustomMessages.InvalidStrategy);
+
         await strategy.SendOtpAsync(user.Email, otpRecord.Code);
         _logger.LogInformation(AuthServiceLogMessages.OtpSent, userDto.Email);
 
@@ -136,6 +139,9 @@ public class AuthService : IAuthService
         _logger.LogInformation(AuthServiceLogMessages.OtpSaved, email);
 
         var strategy = _otpSenderFactory.Factory(OtpChannel.Email);
+        if (strategy == null)
+            throw new ValidationAppException(CustomMessages.InvalidStrategy);
+
         await strategy.SendOtpAsync(email, otpRecord.Code);
         _logger.LogInformation(AuthServiceLogMessages.OtpSent, email);
 
@@ -153,8 +159,6 @@ public class AuthService : IAuthService
             throw new Exception(CustomMessages.InvalidOrExpiredOtpCode);
         }
 
-        Console.WriteLine(record.Expiration.ToUniversalTime());
-        Console.WriteLine(DateTime.UtcNow.ToUniversalTime());
         if (record.Expiration.ToUniversalTime() < DateTime.UtcNow.ToUniversalTime())
         {
             _logger.LogWarning(AuthServiceLogMessages.ExpiredOtpCodeUsed, readDto.Email);

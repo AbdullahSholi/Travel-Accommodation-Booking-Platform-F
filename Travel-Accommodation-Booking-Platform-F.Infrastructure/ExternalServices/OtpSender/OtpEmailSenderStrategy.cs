@@ -10,10 +10,12 @@ namespace Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalService
 public class OtpEmailSenderStrategy : IOtpSenderStrategy
 {
     private readonly EmailSettings _emailSettings;
+
     public OtpEmailSenderStrategy(IOptions<EmailSettings> emailSettings)
     {
         _emailSettings = emailSettings.Value;
     }
+
     public async Task SendOtpAsync(string to, string otp)
     {
         var appPassword = Environment.GetEnvironmentVariable("APP_PASSWORD") ??

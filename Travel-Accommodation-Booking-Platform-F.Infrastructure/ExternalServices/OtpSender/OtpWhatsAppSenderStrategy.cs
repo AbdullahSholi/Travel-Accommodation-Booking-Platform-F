@@ -7,7 +7,7 @@ public class OtpWhatsAppSenderStrategy : IOtpSenderStrategy
 {
     private const string InstanceId = "instance129637";
     private const string Token = "iiemdat9c8liiorb";
-    
+
     public async Task SendOtpAsync(string to, string otp)
     {
         using var client = new HttpClient();

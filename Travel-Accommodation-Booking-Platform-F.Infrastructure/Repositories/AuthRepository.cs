@@ -73,7 +73,7 @@ public class AuthRepository : IAuthRepository
         await _context.OtpRecords.AddAsync(otpRecord);
         await _context.SaveChangesAsync();
     }
-    
+
     public async Task<OtpRecord?> GetOtpRecordAsync(string email, string otp)
     {
         var record = await _context.OtpRecords
