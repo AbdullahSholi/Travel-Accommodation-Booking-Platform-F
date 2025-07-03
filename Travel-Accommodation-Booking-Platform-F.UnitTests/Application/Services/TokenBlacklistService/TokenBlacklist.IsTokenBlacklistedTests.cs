@@ -28,7 +28,7 @@ public class IsTokenBlacklistedTests
     }
 
     [Fact]
-    [Trait("TokenBlacklisted", "IsTokenBlacklisted")]
+    [Trait("UnitTests - TokenBlacklisted ", "IsTokenBlacklisted")]
     public async Task Should_ThrowArgumentNullException_When_ArgumentIsNull()
     {
         // Arrange
@@ -41,7 +41,7 @@ public class IsTokenBlacklistedTests
     }
 
     [Fact]
-    [Trait("TokenBlacklisted", "IsTokenBlacklisted")]
+    [Trait("UnitTests - TokenBlacklisted ", "IsTokenBlacklisted")]
     public async Task Should_ReturnFalse_When_TokenIsNotBlacklisted()
     {
         // Arrange
@@ -57,7 +57,7 @@ public class IsTokenBlacklistedTests
     }
 
     [Fact]
-    [Trait("TokenBlacklisted", "IsTokenBlacklisted")]
+    [Trait("UnitTests - TokenBlacklisted ", "IsTokenBlacklisted")]
     public async Task Should_ReturnTrue_When_TokenIsBlacklisted()
     {
         // Arrange

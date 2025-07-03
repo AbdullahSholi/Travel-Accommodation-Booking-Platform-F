@@ -49,7 +49,7 @@ public class SendOtpTests
     }
 
     [Fact]
-    [Trait("Auth", "SendOtp")]
+    [Trait("UnitTests - Auth", "SendOtp")]
     public async Task Should_ThrowException_When_UserDoesNotExist()
     {
         // Arrange
@@ -63,7 +63,7 @@ public class SendOtpTests
     }
 
     [Fact]
-    [Trait("Auth", "SendOtp")]
+    [Trait("UnitTests - Auth", "SendOtp")]
     public async Task Should_ThrowValidationAppException_When_InsertInvalidOtpSendingStrategy()
     {
         // Arrange
@@ -87,7 +87,7 @@ public class SendOtpTests
     }
 
     [Fact]
-    [Trait("Auth", "SendOtp")]
+    [Trait("UnitTests - Auth", "SendOtp")]
     public async Task Should_SendOtpSuccessfully_When_InsertCorrectDetails()
     {
         // Arrange

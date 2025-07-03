@@ -50,7 +50,7 @@ public class RegisterTests
     }
 
     [Fact]
-    [Trait("Auth", "Register")]
+    [Trait("UnitTests - Auth", "Register")]
     public async Task Should_ThrowException_When_UserAlreadyExists()
     {
         var dto = _fixture.Create<UserWriteDto>();
@@ -61,7 +61,7 @@ public class RegisterTests
     }
 
     [Fact]
-    [Trait("Auth", "Register")]
+    [Trait("UnitTests - Auth", "Register")]
     public async Task Should_RegisterUserSuccessfully_When_ValidDataProvided()
     {
         var dto = _fixture.Build<UserWriteDto>()

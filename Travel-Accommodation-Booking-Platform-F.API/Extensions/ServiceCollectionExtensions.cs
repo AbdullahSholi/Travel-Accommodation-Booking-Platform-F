@@ -12,6 +12,7 @@ using Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.FactoryPattern;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Utils;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.OtpSender;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.OtpSenderFactory;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
@@ -29,6 +30,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<ITokenBlacklistedRepository, TokenBlacklistedRepository>();
         services.AddScoped<ITokenBlacklistService, TokenBlacklistService>();
+        services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
         services.AddAutoMapper(typeof(UserProfile).Assembly);
         services.Configure<EmailSettings>(services.BuildServiceProvider().GetRequiredService<IConfiguration>()
             .GetSection("EmailSettings"));
@@ -52,7 +54,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<JwtTokenGenerator>(sp =>
         {
             var jwtOptions = sp.GetRequiredService<IOptions<JwtSettings>>();
-            return new JwtTokenGenerator(jwtOptions, secretKey);
+            return new JwtTokenGenerator(jwtOptions);
         });
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

@@ -45,7 +45,7 @@ public class LoginTests
     }
 
     [Fact]
-    [Trait("Auth", "Login")]
+    [Trait("UnitTests - Auth", "Login")]
     public async Task Should_ThrowValidationError_When_EmailAndUsernameAreMissing()
     {
         var dto = new Fixture().Build<LoginWriteDto>()
@@ -58,7 +58,7 @@ public class LoginTests
     }
 
     [Fact]
-    [Trait("Auth", "Login")]
+    [Trait("UnitTests - Auth", "Login")]
     public async Task Should_ThrowNotFoundException_When_UserNotExists()
     {
         var dto = _fixture.Create<LoginWriteDto>();
@@ -70,7 +70,7 @@ public class LoginTests
     }
 
     [Fact]
-    [Trait("Auth", "Login")]
+    [Trait("UnitTests - Auth", "Login")]
     public async Task Should_ThrowValidationError_When_PasswordIsIncorrect()
     {
         var dto = _fixture.Create<LoginWriteDto>();
@@ -82,7 +82,7 @@ public class LoginTests
     }
 
     [Fact]
-    [Trait("Auth", "Login")]
+    [Trait("UnitTests - Auth", "Login")]
     public async Task Should_ReturnToken_When_CredentialsAreValid()
     {
         var dto = _fixture.Create<LoginWriteDto>();

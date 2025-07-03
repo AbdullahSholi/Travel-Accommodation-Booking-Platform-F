@@ -45,7 +45,7 @@ public class ResetPasswordTests
     }
 
     [Fact]
-    [Trait("Auth", "ResetPassword")]
+    [Trait("UnitTests - Auth", "ResetPassword")]
     public async Task Should_ThrowException_When_OtpRecordDoesNotExist()
     {
         // Arrange
@@ -61,7 +61,7 @@ public class ResetPasswordTests
     }
 
     [Fact]
-    [Trait("Auth", "ResetPassword")]
+    [Trait("UnitTests - Auth", "ResetPassword")]
     public async Task Should_ThrowException_When_OtpCodeExpired()
     {
         // Arrange
@@ -82,7 +82,7 @@ public class ResetPasswordTests
     }
 
     [Fact]
-    [Trait("Auth", "ResetPassword")]
+    [Trait("UnitTests - Auth", "ResetPassword")]
     public async Task Should_ThrowException_When_UserNotFound()
     {
         // Arrange
@@ -104,7 +104,7 @@ public class ResetPasswordTests
     }
 
     [Fact]
-    [Trait("Auth", "ResetPassword")]
+    [Trait("UnitTests - Auth", "ResetPassword")]
     public async Task Should_ResetPassword_When_UserEnteredCorrectDetails()
     {
         // Arrange

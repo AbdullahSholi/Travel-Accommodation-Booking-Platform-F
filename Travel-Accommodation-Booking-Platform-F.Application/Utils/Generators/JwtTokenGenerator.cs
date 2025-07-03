@@ -11,12 +11,10 @@ namespace Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 public class JwtTokenGenerator : ITokenGenerator
 {
     private readonly JwtSettings _jwtSettings;
-    private readonly string _secretKey;
 
-    public JwtTokenGenerator(IOptions<JwtSettings> jwtSettings, string secretKey)
+    public JwtTokenGenerator(IOptions<JwtSettings> jwtSettings)
     {
         _jwtSettings = jwtSettings.Value;
-        _secretKey = secretKey;
     }
 
     public string GenerateToken(string username, string role)
@@ -29,7 +27,8 @@ public class JwtTokenGenerator : ITokenGenerator
             new Claim(ClaimTypes.Role, role)
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+        var secretKey = Environment.GetEnvironmentVariable("SECRET_KEY");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(

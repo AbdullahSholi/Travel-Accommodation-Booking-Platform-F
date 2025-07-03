@@ -13,7 +13,6 @@ using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.FactoryPattern;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Utils;
 using Xunit;
-using Xunit.Abstractions;
 
 public class VerifyOtpTests
 {
@@ -48,7 +47,7 @@ public class VerifyOtpTests
     private readonly string _otpCode = "123456";
 
     [Fact]
-    [Trait("Auth", "VerifyOtp")]
+    [Trait("UnitTests - Auth ", "VerifyOtp")]
     public async Task Should_ThrowException_When_OtpRecordDoesNotExist()
     {
         // Arrange
@@ -60,7 +59,7 @@ public class VerifyOtpTests
     }
 
     [Fact]
-    [Trait("Auth", "VerifyOtp")]
+    [Trait("UnitTests - Auth ", "VerifyOtp")]
     public async Task Should_ThrowException_When_OtpRecordExpired()
     {
         // Arrange
@@ -76,7 +75,7 @@ public class VerifyOtpTests
     }
 
     [Fact]
-    [Trait("Auth", "VerifyOtp")]
+    [Trait("UnitTests - Auth ", "VerifyOtp")]
     public async Task Should_ThrowException_When_OtpCodeInvalid()
     {
         // Arrange
@@ -93,7 +92,7 @@ public class VerifyOtpTests
     }
 
     [Fact]
-    [Trait("Auth", "VerifyOtp")]
+    [Trait("UnitTests - Auth ", "VerifyOtp")]
     public async Task Should_ThrowException_When_UserIsNotFound()
     {
         // Arrange
@@ -113,7 +112,7 @@ public class VerifyOtpTests
     }
 
     [Fact]
-    [Trait("Auth", "VerifyOtp")]
+    [Trait("UnitTests - Auth ", "VerifyOtp")]
     public async Task Should_OtpVerifiedSuccessfully_When_UserEnterCorrectDetails()
     {
         // Arrange

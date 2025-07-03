@@ -29,7 +29,7 @@ public class AddTokenToBlacklistTests
     }
 
     [Fact]
-    [Trait("TokenBlacklisted", "AddTokenToBlacklist")]
+    [Trait("UnitTests - TokenBlacklisted", "AddTokenToBlacklist")]
     public async Task Should_ThrowArgumentNullException_When_ArgumentsAreNullOrEmpty()
     {
         // Arrange
@@ -49,7 +49,7 @@ public class AddTokenToBlacklistTests
     }
 
     [Fact]
-    [Trait("TokenBlacklisted", "AddTokenToBlacklist")]
+    [Trait("UnitTests - TokenBlacklisted", "AddTokenToBlacklist")]
     public async Task Should_ThrowArgumentNullException_When_JtiArgumentIsNullOrEmpty()
     {
         // Arrange
@@ -69,7 +69,7 @@ public class AddTokenToBlacklistTests
     }
 
     [Fact]
-    [Trait("TokenBlacklisted", "AddTokenToBlacklist")]
+    [Trait("UnitTests - TokenBlacklisted", "AddTokenToBlacklist")]
     public async Task Should_ThrowArgumentNullException_When_ExpirationArgumentIsInvalid()
     {
         // Arrange
@@ -89,7 +89,7 @@ public class AddTokenToBlacklistTests
     }
 
     [Fact]
-    [Trait("TokenBlacklisted", "AddTokenToBlacklist")]
+    [Trait("UnitTests - TokenBlacklisted", "AddTokenToBlacklist")]
     public async Task Should_AddTokenToBlacklistSuccessfully_When_EnterValidInformation()
     {
         // Arrange
