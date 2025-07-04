@@ -6,6 +6,47 @@ on:
       - feat/setup-ci-cd-pipeline
 
 jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    env:
+      DOTNET_VERSION: '9.0.203'
+      TRAVEL_ACCOMMODATION_CONNECTION_STRING: ${{ secrets.SQLSERVER_CONNECTIONSTRING }}
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
+    
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Run Unit Tests
+      run: dotnet test --no-build --configuration Release --filter "Category~UnitTests"
+      env:
+        ConnectionStrings__DefaultConnection: ${{ env.TRAVEL_ACCOMMODATION_CONNECTION_STRING }}
+
+    - name: Run Integration Tests
+      run: dotnet test --no-build --configuration Release --filter "Category~IntegrationTests"
+      env:
+        ConnectionStrings__DefaultConnection: ${{ env.TRAVEL_ACCOMMODATION_CONNECTION_STRING }}
+    
+    - name: Publish application for Linux
+      run: dotnet publish Travel-Accommodation-Booking-Platform-F.API.csproj -c Release -o ./publish --runtime linux-x64 --self-contained false
+
+    - name: Upload published app
+      uses: actions/upload-artifact@v3
+      with:
+        name: published-app
+        path: ./publish
+
   deploy:
     runs-on: ubuntu-latest
 
