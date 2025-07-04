@@ -36,18 +36,19 @@ public class AuthRepository : IAuthRepository
     public async Task DeleteExpiredUnconfirmedUsersAsync()
     {
         var expirationLimit = DateTime.UtcNow;
-        var usersToDelete = await _context.Users
-            .Where(u => !u.IsEmailConfirmed)
-            .Join(_context.OtpRecords,
-                user => user.Email,
-                otp => otp.Email,
-                (user, otp) => new { user, otp })
-            .Where(x => x.otp.Expiration < expirationLimit)
-            .Select(x => x.user)
+        var otpRecordsToDelete = await _context.OtpRecords
+            .Include(u => u.User)
+            .Where(x => !x.User.IsEmailConfirmed && x.Expiration < expirationLimit)
             .ToListAsync();
 
+        var usersToDelete = otpRecordsToDelete
+            .Select(x => x.User)
+            .Distinct()
+            .ToList();
+        
         if (usersToDelete.Any())
         {
+            _context.OtpRecords.RemoveRange(otpRecordsToDelete);
             _context.Users.RemoveRange(usersToDelete);
             await _context.SaveChangesAsync();
         }
