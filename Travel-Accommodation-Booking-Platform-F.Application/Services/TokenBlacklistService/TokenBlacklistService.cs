@@ -45,7 +45,7 @@ public class TokenBlacklistService : ITokenBlacklistService
             throw new ArgumentNullException(nameof(jti));
         }
 
-        if (expiration < DateTime.Now)
+        if (expiration < DateTime.UtcNow)
         {
             _logger.LogWarning(TokenBlacklistLogMessages.InvalidExpirationDateProvided, jti, expiration);
             throw new ArgumentNullException(nameof(expiration));

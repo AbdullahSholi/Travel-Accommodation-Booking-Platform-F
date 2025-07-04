@@ -83,12 +83,21 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         context.OtpRecords.AddRange(otpRecords);
         await context.SaveChangesAsync();
     }
+    
+    protected async Task SeedBlacklistedTokensAsync(params BlacklistedToken[] blacklistedTokens)
+    {
+        using var context = GetDbContext();
+        context.BlacklistedTokens.AddRange(blacklistedTokens);
+        await context.SaveChangesAsync();
+    }
+
 
     protected async Task ClearDatabaseAsync()
     {
         using var context = GetDbContext();
         context.Users.RemoveRange(context.Users);
         context.OtpRecords.RemoveRange(context.OtpRecords);
+        context.BlacklistedTokens.RemoveRange(context.BlacklistedTokens);
         await context.SaveChangesAsync();
     }
 }
