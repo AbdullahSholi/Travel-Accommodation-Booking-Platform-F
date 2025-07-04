@@ -42,7 +42,7 @@ jobs:
       run: dotnet publish Travel-Accommodation-Booking-Platform-F.API.csproj -c Release -o ./publish --runtime linux-x64 --self-contained false
 
     - name: Upload published app
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: published-app
         path: ./publish
