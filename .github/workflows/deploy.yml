@@ -12,6 +12,8 @@ jobs:
     env:
       DOTNET_VERSION: '9.0.203'
       TRAVEL_ACCOMMODATION_CONNECTION_STRING: ${{ secrets.SQLSERVER_CONNECTIONSTRING }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
 
     steps:
     - name: Checkout source code
