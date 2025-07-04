@@ -3,26 +3,29 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoFixture;
-using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Utils;
 using Xunit;
-using Xunit.Abstractions;
 
 public class LoginIntegrationTests : IntegrationTestBase
 {
-    private IFixture _fixture;
+    private readonly IFixture _fixture;
     private IAuthRepository _authRepository;
     private ITokenGenerator _jwtTokenGenerator;
-    private ITestOutputHelper _output;
 
-    public LoginIntegrationTests(ITestOutputHelper output)
+    private readonly LoginWriteDto _loginWriteDto = new()
+    {
+        Email = "abdullah@gmail.com",
+        Password = "Sholi@971",
+        Username = "abdullahsholi"
+    };
+
+    public LoginIntegrationTests()
     {
         _fixture = new Fixture();
-        _output = output;
     }
 
     public override async Task InitializeAsync()
@@ -40,21 +43,14 @@ public class LoginIntegrationTests : IntegrationTestBase
     [Trait("IntegrationTests - Auth", "Login")]
     public async Task Should_LoginSuccessfully_When_UserEnterCorrectCredentials()
     {
-        var loginWriteDto = new LoginWriteDto
-        {
-            Email = "abdullah@gmail.com",
-            Password = "Sholi@971",
-            Username = "abdullahsholi"
-        };
-
         var userMock = _fixture.Build<User>()
             .Without(x => x.UserId)
-            .With(x => x.Email, loginWriteDto.Email)
-            .With(x => x.Password, loginWriteDto.Password)
-            .With(x => x.Username, loginWriteDto.Username)
+            .With(x => x.Email, _loginWriteDto.Email)
+            .With(x => x.Password, _loginWriteDto.Password)
+            .With(x => x.Username, _loginWriteDto.Username)
             .Create();
 
-        await SeedTestDataAsync(userMock);
+        await SeedUsersAsync(userMock);
         var userEmail = userMock.Email;
 
         var user = await _authRepository.GetUserByEmailAsync(userEmail);
@@ -84,23 +80,16 @@ public class LoginIntegrationTests : IntegrationTestBase
     [Trait("IntegrationTests - Auth", "Login")]
     public async Task Should_LoginFailed_When_UserNotFound()
     {
-        var loginWriteDto = new LoginWriteDto
-        {
-            Email = "abdullah@gmail.com",
-            Password = "Sholi@971",
-            Username = "abdullahsholi"
-        };
-
         var userMock = _fixture.Build<User>()
             .Without(x => x.UserId)
             .With(x => x.Email, "ahmad@gmail.com")
-            .With(x => x.Password, loginWriteDto.Password)
-            .With(x => x.Username, loginWriteDto.Username)
+            .With(x => x.Password, _loginWriteDto.Password)
+            .With(x => x.Username, _loginWriteDto.Username)
             .Create();
 
-        await SeedTestDataAsync(userMock);
+        await SeedUsersAsync(userMock);
 
-        var user = await _authRepository.GetUserByEmailAsync(loginWriteDto.Email);
+        var user = await _authRepository.GetUserByEmailAsync(_loginWriteDto.Email);
 
         Assert.Null(user);
     }

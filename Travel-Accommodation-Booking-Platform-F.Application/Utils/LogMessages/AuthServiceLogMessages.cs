@@ -37,6 +37,9 @@ public static class AuthServiceLogMessages
     public const string InvalidOrExpiredOtpAttempt =
         "Password reset failed: invalid or expired OTP for email: {Email}.";
 
+    public const string InvalidOrExpiredOtp =
+        "Send OTP failed: invalid or expired OTP for email: {Email}.";
+
     public const string UserNotFoundForReset = "Password reset failed: user not found for email: {Email}.";
     public const string PasswordResetSuccessfully = "Password reset successfully for email: {Email}.";
     public const string OtpRemovedAfterReset = "OTP removed after password reset for email: {Email}.";

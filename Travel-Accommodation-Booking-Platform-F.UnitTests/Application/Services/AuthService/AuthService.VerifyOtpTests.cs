@@ -76,23 +76,6 @@ public class VerifyOtpTests
 
     [Fact]
     [Trait("UnitTests - Auth ", "VerifyOtp")]
-    public async Task Should_ThrowException_When_OtpCodeInvalid()
-    {
-        // Arrange
-        var otpRecordMock = _fixture.Build<OtpRecord>()
-            .With(x => x.Email, _email)
-            .With(x => x.Expiration, new DateTime(2100, 1, 1))
-            .With(x => x.Code, "")
-            .Create();
-        _mockRepo.Setup(r => r.GetOtpRecordAsync(_email, _otpCode)).ReturnsAsync(otpRecordMock);
-
-        // Act & Assert
-        var exception = await Assert.ThrowsAsync<Exception>(() => _sut.VerifyOtpAsync(_email, _otpCode));
-        Assert.Equal(CustomMessages.InvalidOtp, exception.Message);
-    }
-
-    [Fact]
-    [Trait("UnitTests - Auth ", "VerifyOtp")]
     public async Task Should_ThrowException_When_UserIsNotFound()
     {
         // Arrange

@@ -12,6 +12,7 @@ using Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.FactoryPattern;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.StrategyPattern;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Utils;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.OtpSender;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.OtpSenderFactory;
@@ -36,6 +37,8 @@ public static class ServiceCollectionExtensions
             .GetSection("EmailSettings"));
         services.AddScoped<IOtpSenderFactory, OtpSenderFactory>();
 
+        services.AddScoped<IOtpSenderStrategy, OtpEmailSenderStrategy>();
+        services.AddScoped<IOtpSenderStrategy, OtpWhatsAppSenderStrategy>();
         services.AddScoped<OtpEmailSenderStrategy>();
         services.AddScoped<OtpWhatsAppSenderStrategy>();
         return services;

@@ -92,8 +92,12 @@ public class AuthRepository : IAuthRepository
 
     public async Task RemoveAndSaveOtpAsync(OtpRecord record)
     {
-        _context.OtpRecords.Remove(record);
-        await _context.SaveChangesAsync();
+        var existingRecord = await _context.OtpRecords.FirstOrDefaultAsync(r => r.Id == record.Id);
+        if (existingRecord != null)
+        {
+            _context.OtpRecords.Remove(existingRecord);
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task UpdateUserAsync(User user)

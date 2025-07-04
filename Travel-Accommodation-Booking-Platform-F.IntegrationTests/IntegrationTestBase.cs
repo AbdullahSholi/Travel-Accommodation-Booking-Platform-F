@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Testcontainers.MsSql;
+using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
 using Xunit;
@@ -69,17 +70,25 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         return scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     }
 
-    protected async Task SeedTestDataAsync(params User[] users)
+    protected async Task SeedUsersAsync(params User[] users)
     {
         using var context = GetDbContext();
         context.Users.AddRange(users);
         await context.SaveChangesAsync();
     }
 
-    protected async Task CleaDatabaseAsync()
+    protected async Task SeedOtpRecordsAsync(params OtpRecord[] otpRecords)
+    {
+        using var context = GetDbContext();
+        context.OtpRecords.AddRange(otpRecords);
+        await context.SaveChangesAsync();
+    }
+
+    protected async Task ClearDatabaseAsync()
     {
         using var context = GetDbContext();
         context.Users.RemoveRange(context.Users);
+        context.OtpRecords.RemoveRange(context.OtpRecords);
         await context.SaveChangesAsync();
     }
 }

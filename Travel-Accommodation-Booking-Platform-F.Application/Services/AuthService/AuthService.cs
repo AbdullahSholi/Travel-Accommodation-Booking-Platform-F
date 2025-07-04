@@ -198,12 +198,6 @@ public class AuthService : IAuthService
             throw new Exception(CustomMessages.ExpiredOtpCode);
         }
 
-        if (otpRecord.Code != otpCode)
-        {
-            _logger.LogWarning(AuthServiceLogMessages.InvalidOtpUsed, email);
-            throw new Exception(CustomMessages.InvalidOtp);
-        }
-
         var user = await _authRepository.GetUserByEmailAsync(email);
         if (user == null)
         {
