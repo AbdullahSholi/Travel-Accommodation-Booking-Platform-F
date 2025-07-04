@@ -1,5 +1,7 @@
 ﻿using AspNetCoreRateLimit;
+using Microsoft.EntityFrameworkCore;
 using Travel_Accommodation_Booking_Platform_F.Extensions;
+using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
 using Travel_Accommodation_Booking_Platform_F.Utils.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +25,12 @@ builder.Services.AddRateLimiting(builder.Configuration);
 builder.Services.AddCors();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
 
 if (app.Environment.IsDevelopment())
 {
