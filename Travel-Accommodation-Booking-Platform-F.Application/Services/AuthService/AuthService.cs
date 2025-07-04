@@ -95,6 +95,7 @@ public class AuthService : IAuthService
         var otpCode = OtpGenerator.GenerateOtp();
         var otpRecord = new OtpRecord
         {
+            UserId = user.UserId,
             Email = user.Email,
             Code = otpCode,
             Expiration = DateTime.UtcNow.AddMinutes(Constants.OtpExpirationMinutes).ToUniversalTime()
@@ -130,6 +131,7 @@ public class AuthService : IAuthService
         var otp = OtpGenerator.GenerateOtp();
         var otpRecord = new OtpRecord
         {
+            UserId = user.UserId,
             Email = email,
             Code = otp,
             Expiration = DateTime.UtcNow.AddMinutes(Constants.OtpExpirationMinutes).ToUniversalTime()

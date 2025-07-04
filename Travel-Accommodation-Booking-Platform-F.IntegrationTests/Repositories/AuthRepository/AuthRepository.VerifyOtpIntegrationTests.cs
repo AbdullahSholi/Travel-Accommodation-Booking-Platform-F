@@ -20,6 +20,12 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
     public VerifyOtpIntegrationTests()
     {
         _fixture = new Fixture();
+        _fixture.Behaviors
+            .OfType<ThrowingRecursionBehavior>()
+            .ToList()
+            .ForEach(b => _fixture.Behaviors.Remove(b));
+
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
     }
 
     public override async Task InitializeAsync()
@@ -51,16 +57,23 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
         var userMock = _fixture.Build<User>()
             .With(x => x.Email, _email)
             .Without(x => x.UserId)
+            .Without(x => x.OtpRecords)
             .Create();
+        
+        await SeedUsersAsync(userMock);
+        
+        var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
+        Assert.NotNull(savedUser);
 
         var otpRecordMock = _fixture.Build<OtpRecord>()
             .With(x => x.Email, _email)
             .With(x => x.Code, _otpCode)
             .With(x => x.Expiration, DateTime.UtcNow.AddMinutes(-10))
+            .With(x => x.UserId, savedUser.UserId)
             .Without(x => x.Id)
+            .Without(x => x.User)
             .Create();
-
-        await SeedUsersAsync(userMock);
+        
         await SeedOtpRecordsAsync(otpRecordMock);
 
 
@@ -89,19 +102,25 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .With(x => x.Email, _email)
             .With(x => x.IsEmailConfirmed, true)
             .Without(x => x.UserId)
+            .Without(x => x.OtpRecords)
             .Create();
+        
+        await SeedUsersAsync(userMock);
+        
+        var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
+        Assert.NotNull(savedUser);
 
         var otpRecordMock = _fixture.Build<OtpRecord>()
             .With(x => x.Email, _email)
             .With(x => x.Code, _otpCode)
             .With(x => x.Expiration, DateTime.UtcNow.AddMinutes(+10))
+            .With(x => x.UserId, savedUser.UserId)
             .Without(x => x.Id)
+            .Without(x=>x.User)
             .Create();
-
-        await SeedUsersAsync(userMock);
+        
         await SeedOtpRecordsAsync(otpRecordMock);
-
-
+        
         var otpRecord = await _authRepository.GetOtpRecordAsync(_email, _otpCode);
         Assert.NotNull(otpRecord);
         Assert.Equal(otpRecordMock.Email, otpRecord.Email);
@@ -131,16 +150,23 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .With(x => x.Email, _email)
             .With(x => x.IsEmailConfirmed, false)
             .Without(x => x.UserId)
+            .Without(x => x.OtpRecords)
             .Create();
+        
+        await SeedUsersAsync(userMock);
+        
+        var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
+        Assert.NotNull(savedUser);
 
         var otpRecordMock = _fixture.Build<OtpRecord>()
             .With(x => x.Email, _email)
             .With(x => x.Code, _otpCode)
             .With(x => x.Expiration, DateTime.UtcNow.AddMinutes(+10))
+            .With(x => x.UserId, savedUser.UserId)
             .Without(x => x.Id)
+            .Without(x => x.User)
             .Create();
-
-        await SeedUsersAsync(userMock);
+        
         await SeedOtpRecordsAsync(otpRecordMock);
 
 

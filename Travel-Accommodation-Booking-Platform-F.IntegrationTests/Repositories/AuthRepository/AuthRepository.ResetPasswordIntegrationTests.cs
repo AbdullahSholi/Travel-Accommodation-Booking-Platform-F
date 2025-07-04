@@ -17,6 +17,12 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
     public ResetPasswordIntegrationTests()
     {
         _fixture = new Fixture();
+        _fixture.Behaviors
+            .OfType<ThrowingRecursionBehavior>()
+            .ToList()
+            .ForEach(b => _fixture.Behaviors.Remove(b));
+
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
     }
 
     public override async Task InitializeAsync()
@@ -37,19 +43,26 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
 
         var userMock = _fixture.Build<User>()
             .Without(x => x.UserId)
+            .Without(x => x.OtpRecords)
             .With(x => x.Email, "abdullah@gmail.com")
             .With(x => x.Password, "Sholi@971")
             .With(x => x.Username, "abdullahsholi")
             .With(x => x.IsEmailConfirmed, true)
             .Create();
-
+        
+        await SeedUsersAsync(userMock);
+        
+        var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
+        Assert.NotNull(savedUser);
+        
         var otpRecordMock = new OtpRecord
         {
-            Email = "abdullah@gmail.com",
+            UserId = savedUser.UserId,
+            Email = savedUser.Email,
             Expiration = DateTime.UtcNow.AddMinutes(+5),
             Code = _fixture.Create<string>()
         };
-        await SeedUsersAsync(userMock);
+        
         await SeedOtpRecordsAsync(otpRecordMock);
 
         var record = await _authRepository.GetOtpRecordAsync(otpRecordMock.Email, otpRecordMock.Code);
@@ -83,9 +96,24 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
     {
         await ClearDatabaseAsync();
 
+        var userMock = _fixture.Build<User>()
+            .Without(x => x.UserId)
+            .Without(x => x.OtpRecords)
+            .With(x => x.Email, "abdullah@gmail.com")
+            .With(x => x.Password, "Sholi@971")
+            .With(x => x.Username, "abdullahsholi")
+            .With(x => x.IsEmailConfirmed, true)
+            .Create();
+
+        await SeedUsersAsync(userMock);
+        
+        var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
+        Assert.NotNull(savedUser);
+        
         var otpRecordMock = new OtpRecord
         {
-            Email = "abdullah@gmail.com",
+            UserId = savedUser.UserId,
+            Email = savedUser.Email,
             Expiration = DateTime.UtcNow.AddMinutes(-100),
             Code = _fixture.Create<string>()
         };
@@ -102,10 +130,25 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
     public async Task Should_ThrowException_When_OtpRecordDoesNotExist()
     {
         await ClearDatabaseAsync();
+        
+        var userMock = _fixture.Build<User>()
+            .Without(x => x.UserId)
+            .Without(x => x.OtpRecords)
+            .With(x => x.Email, "abdullah@gmail.com")
+            .With(x => x.Password, "Sholi@971")
+            .With(x => x.Username, "abdullahsholi")
+            .With(x => x.IsEmailConfirmed, true)
+            .Create();
 
+        await SeedUsersAsync(userMock);
+        
+        var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
+        Assert.NotNull(savedUser);
+        
         var otpRecordMock = new OtpRecord
         {
-            Email = "abdullah@gmail.com",
+            UserId = savedUser.UserId,
+            Email = savedUser.Email,
             Expiration = DateTime.UtcNow.AddMinutes(+5),
             Code = _fixture.Create<string>()
         };
@@ -121,10 +164,25 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
     public async Task Should_ThrowException_When_UserNotFound()
     {
         await ClearDatabaseAsync();
+        
+        var userMock = _fixture.Build<User>()
+            .Without(x => x.UserId)
+            .Without(x => x.OtpRecords)
+            .With(x => x.Email, "abdullah@gmail.com")
+            .With(x => x.Password, "Sholi@971")
+            .With(x => x.Username, "abdullahsholi")
+            .With(x => x.IsEmailConfirmed, true)
+            .Create();
 
+        await SeedUsersAsync(userMock);
+        
+        var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
+        Assert.NotNull(savedUser);
+        
         var otpRecordMock = new OtpRecord
         {
-            Email = "abdullah@gmail.com",
+            UserId = savedUser.UserId,
+            Email = savedUser.Email,
             Expiration = DateTime.UtcNow.AddMinutes(+5),
             Code = _fixture.Create<string>()
         };

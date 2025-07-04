@@ -26,6 +26,12 @@ public class LoginIntegrationTests : IntegrationTestBase
     public LoginIntegrationTests()
     {
         _fixture = new Fixture();
+        _fixture.Behaviors
+            .OfType<ThrowingRecursionBehavior>()
+            .ToList()
+            .ForEach(b => _fixture.Behaviors.Remove(b));
+
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
     }
 
     public override async Task InitializeAsync()
@@ -43,8 +49,11 @@ public class LoginIntegrationTests : IntegrationTestBase
     [Trait("IntegrationTests - Auth", "Login")]
     public async Task Should_LoginSuccessfully_When_UserEnterCorrectCredentials()
     {
+        await ClearDatabaseAsync();
+        
         var userMock = _fixture.Build<User>()
             .Without(x => x.UserId)
+            .Without(x => x.OtpRecords)
             .With(x => x.Email, _loginWriteDto.Email)
             .With(x => x.Password, _loginWriteDto.Password)
             .With(x => x.Username, _loginWriteDto.Username)
@@ -80,8 +89,11 @@ public class LoginIntegrationTests : IntegrationTestBase
     [Trait("IntegrationTests - Auth", "Login")]
     public async Task Should_LoginFailed_When_UserNotFound()
     {
+        await ClearDatabaseAsync();
+        
         var userMock = _fixture.Build<User>()
             .Without(x => x.UserId)
+            .Without(x => x.OtpRecords)
             .With(x => x.Email, "ahmad@gmail.com")
             .With(x => x.Password, _loginWriteDto.Password)
             .With(x => x.Username, _loginWriteDto.Username)

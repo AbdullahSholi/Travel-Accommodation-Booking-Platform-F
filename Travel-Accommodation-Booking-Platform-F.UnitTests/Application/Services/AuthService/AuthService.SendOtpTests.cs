@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
@@ -32,6 +33,12 @@ public class SendOtpTests
     public SendOtpTests()
     {
         _fixture = new Fixture().Customize(new AutoMoqCustomization());
+        _fixture.Behaviors
+            .OfType<ThrowingRecursionBehavior>()
+            .ToList()
+            .ForEach(b => _fixture.Behaviors.Remove(b));
+
+        _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         _mockRepo = _fixture.Freeze<Mock<IAuthRepository>>();
         _mockJwtTokenGenerator = _fixture.Freeze<Mock<ITokenGenerator>>();
         _mockMapper = _fixture.Freeze<Mock<IMapper>>();
