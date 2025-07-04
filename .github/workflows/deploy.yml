@@ -80,8 +80,16 @@ jobs:
         username: ubuntu
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          docker service update --image abdullahgsholi/myproject-api:latest myproject_api || \
-          docker service create --name myproject_api --replicas 1 -p 5000:80 abdullahgsholi/myproject-api:latest
+          docker service update \
+            --env SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            --env TRAVEL_ACCOMMODATION_CONNECTION_STRING="${{ secrets.SQLSERVER_CONNECTIONSTRING }}" \
+            --env APP_PASSWORD=${{ secrets.APP_PASSWORD }} \
+            --image abdullahgsholi/myproject-api:latest myproject_api || \
+          docker service create --name myproject_api --replicas 1 -p 5000:80 \
+            --env SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            --env TRAVEL_ACCOMMODATION_CONNECTION_STRING="${{ secrets.SQLSERVER_CONNECTIONSTRING }}" \
+            --env APP_PASSWORD=${{ secrets.APP_PASSWORD }} \
+            abdullahgsholi/myproject-api:latest
           
     - name: Send Slack notification
       if: success()
