@@ -156,8 +156,14 @@ public class AuthController : ControllerBase
     {
         try
         {
-            var jti = User.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
-            var exp = User.FindFirst(JwtRegisteredClaimNames.Exp)?.Value;
+            var authHeader = HttpContext.Request.Headers["Authorization"].ToString();
+            var token = authHeader.StartsWith("Bearer ") ? authHeader.Substring("Bearer ".Length) : authHeader;
+
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+            
+            var jti = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
+            var exp = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Exp)?.Value;
 
             if (jti == null || exp == null)
             {
