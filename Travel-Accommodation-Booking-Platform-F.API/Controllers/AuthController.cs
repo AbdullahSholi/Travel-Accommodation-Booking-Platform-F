@@ -74,7 +74,7 @@ public class AuthController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, LogMessages.RegisterUnexpectedError, dto.Email);
-            return BadRequest(new { Message = CustomMessages.InternalServerError });
+            return StatusCode(500, new { Message = CustomMessages.InternalServerError });
         }
     }
 
@@ -123,7 +123,7 @@ public class AuthController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, LogMessages.ResetPasswordUnexpectedError, readDto.Email);
-            return BadRequest(new { Message = CustomMessages.InternalServerError });
+            return StatusCode(500, new { Message = CustomMessages.InternalServerError });
         }
     }
 
@@ -146,7 +146,7 @@ public class AuthController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, LogMessages.VerifyOtpUnexpectedError, dto.Email);
-            return BadRequest(new { Message = CustomMessages.InternalServerError });
+            return StatusCode(500, new { Message = CustomMessages.InternalServerError });
         }
     }
 
@@ -175,7 +175,7 @@ public class AuthController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, LogMessages.LogoutUnexpectedError);
-            return BadRequest(new { Message = CustomMessages.InternalServerError });
+            return StatusCode(500, new { Message = CustomMessages.InternalServerError });
         }
     }
 }

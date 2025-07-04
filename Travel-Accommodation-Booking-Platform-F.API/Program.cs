@@ -1,6 +1,5 @@
 ﻿using AspNetCoreRateLimit;
 using Travel_Accommodation_Booking_Platform_F.Extensions;
-using Travel_Accommodation_Booking_Platform_F.Utils;
 using Travel_Accommodation_Booking_Platform_F.Utils.Auth;
 
 var builder = WebApplication.CreateBuilder(args);

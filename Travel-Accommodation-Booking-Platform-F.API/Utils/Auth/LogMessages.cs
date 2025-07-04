@@ -1,6 +1,6 @@
 ﻿namespace Travel_Accommodation_Booking_Platform_F.Utils.Auth;
 
-public class LogMessages
+public static class LogMessages
 {
     public const string LoginRequestReceived = "Login request received for user: {Email}";
     public const string LoginSuccessful = "Login successful for user: {Email}";

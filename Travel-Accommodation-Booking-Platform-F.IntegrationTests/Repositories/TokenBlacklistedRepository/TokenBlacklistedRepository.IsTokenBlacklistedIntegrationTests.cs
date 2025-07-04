@@ -10,7 +10,7 @@ public class TokenBlacklistIntegrationTests : IntegrationTestBase
 {
     private readonly IFixture _fixture;
     private ITokenBlacklistedRepository _tokenBlacklistedRepository;
-    
+
     public TokenBlacklistIntegrationTests()
     {
         _fixture = new Fixture();
@@ -30,16 +30,16 @@ public class TokenBlacklistIntegrationTests : IntegrationTestBase
     [Trait("IntegrationTests - TokenBlacklisted", "IsTokenBlacklisted")]
     public void Should_ThrowArgumentNullException_When_ArgumentIsNull()
     {
-        var jti = ""; 
+        var jti = "";
         Assert.Empty(jti);
     }
-    
+
     [Fact]
     [Trait("IntegrationTests - TokenBlacklisted", "IsTokenBlacklisted")]
     public async Task Should_ReturnFalse_When_TokenIsNotBlacklisted()
     {
         await ClearDatabaseAsync();
-        
+
         var jti = _fixture.Create<string>();
         var isBlacklisted = await _tokenBlacklistedRepository.CheckIfTokenBlacklistedAsync(jti);
         Assert.False(isBlacklisted);
@@ -50,7 +50,7 @@ public class TokenBlacklistIntegrationTests : IntegrationTestBase
     public async Task Should_ReturnTrue_When_TokenIsBlacklisted()
     {
         await ClearDatabaseAsync();
-        
+
         var jti = "123456";
         var blacklistedTokenMock = _fixture.Build<BlacklistedToken>()
             .Without(x => x.Id)
@@ -59,7 +59,7 @@ public class TokenBlacklistIntegrationTests : IntegrationTestBase
             .Create();
 
         await SeedBlacklistedTokensAsync(blacklistedTokenMock);
-        
+
         var isBlacklisted = await _tokenBlacklistedRepository.CheckIfTokenBlacklistedAsync(jti);
         Assert.True(isBlacklisted);
     }

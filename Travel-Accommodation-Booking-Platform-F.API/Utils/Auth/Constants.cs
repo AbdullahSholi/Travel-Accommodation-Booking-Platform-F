@@ -1,4 +1,4 @@
-﻿namespace Travel_Accommodation_Booking_Platform_F.Utils;
+﻿namespace Travel_Accommodation_Booking_Platform_F.Utils.Auth;
 
 public static class Constants
 {

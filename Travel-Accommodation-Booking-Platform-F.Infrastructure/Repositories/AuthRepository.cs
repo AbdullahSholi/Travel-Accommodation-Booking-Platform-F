@@ -45,7 +45,7 @@ public class AuthRepository : IAuthRepository
             .Select(x => x.User)
             .Distinct()
             .ToList();
-        
+
         if (usersToDelete.Any())
         {
             _context.OtpRecords.RemoveRange(otpRecordsToDelete);

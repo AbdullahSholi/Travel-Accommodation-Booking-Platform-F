@@ -11,7 +11,7 @@ using Xunit;
 public class AddTokenToBlacklistIntegrationTests : IntegrationTestBase
 {
     private ITokenBlacklistedRepository _tokenBlacklistedRepository;
-    
+
     public AddTokenToBlacklistIntegrationTests()
     {
     }
@@ -25,13 +25,13 @@ public class AddTokenToBlacklistIntegrationTests : IntegrationTestBase
 
         _tokenBlacklistedRepository = provider.GetRequiredService<ITokenBlacklistedRepository>();
     }
-    
+
     [Fact]
     [Trait("IntegrationTests - TokenBlacklisted", "AddTokenToBlacklist")]
     public async Task Should_AddTokenToBlacklistSuccessfully_When_EnterValidInformation()
     {
         await ClearDatabaseAsync();
-        
+
         var jti = "123456";
         var expiration = DateTime.Today.AddHours(1);
         var token = new BlacklistedToken

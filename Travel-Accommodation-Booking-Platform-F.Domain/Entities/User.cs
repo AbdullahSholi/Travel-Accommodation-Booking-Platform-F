@@ -30,6 +30,6 @@ public class User
     public bool IsEmailConfirmed { get; set; } = false;
 
     public string Role { get; set; } = "User";
-    
+
     public List<OtpRecord>? OtpRecords { get; set; }
 }

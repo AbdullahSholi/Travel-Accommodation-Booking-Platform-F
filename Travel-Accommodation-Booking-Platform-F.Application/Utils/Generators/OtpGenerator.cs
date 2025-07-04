@@ -2,7 +2,7 @@
 
 namespace Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 
-public class OtpGenerator
+public static class OtpGenerator
 {
     public static string GenerateOtp(int length = 6)
     {

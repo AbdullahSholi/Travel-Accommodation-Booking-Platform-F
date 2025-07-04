@@ -18,7 +18,6 @@ using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.Ot
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.OtpSenderFactory;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Repositories;
-using Travel_Accommodation_Booking_Platform_F.Utils;
 using Travel_Accommodation_Booking_Platform_F.Utils.Auth;
 
 namespace Travel_Accommodation_Booking_Platform_F.Extensions;
