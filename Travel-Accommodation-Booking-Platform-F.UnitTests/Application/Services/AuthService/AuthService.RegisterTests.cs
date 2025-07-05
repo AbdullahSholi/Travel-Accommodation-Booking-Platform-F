@@ -64,7 +64,7 @@ public class RegisterTests
         _mockRepo.Setup(r => r.EmailExistsAsync(It.IsAny<string>())).ReturnsAsync(true);
 
         var ex = await Assert.ThrowsAsync<Exception>(() => _sut.RegisterAsync(dto));
-        Assert.Equal(CustomMessages.DuplicatedEmail, ex.Message);
+        Assert.Equal(AuthServiceCustomMessages.DuplicatedEmail, ex.Message);
     }
 
     [Fact]

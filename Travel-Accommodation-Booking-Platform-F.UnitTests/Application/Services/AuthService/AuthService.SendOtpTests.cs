@@ -66,7 +66,7 @@ public class SendOtpTests
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _sut.SendOtpAsync(emailMock));
-        Assert.Equal(CustomMessages.UserNotFound, exception.Message);
+        Assert.Equal(AuthServiceCustomMessages.UserNotFound, exception.Message);
     }
 
     [Fact]
@@ -88,7 +88,7 @@ public class SendOtpTests
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ValidationAppException>(() => _sut.SendOtpAsync(emailMock));
-        Assert.Equal(CustomMessages.InvalidStrategy, exception.Message);
+        Assert.Equal(AuthServiceCustomMessages.InvalidStrategy, exception.Message);
         _mockRepo.Verify(r => r.GetUserByEmailAsync(emailMock), Times.Once);
         _mockOtpSenderFactory.Verify(r => r.Factory(OtpChannel.Email), Times.Once);
     }

@@ -62,7 +62,7 @@ public class VerifyOtpTests
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _sut.VerifyOtpAsync(_email, _otpCode));
-        Assert.Equal(CustomMessages.OtpNotFound, exception.Message);
+        Assert.Equal(AuthServiceCustomMessages.OtpNotFound, exception.Message);
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public class VerifyOtpTests
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _sut.VerifyOtpAsync(_email, _otpCode));
-        Assert.Equal(CustomMessages.ExpiredOtpCode, exception.Message);
+        Assert.Equal(AuthServiceCustomMessages.ExpiredOtpCode, exception.Message);
     }
 
     [Fact]
@@ -97,7 +97,7 @@ public class VerifyOtpTests
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<Exception>(() => _sut.VerifyOtpAsync(_email, _otpCode));
-        Assert.Equal(CustomMessages.UserNotFound, exception.Message);
+        Assert.Equal(AuthServiceCustomMessages.UserNotFound, exception.Message);
         _mockRepo.Verify(r => r.GetOtpRecordAsync(_email, _otpCode), Times.Once);
     }
 

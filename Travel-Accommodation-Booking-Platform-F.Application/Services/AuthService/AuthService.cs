@@ -41,7 +41,7 @@ public class AuthService : IAuthService
         if (string.IsNullOrWhiteSpace(dto.Email) && string.IsNullOrWhiteSpace(dto.Username))
         {
             _logger.LogWarning(AuthServiceLogMessages.LoginMissingEmailAndUsername);
-            throw new ValidationAppException(CustomMessages.EmailOrUsernameNotFound);
+            throw new ValidationAppException(AuthServiceCustomMessages.EmailOrUsernameNotFound);
         }
 
         _logger.LogInformation(AuthServiceLogMessages.FetchingUserFromRepository,
@@ -54,13 +54,13 @@ public class AuthService : IAuthService
         if (user == null)
         {
             _logger.LogWarning(AuthServiceLogMessages.UserNotFound, dto.Email ?? dto.Username);
-            throw new NotFoundException(CustomMessages.UserNotFound);
+            throw new NotFoundException(AuthServiceCustomMessages.UserNotFound);
         }
 
         if (!PasswordHasher.VerifyPassword(user.Password, dto.Password))
         {
             _logger.LogWarning(AuthServiceLogMessages.InvalidPasswordAttempt, user.UserId);
-            throw new ValidationAppException(CustomMessages.InvalidPassword);
+            throw new ValidationAppException(AuthServiceCustomMessages.InvalidPassword);
         }
 
         _logger.LogInformation(AuthServiceLogMessages.PasswordVerified, user.UserId);
@@ -85,7 +85,7 @@ public class AuthService : IAuthService
         if (isEmailExist)
         {
             _logger.LogWarning(AuthServiceLogMessages.EmailAlreadyExists, userDto.Email);
-            throw new Exception(CustomMessages.DuplicatedEmail);
+            throw new Exception(AuthServiceCustomMessages.DuplicatedEmail);
         }
 
         var user = _mapper.Map<User>(userDto);
@@ -106,7 +106,7 @@ public class AuthService : IAuthService
 
         var strategy = _otpSenderFactory.Factory(OtpChannel.Email);
         if (strategy == null)
-            throw new ValidationAppException(CustomMessages.InvalidStrategy);
+            throw new ValidationAppException(AuthServiceCustomMessages.InvalidStrategy);
 
         await strategy.SendOtpAsync(user.Email, otpRecord.Code);
         _logger.LogInformation(AuthServiceLogMessages.OtpSent, userDto.Email);
@@ -125,7 +125,7 @@ public class AuthService : IAuthService
         if (user == null)
         {
             _logger.LogWarning(AuthServiceLogMessages.UserNotFoundForOtp, email);
-            throw new Exception(CustomMessages.UserNotFound);
+            throw new Exception(AuthServiceCustomMessages.UserNotFound);
         }
 
         var otp = OtpGenerator.GenerateOtp();
@@ -142,7 +142,7 @@ public class AuthService : IAuthService
 
         var strategy = _otpSenderFactory.Factory(OtpChannel.Email);
         if (strategy == null)
-            throw new ValidationAppException(CustomMessages.InvalidStrategy);
+            throw new ValidationAppException(AuthServiceCustomMessages.InvalidStrategy);
 
         await strategy.SendOtpAsync(email, otpRecord.Code);
         _logger.LogInformation(AuthServiceLogMessages.OtpSent, email);
@@ -158,20 +158,20 @@ public class AuthService : IAuthService
         if (record == null)
         {
             _logger.LogWarning(AuthServiceLogMessages.InvalidOrExpiredOtpAttempt, readDto.Email);
-            throw new Exception(CustomMessages.InvalidOrExpiredOtpCode);
+            throw new Exception(AuthServiceCustomMessages.InvalidOrExpiredOtpCode);
         }
 
         if (record.Expiration.ToUniversalTime() < DateTime.UtcNow.ToUniversalTime())
         {
             _logger.LogWarning(AuthServiceLogMessages.ExpiredOtpCodeUsed, readDto.Email);
-            throw new Exception(CustomMessages.ExpiredOtpCode);
+            throw new Exception(AuthServiceCustomMessages.ExpiredOtpCode);
         }
 
         var user = await _authRepository.GetUserByEmailAsync(readDto.Email);
         if (user == null)
         {
             _logger.LogWarning(AuthServiceLogMessages.UserNotFoundForReset, readDto.Email);
-            throw new Exception(CustomMessages.UserNotFound);
+            throw new Exception(AuthServiceCustomMessages.UserNotFound);
         }
 
         await _authRepository.HashAndSavePasswordAsync(user, readDto.NewPassword);
@@ -191,20 +191,20 @@ public class AuthService : IAuthService
         if (otpRecord == null)
         {
             _logger.LogWarning(AuthServiceLogMessages.OtpNotFound, email);
-            throw new Exception(CustomMessages.OtpNotFound);
+            throw new Exception(AuthServiceCustomMessages.OtpNotFound);
         }
 
         if (otpRecord.Expiration.ToUniversalTime() < DateTime.UtcNow.ToUniversalTime())
         {
             _logger.LogWarning(AuthServiceLogMessages.ExpiredOtpCodeUsed, email);
-            throw new Exception(CustomMessages.ExpiredOtpCode);
+            throw new Exception(AuthServiceCustomMessages.ExpiredOtpCode);
         }
 
         var user = await _authRepository.GetUserByEmailAsync(email);
         if (user == null)
         {
             _logger.LogWarning(AuthServiceLogMessages.UserNotFoundForOtpVerification, email);
-            throw new Exception(CustomMessages.UserNotFound);
+            throw new Exception(AuthServiceCustomMessages.UserNotFound);
         }
 
         user.IsEmailConfirmed = true;

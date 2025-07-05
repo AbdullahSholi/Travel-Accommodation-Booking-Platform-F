@@ -1,6 +1,6 @@
 ﻿namespace Travel_Accommodation_Booking_Platform_F.Application.Utils.CustomMessages;
 
-public static class CustomMessages
+public static class AuthServiceCustomMessages
 {
     public const string InvalidOtp = "Invalid otp.";
     public const string DuplicatedEmail = "Duplicated email";

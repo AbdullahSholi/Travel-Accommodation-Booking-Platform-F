@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Travel_Accommodation_Booking_Platform_F.Application.Mapping;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.AdminService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AuthService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.TokenBlacklistService;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
@@ -40,6 +41,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IOtpSenderStrategy, OtpWhatsAppSenderStrategy>();
         services.AddScoped<OtpEmailSenderStrategy>();
         services.AddScoped<OtpWhatsAppSenderStrategy>();
+        
+        services.AddScoped<IAdminService, AdminService>();
+        services.AddScoped<IAdminRepository, AdminRepository>();
         return services;
     }
 

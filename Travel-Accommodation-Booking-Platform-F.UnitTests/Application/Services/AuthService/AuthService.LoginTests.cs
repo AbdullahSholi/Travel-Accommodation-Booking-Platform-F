@@ -61,7 +61,7 @@ public class LoginTests
             .Create();
 
         var ex = await Assert.ThrowsAsync<ValidationAppException>(() => _sut.LoginAsync(dto));
-        Assert.Equal(CustomMessages.EmailOrUsernameNotFound, ex.Message);
+        Assert.Equal(AuthServiceCustomMessages.EmailOrUsernameNotFound, ex.Message);
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class LoginTests
         _mockRepo.Setup(r => r.GetUserByEmailAsync(It.IsAny<string>())).ReturnsAsync((User)null!);
 
         var ex = await Assert.ThrowsAsync<NotFoundException>(() => _sut.LoginAsync(dto));
-        Assert.Equal(CustomMessages.UserNotFound, ex.Message);
+        Assert.Equal(AuthServiceCustomMessages.UserNotFound, ex.Message);
         _mockRepo.Verify(r => r.GetUserByEmailAsync(It.IsAny<string>()), Times.Once);
     }
 
@@ -85,7 +85,7 @@ public class LoginTests
         _mockRepo.Setup(r => r.GetUserByEmailAsync(dto.Email)).ReturnsAsync(user);
 
         var ex = await Assert.ThrowsAsync<ValidationAppException>(() => _sut.LoginAsync(dto));
-        Assert.Equal(CustomMessages.InvalidPassword, ex.Message);
+        Assert.Equal(AuthServiceCustomMessages.InvalidPassword, ex.Message);
     }
 
     [Fact]
