@@ -9,4 +9,5 @@ public class HotelReadDto
     public string Description { get; set; } = string.Empty;
 
     public int CityId { get; set; }
+    public DateTime LastUpdated { get; set; } 
 }

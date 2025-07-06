@@ -21,4 +21,13 @@ public static class LogMessages
 
     public const string DeleteHotelRequestReceived = "Delete Hotel request received for Hotel with id: {HotelId}";
     public const string DeleteHotelFailed = "Delete Hotel failed for Hotel with id: {HotelId}";
+    
+    public const string CheckIfListOfHotelsNotUpdatedRecently  = "Check if list of hotels not updated recently";
+    public const string RetrievedDataFromBrowserCache  = "Retrieved data from browser cache";
+    public const string SendETagToClientWhenListOfHotelsUpdatedRecently  = "Send ETag to client if list of hotels updated recently";
+    public const string CheckIfHotelIsNotUpdatedRecently  = "Check if hotel is not updated recently";
+    public const string SendETagToClientWhenHotelUpdatedRecently  = "Send ETag to client if hotel updated recently";
+    
+    public const string CheckIfUserTryUpdateTheLastVersionOfData = "Check if user try to update the last version of data";
+    public const string UserTryUpdateOldVersionOfData = "User try to update the old version of data";
 }

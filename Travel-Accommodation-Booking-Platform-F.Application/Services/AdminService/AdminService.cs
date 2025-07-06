@@ -100,6 +100,7 @@ public class AdminService : IAdminService
         user.Country = dto.Country ?? user.Country;
         user.PhoneNumber = dto.PhoneNumber ?? user.PhoneNumber;
         user.DriverLicense = dto.DriverLicense ?? user.DriverLicense;
+        user.LastUpdated = DateTime.UtcNow;
 
         await _adminRepository.UpdateAsync(user);
 

@@ -15,4 +15,6 @@ public class Booking
 
     public DateTime CreatedAt { get; set; }
     public decimal TotalPrice { get; set; }
+    
+    public DateTime LastUpdated { get; set; } 
 }

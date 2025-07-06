@@ -87,6 +87,7 @@ public class CityService : ICityService
         city.PostOffice = dto.PostOffice ?? city.PostOffice;
         city.NumberOfHotels = dto.NumberOfHotels ?? city.NumberOfHotels;
         city.UpdatedAt = DateTime.UtcNow;
+        city.LastUpdated = DateTime.UtcNow;
 
         await _cityRepository.UpdateAsync(city);
 

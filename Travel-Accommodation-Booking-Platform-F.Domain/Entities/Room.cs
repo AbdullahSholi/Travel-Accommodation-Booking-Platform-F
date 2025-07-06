@@ -18,4 +18,6 @@ public class Room
     public List<Booking>? Bookings { get; set; }
     public int HotelId { get; set; }
     public Hotel? Hotel { get; set; }
+    
+    public DateTime LastUpdated { get; set; } 
 }

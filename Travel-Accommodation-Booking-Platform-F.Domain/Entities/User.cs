@@ -33,4 +33,6 @@ public class User
 
     public List<OtpRecord>? OtpRecords { get; set; }
     public List<Booking>? Bookings { get; set; }
+    
+    public DateTime LastUpdated { get; set; } 
 }

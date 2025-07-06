@@ -53,6 +53,7 @@ public class CitiesController : ControllerBase
 
     [Authorize(Roles = "User, Admin")]
     [HttpGet]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
     public async Task<IActionResult> GetCities()
     {
         _logger.LogInformation(LogMessages.GetCitiesRequestReceived);
@@ -65,6 +66,20 @@ public class CitiesController : ControllerBase
                 _logger.LogWarning(LogMessages.GetCitiesFailed);
                 return NotFound(new { Message = CustomMessages.ListOfCitiesIsNotFound });
             }
+
+            var lastUpdated = cities.Max(c => c.LastUpdated);
+            var eTag = $"\"{lastUpdated.Ticks}\"";
+            
+            _logger.LogInformation(LogMessages.CheckIfListOfCitiesNotUpdatedRecently);
+            var clientETag = Request.Headers["If-None-Match"].FirstOrDefault();
+            if (clientETag == eTag)
+            {
+                _logger.LogInformation(LogMessages.RetrievedDataFromBrowserCache);
+                return StatusCode(StatusCodes.Status304NotModified);
+            }
+            
+            _logger.LogInformation(LogMessages.SendETagToClientWhenListOfCitiesUpdatedRecently);
+            Response.Headers["ETag"] = eTag;
 
             _logger.LogInformation(LogMessages.GetCitiesSuccess);
             return Ok(cities);
@@ -83,6 +98,7 @@ public class CitiesController : ControllerBase
 
     [Authorize(Roles = "User, Admin")]
     [HttpGet("{id:int}")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
     public async Task<IActionResult> GetCityById([FromRoute] int id)
     {
         _logger.LogInformation(LogMessages.GetCityRequestReceived, id);
@@ -95,6 +111,19 @@ public class CitiesController : ControllerBase
                 _logger.LogWarning(LogMessages.GetCityFailed, id);
                 return NotFound(new { Message = CustomMessages.CityNotFound });
             }
+            
+            var eTag = $"\"{city.LastUpdated.Ticks}\"";
+            
+            _logger.LogInformation(LogMessages.CheckIfCityIsNotUpdatedRecently);
+            var clientETag = Request.Headers["If-None-Match"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(clientETag) && clientETag == eTag)
+            {
+                _logger.LogInformation(LogMessages.RetrievedDataFromBrowserCache);
+                return StatusCode(StatusCodes.Status304NotModified);
+            }
+            
+            _logger.LogInformation(LogMessages.SendETagToClientWhenCityUpdatedRecently);
+            Response.Headers["ETag"] = eTag;
 
             _logger.LogInformation(LogMessages.GetCitySuccess, id);
             return Ok(city);
@@ -110,9 +139,27 @@ public class CitiesController : ControllerBase
     [HttpPatch("{id:int}")]
     public async Task<IActionResult> UpdateCity([FromRoute] int id, [FromBody] CityPatchDto dto)
     {
+        _logger.LogInformation(LogMessages.UpdateCityRequestReceived, id);
+        
         try
         {
-            _logger.LogInformation(LogMessages.UpdateCityRequestReceived, id);
+            var city = await _cityService.GetCityAsync(id);
+            if (city == null)
+            {
+                _logger.LogWarning(LogMessages.GetCityFailed, id);
+                return NotFound(new { Message = CustomMessages.CityNotFound });
+            }
+            
+            var currentETag = $"\"{city.LastUpdated.Ticks}\"";
+            
+            _logger.LogInformation(LogMessages.CheckIfUserTryUpdateTheLastVersionOfData);
+            var clientETag = Request.Headers["If-Match"].FirstOrDefault();
+            if (clientETag == null || clientETag != currentETag)
+            {
+                _logger.LogWarning(LogMessages.UserTryUpdateOldVersionOfData);
+                return StatusCode(StatusCodes.Status412PreconditionFailed);
+            }
+            
             var updatedCity = await _cityService.UpdateCityAsync(id, dto);
             if (updatedCity == null)
             {

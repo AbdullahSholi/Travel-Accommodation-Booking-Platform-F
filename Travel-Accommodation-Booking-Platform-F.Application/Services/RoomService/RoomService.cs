@@ -88,7 +88,8 @@ public class RoomService : IRoomService
         room.IsAvailable = dto.IsAvailable ?? room.IsAvailable;
         room.AdultCapacity = dto.AdultCapacity ?? room.AdultCapacity;
         room.ChildrenCapacity = dto.ChildrenCapacity ?? room.ChildrenCapacity;
-        room.UpdatedAt = dto.UpdatedAt ?? room.UpdatedAt;
+        room.UpdatedAt = DateTime.UtcNow;
+        room.LastUpdated = DateTime.UtcNow;
 
         await _roomRepository.UpdateAsync(room);
 

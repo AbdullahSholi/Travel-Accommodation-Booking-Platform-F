@@ -86,6 +86,7 @@ public class HotelService : IHotelService
         hotel.OwnerName = dto.OwnerName ?? hotel.OwnerName;
         hotel.Location = dto.Location ?? hotel.Location;
         hotel.CityId = dto.CityId ?? hotel.CityId;
+        hotel.LastUpdated = DateTime.UtcNow;
 
         await _hotelRepository.UpdateAsync(hotel);
 

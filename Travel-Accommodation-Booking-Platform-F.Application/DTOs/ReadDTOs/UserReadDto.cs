@@ -8,4 +8,5 @@ public class UserReadDto
     public string Email { get; init; } = string.Empty;
     public string Username { get; set; } = string.Empty;
     public string Role { get; init; } = "User";
+    public DateTime LastUpdated { get; set; } 
 }

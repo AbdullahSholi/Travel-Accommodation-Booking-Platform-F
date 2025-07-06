@@ -11,4 +11,6 @@ public class City
     public DateTime UpdatedAt { get; set; }
 
     public List<Hotel>? Hotels { get; set; }
+    
+    public DateTime LastUpdated { get; set; } 
 }

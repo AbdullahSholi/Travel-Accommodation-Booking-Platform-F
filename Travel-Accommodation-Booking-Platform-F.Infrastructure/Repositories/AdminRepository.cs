@@ -25,6 +25,7 @@ public class AdminRepository : IAdminRepository
     public async Task<List<User>> GetAllAsync()
     {
         var users = await _context.Users
+            .AsNoTracking()
             .ToListAsync();
 
         return users;
@@ -32,6 +33,7 @@ public class AdminRepository : IAdminRepository
 
     public async Task AddAsync(User user)
     {
+        user.LastUpdated = DateTime.UtcNow;
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
     }

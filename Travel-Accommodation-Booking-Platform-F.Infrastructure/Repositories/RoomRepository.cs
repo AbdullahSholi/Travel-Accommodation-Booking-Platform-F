@@ -25,6 +25,7 @@ public class RoomRepository : IRoomRepository
     public async Task<List<Room>> GetAllAsync()
     {
         var rooms = await _context.Rooms
+            .AsNoTracking()
             .ToListAsync();
 
         return rooms;
@@ -32,6 +33,7 @@ public class RoomRepository : IRoomRepository
 
     public async Task AddAsync(Room room)
     {
+        room.LastUpdated = DateTime.UtcNow;
         _context.Rooms.Add(room);
         await _context.SaveChangesAsync();
     }

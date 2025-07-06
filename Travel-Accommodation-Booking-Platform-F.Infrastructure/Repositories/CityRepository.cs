@@ -26,6 +26,7 @@ public class CityRepository : ICityRepository
     {
         var cities = await _context.Cities
             .Include(h => h.Hotels)
+            .AsNoTracking()
             .ToListAsync();
 
         return cities;
@@ -33,6 +34,7 @@ public class CityRepository : ICityRepository
 
     public async Task AddAsync(City city)
     {
+        city.LastUpdated = DateTime.UtcNow;
         _context.Cities.Add(city);
         await _context.SaveChangesAsync();
     }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
 
@@ -11,9 +12,11 @@ using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
 namespace Travel_Accommodation_Booking_Platform_F.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250706200714_AddLastUpdatedPropertyForApplyETagHTTPCaching")]
+    partial class AddLastUpdatedPropertyForApplyETagHTTPCaching
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

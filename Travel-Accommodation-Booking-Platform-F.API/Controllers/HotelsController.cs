@@ -53,6 +53,7 @@ public class HotelsController : ControllerBase
 
     [Authorize(Roles = "User, Admin")]
     [HttpGet]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
     public async Task<IActionResult> GetHotels()
     {
         _logger.LogInformation(LogMessages.GetHotelsRequestReceived);
@@ -66,6 +67,20 @@ public class HotelsController : ControllerBase
                 return NotFound(new { Message = CustomMessages.ListOfHotelsIsNotFound });
             }
 
+            var lastUpdated = hotels.Max(u => u.LastUpdated);
+            var eTag = $"\"{lastUpdated.Ticks}\"";
+            
+            _logger.LogInformation(LogMessages.CheckIfListOfHotelsNotUpdatedRecently);
+            var clientETag = Request.Headers["If-None-Match"].FirstOrDefault();
+            if (clientETag == eTag)
+            {
+                _logger.LogInformation(LogMessages.RetrievedDataFromBrowserCache);
+                return StatusCode(StatusCodes.Status304NotModified);
+            }
+            
+            _logger.LogInformation(LogMessages.SendETagToClientWhenListOfHotelsUpdatedRecently);
+            Response.Headers["ETag"] = eTag;
+            
             _logger.LogInformation(LogMessages.GetHotelsSuccess);
             return Ok(hotels);
         }
@@ -83,6 +98,7 @@ public class HotelsController : ControllerBase
 
     [Authorize(Roles = "User, Admin")]
     [HttpGet("{id:int}")]
+    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
     public async Task<IActionResult> GetHotelById([FromRoute] int id)
     {
         _logger.LogInformation(LogMessages.GetHotelRequestReceived, id);
@@ -95,6 +111,19 @@ public class HotelsController : ControllerBase
                 _logger.LogWarning(LogMessages.GetHotelFailed, id);
                 return NotFound(new { Message = CustomMessages.HotelNotFound });
             }
+            
+            var eTag = $"\"{hotel.LastUpdated.Ticks}\"";
+            
+            _logger.LogInformation(LogMessages.CheckIfHotelIsNotUpdatedRecently);
+            var clientETag = Request.Headers["If-None-Match"].FirstOrDefault();
+            if (!string.IsNullOrEmpty(clientETag) && clientETag == eTag)
+            {
+                _logger.LogInformation(LogMessages.RetrievedDataFromBrowserCache);
+                return StatusCode(StatusCodes.Status304NotModified);
+            }
+            
+            _logger.LogInformation(LogMessages.SendETagToClientWhenHotelUpdatedRecently);
+            Response.Headers["ETag"] = eTag;
 
             _logger.LogInformation(LogMessages.GetHotelSuccess, id);
             return Ok(hotel);
@@ -110,9 +139,27 @@ public class HotelsController : ControllerBase
     [HttpPatch("{id:int}")]
     public async Task<IActionResult> UpdateHotel([FromRoute] int id, [FromBody] HotelPatchDto dto)
     {
+        _logger.LogInformation(LogMessages.UpdateHotelRequestReceived, id);
+        
         try
         {
-            _logger.LogInformation(LogMessages.UpdateHotelRequestReceived, id);
+            var hotel = await _hotelService.GetHotelAsync(id);
+            if (hotel == null)
+            {
+                _logger.LogWarning(LogMessages.GetHotelFailed, id);
+                return NotFound(new { Message = CustomMessages.HotelNotFound });
+            }
+            
+            var currentETag = $"\"{hotel.LastUpdated.Ticks}\"";
+            
+            _logger.LogInformation(LogMessages.CheckIfUserTryUpdateTheLastVersionOfData);
+            var clientETag = Request.Headers["If-Match"].FirstOrDefault();
+            if (clientETag == null || clientETag != currentETag)
+            {
+                _logger.LogWarning(LogMessages.UserTryUpdateOldVersionOfData);
+                return StatusCode(StatusCodes.Status412PreconditionFailed);
+            }
+            
             var updatedHotel = await _hotelService.UpdateHotelAsync(id, dto);
             if (updatedHotel == null)
             {

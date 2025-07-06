@@ -21,4 +21,13 @@ public static class LogMessages
 
     public const string DeleteUserRequestReceived = "Delete User request received for User with id: {UserId}";
     public const string DeleteUserFailed = "Delete User failed for User with id: {UserId}";
+    
+    public const string CheckIfListOfUsersNotUpdatedRecently  = "Check if list of users not updated recently";
+    public const string RetrievedDataFromBrowserCache  = "Retrieved data from browser cache";
+    public const string SendETagToClientWhenListOfUsersUpdatedRecently  = "Send ETag to client if list of users updated recently";
+    public const string CheckIfUserIsNotUpdatedRecently  = "Check if user is not updated recently";
+    public const string SendETagToClientWhenUserUpdatedRecently  = "Send ETag to client if user updated recently";
+    
+    public const string CheckIfUserTryUpdateTheLastVersionOfData = "Check if user try to update the last version of data";
+    public const string UserTryUpdateOldVersionOfData = "User try to update the old version of data";
 }
