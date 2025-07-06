@@ -39,13 +39,14 @@ public class AdminService : IAdminService
             _logger.LogWarning(AdminServiceLogMessages.EmailAlreadyExists, dto.Email);
             throw new DuplicatedEmailException(AdminServiceCustomMessages.DuplicatedEmails);
         }
+
         _logger.LogInformation(AdminServiceLogMessages.CorrectUserInformationSent);
 
         var user = _mapper.Map<User>(dto);
         user.IsEmailConfirmed = true;
-        
+
         await _adminRepository.AddAsync(user);
-        
+
         var userReadDto = _mapper.Map<UserReadDto>(user);
         return userReadDto;
     }
@@ -53,16 +54,16 @@ public class AdminService : IAdminService
     public async Task<List<UserReadDto>?> GetUsersAsync()
     {
         _logger.LogInformation(AdminServiceLogMessages.FetchingUsersFromRepository);
-        
+
         var users = await _adminRepository.GetAllAsync();
         if (users == null)
         {
             _logger.LogWarning(AdminServiceCustomMessages.FailedFetchingUsersFromRepository);
             throw new FailedToFetchUsersException(AdminServiceCustomMessages.FailedFetchingUsersFromRepository);
         }
-        
+
         _logger.LogInformation(AdminServiceLogMessages.FetchedUsersFromRepositorySuccessfully);
-        
+
         var usersReadDto = _mapper.Map<List<UserReadDto>>(users);
         return usersReadDto;
     }
@@ -72,13 +73,10 @@ public class AdminService : IAdminService
         _logger.LogInformation(AdminServiceLogMessages.GetUserRequestReceived, userId);
 
         var user = await _adminRepository.GetByIdAsync(userId);
-        if (user == null)
-        {
-            return null;
-        }
-        
+        if (user == null) return null;
+
         _logger.LogInformation(AdminServiceLogMessages.FetchedUserFromRepositorySuccessfully, userId);
-        
+
         var userReadDto = _mapper.Map<UserReadDto>(user);
         return userReadDto;
     }
@@ -86,15 +84,12 @@ public class AdminService : IAdminService
     public async Task<UserReadDto?> UpdateUserAsync(int userId, UserPatchDto dto)
     {
         _logger.LogInformation(AdminServiceLogMessages.UpdateUserRequestReceived, userId);
-        
+
         var user = await _adminRepository.GetByIdAsync(userId);
-        if (user == null)
-        {
-            return null;
-        }
-        
+        if (user == null) return null;
+
         _logger.LogInformation(AdminServiceLogMessages.RetrieveUserSuccessfullyFromRepository, userId);
-        
+
         user.Username = dto.Username ?? user.Username;
         user.FirstName = dto.FirstName ?? user.FirstName;
         user.LastName = dto.LastName ?? user.LastName;
@@ -105,9 +100,9 @@ public class AdminService : IAdminService
         user.Country = dto.Country ?? user.Country;
         user.PhoneNumber = dto.PhoneNumber ?? user.PhoneNumber;
         user.DriverLicense = dto.DriverLicense ?? user.DriverLicense;
-        
+
         await _adminRepository.UpdateAsync(user);
-        
+
         var userReadDto = _mapper.Map<UserReadDto>(user);
         return userReadDto;
     }
@@ -115,15 +110,12 @@ public class AdminService : IAdminService
     public async Task DeleteUserAsync(int userId)
     {
         _logger.LogInformation(AdminServiceLogMessages.DeleteUserRequestReceived, userId);
-         
+
         var user = await _adminRepository.GetByIdAsync(userId);
-        if (user == null)
-        {
-            return;
-        }
+        if (user == null) return;
         _logger.LogInformation(AdminServiceLogMessages.RetrieveUserSuccessfullyFromRepository, userId);
-         
-        
+
+
         await _adminRepository.DeleteAsync(user);
         _logger.LogInformation(AdminServiceLogMessages.UserDeletedSuccessfully, userId);
     }

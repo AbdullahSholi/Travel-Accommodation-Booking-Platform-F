@@ -13,12 +13,18 @@ public class ApplicationDbContext : DbContext
     }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<Hotel> Hotels => Set<Hotel>();
+    public DbSet<Room> Rooms => Set<Room>();
+    public DbSet<City> Cities => Set<City>();
+    public DbSet<Booking> Bookings => Set<Booking>();
     public DbSet<OtpRecord> OtpRecords => Set<OtpRecord>();
     public DbSet<BlacklistedToken> BlacklistedTokens => Set<BlacklistedToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new OtpRecordConfiguration());
+        modelBuilder.ApplyConfiguration(new BookingConfiguration());
+        modelBuilder.ApplyConfiguration(new RoomConfiguration());
 
         base.OnModelCreating(modelBuilder);
     }

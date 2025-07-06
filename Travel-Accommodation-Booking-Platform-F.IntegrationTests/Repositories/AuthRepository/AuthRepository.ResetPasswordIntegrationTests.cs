@@ -49,12 +49,12 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
             .With(x => x.Username, "abdullahsholi")
             .With(x => x.IsEmailConfirmed, true)
             .Create();
-        
+
         await SeedUsersAsync(userMock);
-        
+
         var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
         Assert.NotNull(savedUser);
-        
+
         var otpRecordMock = new OtpRecord
         {
             UserId = savedUser.UserId,
@@ -62,7 +62,7 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
             Expiration = DateTime.UtcNow.AddMinutes(+5),
             Code = _fixture.Create<string>()
         };
-        
+
         await SeedOtpRecordsAsync(otpRecordMock);
 
         var record = await _authRepository.GetOtpRecordAsync(otpRecordMock.Email, otpRecordMock.Code);
@@ -106,10 +106,10 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
             .Create();
 
         await SeedUsersAsync(userMock);
-        
+
         var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
         Assert.NotNull(savedUser);
-        
+
         var otpRecordMock = new OtpRecord
         {
             UserId = savedUser.UserId,
@@ -130,7 +130,7 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
     public async Task Should_ThrowException_When_OtpRecordDoesNotExist()
     {
         await ClearDatabaseAsync();
-        
+
         var userMock = _fixture.Build<User>()
             .Without(x => x.UserId)
             .Without(x => x.OtpRecords)
@@ -141,10 +141,10 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
             .Create();
 
         await SeedUsersAsync(userMock);
-        
+
         var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
         Assert.NotNull(savedUser);
-        
+
         var otpRecordMock = new OtpRecord
         {
             UserId = savedUser.UserId,
@@ -164,7 +164,7 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
     public async Task Should_ThrowException_When_UserNotFound()
     {
         await ClearDatabaseAsync();
-        
+
         var userMock = _fixture.Build<User>()
             .Without(x => x.UserId)
             .Without(x => x.OtpRecords)
@@ -175,10 +175,10 @@ public class ResetPasswordIntegrationTests : IntegrationTestBase
             .Create();
 
         await SeedUsersAsync(userMock);
-        
+
         var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
         Assert.NotNull(savedUser);
-        
+
         var otpRecordMock = new OtpRecord
         {
             UserId = savedUser.UserId,

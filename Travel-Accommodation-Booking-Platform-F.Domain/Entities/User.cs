@@ -32,4 +32,5 @@ public class User
     public string Role { get; set; } = "User";
 
     public List<OtpRecord>? OtpRecords { get; set; }
+    public List<Booking>? Bookings { get; set; }
 }

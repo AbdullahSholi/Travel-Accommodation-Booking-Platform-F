@@ -8,6 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 using Travel_Accommodation_Booking_Platform_F.Application.Mapping;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AdminService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AuthService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.CityService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.HotelService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.RoomService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.TokenBlacklistService;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
@@ -41,9 +44,15 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IOtpSenderStrategy, OtpWhatsAppSenderStrategy>();
         services.AddScoped<OtpEmailSenderStrategy>();
         services.AddScoped<OtpWhatsAppSenderStrategy>();
-        
+
         services.AddScoped<IAdminService, AdminService>();
         services.AddScoped<IAdminRepository, AdminRepository>();
+        services.AddScoped<IHotelService, HotelService>();
+        services.AddScoped<IHotelRepository, HotelRepository>();
+        services.AddScoped<ICityService, CityService>();
+        services.AddScoped<ICityRepository, CityRepository>();
+        services.AddScoped<IRoomService, RoomService>();
+        services.AddScoped<IRoomRepository, RoomRepository>();
         return services;
     }
 

@@ -13,12 +13,12 @@ public class AdminRepository : IAdminRepository
     {
         _context = context;
     }
-    
+
     public async Task<User?> GetByIdAsync(int id)
     {
         var user = await _context.Users
             .Where(u => u.UserId == id).FirstOrDefaultAsync();
-        
+
         return user;
     }
 
@@ -26,7 +26,7 @@ public class AdminRepository : IAdminRepository
     {
         var users = await _context.Users
             .ToListAsync();
-        
+
         return users;
     }
 
@@ -40,10 +40,10 @@ public class AdminRepository : IAdminRepository
     {
         var isExist = await _context.Users
             .AnyAsync(u => u.Email.ToLower() == email.ToLower());
-        
+
         return isExist;
     }
-    
+
     public async Task UpdateAsync(User user)
     {
         _context.Users.Update(user);

@@ -54,12 +54,12 @@ public class SendOtpIntegrationTests : IntegrationTestBase
             .With(x => x.Username, "abdullahsholi")
             .With(x => x.IsEmailConfirmed, true)
             .Create();
-        
+
         await SeedUsersAsync(userMock);
-        
+
         var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
         Assert.NotNull(savedUser);
-        
+
         var otpRecordMock = new OtpRecord
         {
             UserId = savedUser.UserId,
@@ -67,7 +67,7 @@ public class SendOtpIntegrationTests : IntegrationTestBase
             Expiration = DateTime.UtcNow.AddMinutes(+5),
             Code = _fixture.Create<string>()
         };
-        
+
         var user = await _authRepository.GetUserByEmailAsync(userMock.Email);
         Assert.NotNull(user);
         Assert.Equal(userMock.Email, user.Email);

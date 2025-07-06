@@ -85,7 +85,7 @@ public class AdminsController : ControllerBase
             return StatusCode(500, new { Message = CustomMessages.InternalServerError });
         }
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpGet("users/{id:int}")]
     public async Task<IActionResult> GetUserById([FromRoute] int id)
@@ -134,7 +134,7 @@ public class AdminsController : ControllerBase
             return StatusCode(500, new { Message = CustomMessages.InternalServerError });
         }
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpDelete("users/{id:int}")]
     public async Task<IActionResult> DeleteUser([FromRoute] int id)
@@ -143,7 +143,7 @@ public class AdminsController : ControllerBase
         {
             _logger.LogInformation(LogMessages.DeleteUserRequestReceived, id);
             await _adminService.DeleteUserAsync(id);
-            
+
             _logger.LogInformation(LogMessages.UserUpdatedSuccessfully, id);
             return NoContent();
         }

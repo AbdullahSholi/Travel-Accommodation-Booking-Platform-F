@@ -3,6 +3,7 @@
 public class FailedToFetchUserException : Exception
 {
     public int UserId { get; }
+
     public FailedToFetchUserException(string message, int userId) : base(message)
     {
         UserId = userId;

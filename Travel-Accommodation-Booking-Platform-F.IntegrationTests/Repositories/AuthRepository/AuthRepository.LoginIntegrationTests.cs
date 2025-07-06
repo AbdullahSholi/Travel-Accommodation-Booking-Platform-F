@@ -50,7 +50,7 @@ public class LoginIntegrationTests : IntegrationTestBase
     public async Task Should_LoginSuccessfully_When_UserEnterCorrectCredentials()
     {
         await ClearDatabaseAsync();
-        
+
         var userMock = _fixture.Build<User>()
             .Without(x => x.UserId)
             .Without(x => x.OtpRecords)
@@ -90,7 +90,7 @@ public class LoginIntegrationTests : IntegrationTestBase
     public async Task Should_LoginFailed_When_UserNotFound()
     {
         await ClearDatabaseAsync();
-        
+
         var userMock = _fixture.Build<User>()
             .Without(x => x.UserId)
             .Without(x => x.OtpRecords)

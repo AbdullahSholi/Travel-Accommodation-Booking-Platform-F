@@ -4,6 +4,5 @@ public class FailedToFetchUsersException : Exception
 {
     public FailedToFetchUsersException(string message) : base(message)
     {
-        
     }
 }

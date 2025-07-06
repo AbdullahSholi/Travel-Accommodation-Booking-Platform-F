@@ -59,9 +59,9 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .Without(x => x.UserId)
             .Without(x => x.OtpRecords)
             .Create();
-        
+
         await SeedUsersAsync(userMock);
-        
+
         var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
         Assert.NotNull(savedUser);
 
@@ -73,7 +73,7 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .Without(x => x.Id)
             .Without(x => x.User)
             .Create();
-        
+
         await SeedOtpRecordsAsync(otpRecordMock);
 
 
@@ -104,9 +104,9 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .Without(x => x.UserId)
             .Without(x => x.OtpRecords)
             .Create();
-        
+
         await SeedUsersAsync(userMock);
-        
+
         var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
         Assert.NotNull(savedUser);
 
@@ -116,11 +116,11 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .With(x => x.Expiration, DateTime.UtcNow.AddMinutes(+10))
             .With(x => x.UserId, savedUser.UserId)
             .Without(x => x.Id)
-            .Without(x=>x.User)
+            .Without(x => x.User)
             .Create();
-        
+
         await SeedOtpRecordsAsync(otpRecordMock);
-        
+
         var otpRecord = await _authRepository.GetOtpRecordAsync(_email, _otpCode);
         Assert.NotNull(otpRecord);
         Assert.Equal(otpRecordMock.Email, otpRecord.Email);
@@ -152,9 +152,9 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .Without(x => x.UserId)
             .Without(x => x.OtpRecords)
             .Create();
-        
+
         await SeedUsersAsync(userMock);
-        
+
         var savedUser = await _authRepository.GetUserByEmailAsync("abdullah@gmail.com");
         Assert.NotNull(savedUser);
 
@@ -166,7 +166,7 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .Without(x => x.Id)
             .Without(x => x.User)
             .Create();
-        
+
         await SeedOtpRecordsAsync(otpRecordMock);
 
 
