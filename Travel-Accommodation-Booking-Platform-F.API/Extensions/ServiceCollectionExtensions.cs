@@ -132,4 +132,11 @@ public static class ServiceCollectionExtensions
         });
         return services;
     }
+
+    public static IServiceCollection AddCaching(this IServiceCollection services)
+    {
+        services.AddMemoryCache();
+
+        return services;
+    }
 }

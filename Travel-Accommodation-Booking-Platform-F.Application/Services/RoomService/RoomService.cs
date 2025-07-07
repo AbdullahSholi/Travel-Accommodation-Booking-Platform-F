@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
@@ -15,12 +16,18 @@ public class RoomService : IRoomService
     private readonly IRoomRepository _roomRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<RoomService> _logger;
+    private readonly IMemoryCache _memoryCache;
 
-    public RoomService(IRoomRepository roomRepository, IMapper mapper, ILogger<RoomService> logger)
+    private const string RoomsCacheKey = "rooms-list";
+    private const string RoomCacheKey = "room";
+
+    public RoomService(IRoomRepository roomRepository, IMapper mapper, ILogger<RoomService> logger,
+        IMemoryCache memoryCache)
     {
         _roomRepository = roomRepository;
         _mapper = mapper;
         _logger = logger;
+        _memoryCache = memoryCache;
     }
 
     public async Task<RoomReadDto?> CreateRoomAsync(RoomWriteDto dto)
@@ -39,13 +46,23 @@ public class RoomService : IRoomService
 
         await _roomRepository.AddAsync(room);
 
+        _logger.LogInformation(RoomServiceLogMessages.DeleteCachedData);
+        _memoryCache.Remove(RoomsCacheKey);
+        _memoryCache.Remove(RoomCacheKey);
+
         var roomReadDto = _mapper.Map<RoomReadDto>(room);
         return roomReadDto;
     }
 
     public async Task<List<RoomReadDto>?> GetRoomsAsync()
     {
-        _logger.LogInformation(RoomServiceLogMessages.FetchingRoomsFromRepository);
+        _logger.LogInformation(RoomServiceLogMessages.GetRoomsRequestReceived);
+
+        if (_memoryCache.TryGetValue(RoomsCacheKey, out List<RoomReadDto> cachedRooms))
+        {
+            _logger.LogInformation(RoomServiceLogMessages.ReturningRoomsFromCache);
+            return cachedRooms;
+        }
 
         var rooms = await _roomRepository.GetAllAsync();
         if (rooms == null)
@@ -56,7 +73,14 @@ public class RoomService : IRoomService
 
         _logger.LogInformation(RoomServiceLogMessages.FetchedRoomsFromRepositorySuccessfully);
 
+        var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(Constants.AbsoluteExpirationForRetrieveRoomsMinutes))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(Constants.SlidingExpirationMinutes))
+            .SetSize(Constants.CachingUnitSize);
+
         var roomsReadDto = _mapper.Map<List<RoomReadDto>>(rooms);
+
+        _memoryCache.Set(RoomsCacheKey, roomsReadDto, cacheEntryOptions);
         return roomsReadDto;
     }
 
@@ -64,12 +88,25 @@ public class RoomService : IRoomService
     {
         _logger.LogInformation(RoomServiceLogMessages.GetRoomRequestReceived, roomId);
 
+        if (_memoryCache.TryGetValue(RoomCacheKey, out RoomReadDto cachedRoom))
+        {
+            _logger.LogInformation(RoomServiceLogMessages.ReturningRoomFromCache);
+            return cachedRoom;
+        }
+
         var room = await _roomRepository.GetByIdAsync(roomId);
         if (room == null) return null;
 
         _logger.LogInformation(RoomServiceLogMessages.FetchedRoomFromRepositorySuccessfully, roomId);
 
+        var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(Constants.AbsoluteExpirationForRetrieveRoomsMinutes))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(Constants.SlidingExpirationMinutes))
+            .SetSize(Constants.CachingUnitSize);
+
         var roomReadDto = _mapper.Map<RoomReadDto>(room);
+
+        _memoryCache.Set(RoomCacheKey, roomReadDto, cacheEntryOptions);
         return roomReadDto;
     }
 
@@ -93,6 +130,10 @@ public class RoomService : IRoomService
 
         await _roomRepository.UpdateAsync(room);
 
+        _logger.LogInformation(RoomServiceLogMessages.DeleteCachedData);
+        _memoryCache.Remove(RoomsCacheKey);
+        _memoryCache.Remove(RoomCacheKey);
+
         var roomReadDto = _mapper.Map<RoomReadDto>(room);
         return roomReadDto;
     }
@@ -105,8 +146,11 @@ public class RoomService : IRoomService
         if (room == null) return;
         _logger.LogInformation(RoomServiceLogMessages.RetrieveRoomSuccessfullyFromRepository, roomId);
 
-
         await _roomRepository.DeleteAsync(room);
         _logger.LogInformation(RoomServiceLogMessages.RoomDeletedSuccessfully, roomId);
+
+        _logger.LogInformation(RoomServiceLogMessages.DeleteCachedData);
+        _memoryCache.Remove(RoomsCacheKey);
+        _memoryCache.Remove(RoomCacheKey);
     }
 }

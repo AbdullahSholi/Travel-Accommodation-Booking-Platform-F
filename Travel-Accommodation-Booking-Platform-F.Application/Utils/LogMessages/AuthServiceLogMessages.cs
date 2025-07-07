@@ -26,7 +26,6 @@ public static class AuthServiceLogMessages
     public const string VerifyOtpRequestReceived = "OTP verification request received for email: {Email}.";
     public const string OtpNotFound = "OTP verification failed: OTP not found for email: {Email}.";
     public const string ExpiredOtpCodeUsed = "OTP verification failed: OTP expired for email: {Email}.";
-    public const string InvalidOtpUsed = "OTP verification failed: OTP does not match for email: {Email}.";
     public const string UserNotFoundForOtpVerification = "OTP verification failed: user not found for email: {Email}.";
     public const string UserEmailConfirmed = "Email confirmed successfully for user: {Email}.";
     public const string OtpInvalidated = "OTP invalidated after successful verification for email: {Email}.";

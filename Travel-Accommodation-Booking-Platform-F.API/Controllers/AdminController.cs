@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AdminService;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.AdminExceptions;
@@ -59,7 +58,6 @@ public class AdminsController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpGet("users")]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
     public async Task<IActionResult> GetUsers()
     {
         _logger.LogInformation(LogMessages.GetUsersRequestReceived);
@@ -75,7 +73,7 @@ public class AdminsController : ControllerBase
 
             var lastUpdated = users.Max(u => u.LastUpdated);
             var eTag = $"\"{lastUpdated.Ticks}\"";
-            
+
             _logger.LogInformation(LogMessages.CheckIfListOfUsersNotUpdatedRecently);
             var clientETag = Request.Headers["If-None-Match"].FirstOrDefault();
             if (clientETag == eTag)
@@ -83,10 +81,10 @@ public class AdminsController : ControllerBase
                 _logger.LogInformation(LogMessages.RetrievedDataFromBrowserCache);
                 return StatusCode(StatusCodes.Status304NotModified);
             }
-            
+
             _logger.LogInformation(LogMessages.SendETagToClientWhenListOfUsersUpdatedRecently);
             Response.Headers["ETag"] = eTag;
-            
+
             _logger.LogInformation(LogMessages.GetUsersSuccess);
             return Ok(users);
         }
@@ -104,7 +102,6 @@ public class AdminsController : ControllerBase
 
     [Authorize(Roles = "Admin")]
     [HttpGet("users/{id:int}")]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
     public async Task<IActionResult> GetUserById([FromRoute] int id)
     {
         _logger.LogInformation(LogMessages.GetUserRequestReceived, id);
@@ -119,7 +116,7 @@ public class AdminsController : ControllerBase
             }
 
             var eTag = $"\"{user.LastUpdated.Ticks}\"";
-            
+
             _logger.LogInformation(LogMessages.CheckIfUserIsNotUpdatedRecently);
             var clientETag = Request.Headers["If-None-Match"].FirstOrDefault();
             if (!string.IsNullOrEmpty(clientETag) && clientETag == eTag)
@@ -127,10 +124,10 @@ public class AdminsController : ControllerBase
                 _logger.LogInformation(LogMessages.RetrievedDataFromBrowserCache);
                 return StatusCode(StatusCodes.Status304NotModified);
             }
-            
+
             _logger.LogInformation(LogMessages.SendETagToClientWhenUserUpdatedRecently);
             Response.Headers["ETag"] = eTag;
-            
+
             _logger.LogInformation(LogMessages.GetUserSuccess, id);
             return Ok(user);
         }
@@ -146,7 +143,7 @@ public class AdminsController : ControllerBase
     public async Task<IActionResult> UpdateUser([FromRoute] int id, [FromBody] UserPatchDto dto)
     {
         _logger.LogInformation(LogMessages.UpdateUserRequestReceived, id);
-        
+
         try
         {
             var user = await _adminService.GetUserAsync(id);
@@ -155,9 +152,9 @@ public class AdminsController : ControllerBase
                 _logger.LogWarning(LogMessages.GetUserFailed, id);
                 return NotFound(new { Message = CustomMessages.UserNotFound });
             }
-            
+
             var currentETag = $"\"{user.LastUpdated.Ticks}\"";
-            
+
             _logger.LogInformation(LogMessages.CheckIfUserTryUpdateTheLastVersionOfData);
             var clientETag = Request.Headers["If-Match"].FirstOrDefault();
             if (clientETag == null || clientETag != currentETag)
@@ -165,14 +162,14 @@ public class AdminsController : ControllerBase
                 _logger.LogWarning(LogMessages.UserTryUpdateOldVersionOfData);
                 return StatusCode(StatusCodes.Status412PreconditionFailed);
             }
-            
+
             var updatedUser = await _adminService.UpdateUserAsync(id, dto);
             if (updatedUser == null)
             {
                 _logger.LogWarning(LogMessages.UpdateUserFailed, id);
                 return NotFound(new { Message = CustomMessages.UserNotFound });
             }
-            
+
             _logger.LogInformation(LogMessages.UserUpdatedSuccessfully, id);
             return Ok(updatedUser);
         }

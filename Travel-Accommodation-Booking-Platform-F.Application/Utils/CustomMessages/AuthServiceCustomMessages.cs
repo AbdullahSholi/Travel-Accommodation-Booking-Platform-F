@@ -2,7 +2,6 @@
 
 public static class AuthServiceCustomMessages
 {
-    public const string InvalidOtp = "Invalid otp.";
     public const string DuplicatedEmail = "Duplicated email";
     public const string EmailOrUsernameNotFound = "Please provide either an email or a username.";
     public const string UserNotFound = "User not found.";

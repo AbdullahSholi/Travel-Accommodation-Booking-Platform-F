@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
@@ -15,12 +16,18 @@ public class HotelService : IHotelService
     private readonly IHotelRepository _hotelRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<HotelService> _logger;
+    private readonly IMemoryCache _memoryCache;
 
-    public HotelService(IHotelRepository hotelRepository, IMapper mapper, ILogger<HotelService> logger)
+    private const string HotelsCacheKey = "hotels-list";
+    private const string HotelCacheKey = "hote";
+
+    public HotelService(IHotelRepository hotelRepository, IMapper mapper, ILogger<HotelService> logger,
+        IMemoryCache memoryCache)
     {
         _hotelRepository = hotelRepository;
         _mapper = mapper;
         _logger = logger;
+        _memoryCache = memoryCache;
     }
 
     public async Task<HotelReadDto?> CreateHotelAsync(HotelWriteDto dto)
@@ -39,6 +46,10 @@ public class HotelService : IHotelService
 
         await _hotelRepository.AddAsync(hotel);
 
+        _logger.LogInformation(AdminServiceLogMessages.DeleteCachedData);
+        _memoryCache.Remove(HotelsCacheKey);
+        _memoryCache.Remove(HotelCacheKey);
+
         var hotelReadDto = _mapper.Map<HotelReadDto>(hotel);
         return hotelReadDto;
     }
@@ -46,6 +57,12 @@ public class HotelService : IHotelService
     public async Task<List<HotelReadDto>?> GetHotelsAsync()
     {
         _logger.LogInformation(HotelServiceLogMessages.FetchingHotelsFromRepository);
+
+        if (_memoryCache.TryGetValue(HotelsCacheKey, out List<HotelReadDto> cachedHotels))
+        {
+            _logger.LogInformation(HotelServiceLogMessages.ReturningHotelsFromCache);
+            return cachedHotels;
+        }
 
         var hotels = await _hotelRepository.GetAllAsync();
         if (hotels == null)
@@ -56,7 +73,14 @@ public class HotelService : IHotelService
 
         _logger.LogInformation(HotelServiceLogMessages.FetchedHotelsFromRepositorySuccessfully);
 
+        var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(Constants.AbsoluteExpirationForRetrieveHotelsMinutes))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(Constants.SlidingExpirationMinutes))
+            .SetSize(Constants.CachingUnitSize);
+
         var hotelsReadDto = _mapper.Map<List<HotelReadDto>>(hotels);
+
+        _memoryCache.Set(HotelsCacheKey, hotelsReadDto, cacheEntryOptions);
         return hotelsReadDto;
     }
 
@@ -64,12 +88,25 @@ public class HotelService : IHotelService
     {
         _logger.LogInformation(HotelServiceLogMessages.GetHotelRequestReceived, hotelId);
 
+        if (_memoryCache.TryGetValue(HotelCacheKey, out HotelReadDto cachedHotel))
+        {
+            _logger.LogInformation(HotelServiceLogMessages.ReturningHotelFromCache);
+            return cachedHotel;
+        }
+
         var hotel = await _hotelRepository.GetByIdAsync(hotelId);
         if (hotel == null) return null;
 
         _logger.LogInformation(HotelServiceLogMessages.FetchedHotelFromRepositorySuccessfully, hotelId);
 
+        var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(Constants.AbsoluteExpirationForRetrieveHotelsMinutes))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(Constants.SlidingExpirationMinutes))
+            .SetSize(Constants.CachingUnitSize);
+
         var hotelReadDto = _mapper.Map<HotelReadDto>(hotel);
+
+        _memoryCache.Set(HotelCacheKey, hotelReadDto, cacheEntryOptions);
         return hotelReadDto;
     }
 
@@ -90,6 +127,10 @@ public class HotelService : IHotelService
 
         await _hotelRepository.UpdateAsync(hotel);
 
+        _logger.LogInformation(AdminServiceLogMessages.DeleteCachedData);
+        _memoryCache.Remove(HotelsCacheKey);
+        _memoryCache.Remove(HotelCacheKey);
+
         var hotelReadDto = _mapper.Map<HotelReadDto>(hotel);
         return hotelReadDto;
     }
@@ -101,7 +142,6 @@ public class HotelService : IHotelService
         var hotel = await _hotelRepository.GetByIdAsync(hotelId);
         if (hotel == null) return;
         _logger.LogInformation(HotelServiceLogMessages.RetrieveHotelSuccessfullyFromRepository, hotelId);
-
 
         await _hotelRepository.DeleteAsync(hotel);
         _logger.LogInformation(HotelServiceLogMessages.HotelDeletedSuccessfully, hotelId);

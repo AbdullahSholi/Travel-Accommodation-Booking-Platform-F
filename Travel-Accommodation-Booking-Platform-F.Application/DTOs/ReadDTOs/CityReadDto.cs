@@ -9,5 +9,5 @@ public class CityReadDto
     public int NumberOfHotels { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime LastUpdated { get; set; } 
+    public DateTime LastUpdated { get; set; }
 }

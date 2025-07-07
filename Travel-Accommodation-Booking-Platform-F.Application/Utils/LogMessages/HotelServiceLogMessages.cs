@@ -10,7 +10,6 @@ public static class HotelServiceLogMessages
     public const string FetchedHotelsFromRepositorySuccessfully = "Fetching hotels from repository successfully";
 
     public const string GetHotelRequestReceived = "Get hotel request received for hotel: {HotelId}";
-    public const string FailedGetHotelFromRepository = "Failed to get hotel from repository for hotel: {HotelId}";
 
     public const string FetchedHotelFromRepositorySuccessfully =
         "Fetched hotel from repository successfully for hotel: {HotelId}";
@@ -20,4 +19,7 @@ public static class HotelServiceLogMessages
 
     public const string DeleteHotelRequestReceived = "Delete hotel request received for hotel: {HotelId}";
     public const string HotelDeletedSuccessfully = "Hotel deleted successfully for hotel: {HotelId}";
+
+    public const string ReturningHotelsFromCache = "Returning hotels from cache";
+    public const string ReturningHotelFromCache = "Returning hotel from cache";
 }

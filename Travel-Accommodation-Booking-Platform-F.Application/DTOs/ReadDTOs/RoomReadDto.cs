@@ -14,5 +14,5 @@ public class RoomReadDto
     public int ChildrenCapacity { get; set; } = 0;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
-    public DateTime LastUpdated { get; set; } 
+    public DateTime LastUpdated { get; set; }
 }

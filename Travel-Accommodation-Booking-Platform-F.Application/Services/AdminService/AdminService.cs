@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
@@ -15,12 +16,18 @@ public class AdminService : IAdminService
     private readonly IAdminRepository _adminRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<AdminService> _logger;
+    private readonly IMemoryCache _memoryCache;
 
-    public AdminService(IAdminRepository adminRepository, IMapper mapper, ILogger<AdminService> logger)
+    private const string UsersCacheKey = "users-list";
+    private const string UserCacheKey = "user";
+
+    public AdminService(IAdminRepository adminRepository, IMapper mapper, ILogger<AdminService> logger,
+        IMemoryCache memoryCache)
     {
         _adminRepository = adminRepository;
         _mapper = mapper;
         _logger = logger;
+        _memoryCache = memoryCache;
     }
 
     public async Task<UserReadDto?> CreateUserAsync(UserWriteDto dto)
@@ -47,6 +54,10 @@ public class AdminService : IAdminService
 
         await _adminRepository.AddAsync(user);
 
+        _logger.LogInformation(AdminServiceLogMessages.DeleteCachedData);
+        _memoryCache.Remove(UsersCacheKey);
+        _memoryCache.Remove(UserCacheKey);
+
         var userReadDto = _mapper.Map<UserReadDto>(user);
         return userReadDto;
     }
@@ -54,6 +65,12 @@ public class AdminService : IAdminService
     public async Task<List<UserReadDto>?> GetUsersAsync()
     {
         _logger.LogInformation(AdminServiceLogMessages.FetchingUsersFromRepository);
+
+        if (_memoryCache.TryGetValue(UsersCacheKey, out List<UserReadDto> cachedUsers))
+        {
+            _logger.LogInformation(AdminServiceLogMessages.ReturningUsersFromCache);
+            return cachedUsers;
+        }
 
         var users = await _adminRepository.GetAllAsync();
         if (users == null)
@@ -64,7 +81,14 @@ public class AdminService : IAdminService
 
         _logger.LogInformation(AdminServiceLogMessages.FetchedUsersFromRepositorySuccessfully);
 
+        var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(Constants.AbsoluteExpirationForRetrieveUsersMinutes))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(Constants.SlidingExpirationMinutes))
+            .SetSize(Constants.CachingUnitSize);
+
         var usersReadDto = _mapper.Map<List<UserReadDto>>(users);
+
+        _memoryCache.Set(UsersCacheKey, usersReadDto, cacheEntryOptions);
         return usersReadDto;
     }
 
@@ -72,12 +96,25 @@ public class AdminService : IAdminService
     {
         _logger.LogInformation(AdminServiceLogMessages.GetUserRequestReceived, userId);
 
+        if (_memoryCache.TryGetValue(UserCacheKey, out UserReadDto cachedUser))
+        {
+            _logger.LogInformation(AdminServiceLogMessages.ReturningUserFromCache);
+            return cachedUser;
+        }
+
         var user = await _adminRepository.GetByIdAsync(userId);
         if (user == null) return null;
 
         _logger.LogInformation(AdminServiceLogMessages.FetchedUserFromRepositorySuccessfully, userId);
 
+        var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(Constants.AbsoluteExpirationForRetrieveUsersMinutes))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(Constants.SlidingExpirationMinutes))
+            .SetSize(Constants.CachingUnitSize);
+
         var userReadDto = _mapper.Map<UserReadDto>(user);
+
+        _memoryCache.Set(UserCacheKey, userReadDto, cacheEntryOptions);
         return userReadDto;
     }
 
@@ -104,6 +141,10 @@ public class AdminService : IAdminService
 
         await _adminRepository.UpdateAsync(user);
 
+        _logger.LogInformation(AdminServiceLogMessages.DeleteCachedData);
+        _memoryCache.Remove(UsersCacheKey);
+        _memoryCache.Remove(UserCacheKey);
+
         var userReadDto = _mapper.Map<UserReadDto>(user);
         return userReadDto;
     }
@@ -119,5 +160,9 @@ public class AdminService : IAdminService
 
         await _adminRepository.DeleteAsync(user);
         _logger.LogInformation(AdminServiceLogMessages.UserDeletedSuccessfully, userId);
+
+        _logger.LogInformation(AdminServiceLogMessages.DeleteCachedData);
+        _memoryCache.Remove(UsersCacheKey);
+        _memoryCache.Remove(UserCacheKey);
     }
 }

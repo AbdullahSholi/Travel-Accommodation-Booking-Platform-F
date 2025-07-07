@@ -28,7 +28,6 @@ public static class LogMessages
     public const string VerifyOtpFailed = "OTP verification failed for user: {Email}";
     public const string VerifyOtpUnexpectedError = "Unexpected error during OTP verification for user: {Email}";
 
-    public const string LogoutRequestReceived = "Logout request received";
     public const string LogoutSuccessful = "User logged out successfully";
     public const string LogoutInvalidToken = "Logout attempt with invalid token";
     public const string LogoutUnexpectedError = "Unexpected error during logout";

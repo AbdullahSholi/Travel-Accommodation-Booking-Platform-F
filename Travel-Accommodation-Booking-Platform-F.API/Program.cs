@@ -6,6 +6,8 @@ using Travel_Accommodation_Booking_Platform_F.Utils.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCaching();
+
 builder.Services.AddControllers();
 
 builder.Services.AddLogging();

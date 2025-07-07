@@ -10,7 +10,6 @@ public static class CityServiceLogMessages
     public const string FetchedCitiesFromRepositorySuccessfully = "Fetching cities from repository successfully";
 
     public const string GetCityRequestReceived = "Get city request received for city: {CityId}";
-    public const string FailedGetCityFromRepository = "Failed to get city from repository for city: {CityId}";
 
     public const string FetchedCityFromRepositorySuccessfully =
         "Fetched city from repository successfully for city: {CityId}";
@@ -20,4 +19,9 @@ public static class CityServiceLogMessages
 
     public const string DeleteCityRequestReceived = "Delete city request received for city: {CityId}";
     public const string CityDeletedSuccessfully = "City deleted successfully for city: {CityId}";
+
+    public const string DeleteCachedData = "Delete cached data";
+
+    public const string ReturningCitiesFromCache = "Returning cities from cache";
+    public const string ReturningCityFromCache = "Returning city from cache";
 }

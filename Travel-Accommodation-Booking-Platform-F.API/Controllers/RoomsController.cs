@@ -53,7 +53,6 @@ public class RoomsController : ControllerBase
 
     [Authorize(Roles = "User, Admin")]
     [HttpGet]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
     public async Task<IActionResult> GetRooms()
     {
         _logger.LogInformation(LogMessages.GetRoomsRequestReceived);
@@ -66,10 +65,10 @@ public class RoomsController : ControllerBase
                 _logger.LogWarning(LogMessages.GetRoomsFailed);
                 return NotFound(new { Message = CustomMessages.ListOfRoomsIsNotFound });
             }
-            
+
             var lastUpdated = rooms.Max(u => u.LastUpdated);
             var eTag = $"\"{lastUpdated.Ticks}\"";
-            
+
             _logger.LogInformation(LogMessages.CheckIfListOfRoomsNotUpdatedRecently);
             var clientETag = Request.Headers["If-None-Match"].FirstOrDefault();
             if (clientETag == eTag)
@@ -77,7 +76,7 @@ public class RoomsController : ControllerBase
                 _logger.LogInformation(LogMessages.RetrievedDataFromBrowserCache);
                 return StatusCode(StatusCodes.Status304NotModified);
             }
-            
+
             _logger.LogInformation(LogMessages.SendETagToClientWhenListOfRoomsUpdatedRecently);
             Response.Headers["ETag"] = eTag;
 
@@ -98,7 +97,6 @@ public class RoomsController : ControllerBase
 
     [Authorize(Roles = "User, Admin")]
     [HttpGet("{id:int}")]
-    [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
     public async Task<IActionResult> GetRoomById([FromRoute] int id)
     {
         _logger.LogInformation(LogMessages.GetRoomRequestReceived, id);
@@ -111,9 +109,9 @@ public class RoomsController : ControllerBase
                 _logger.LogWarning(LogMessages.GetRoomFailed, id);
                 return NotFound(new { Message = CustomMessages.RoomNotFound });
             }
-            
+
             var eTag = $"\"{room.LastUpdated.Ticks}\"";
-            
+
             _logger.LogInformation(LogMessages.CheckIfRoomIsNotUpdatedRecently);
             var clientETag = Request.Headers["If-None-Match"].FirstOrDefault();
             if (!string.IsNullOrEmpty(clientETag) && clientETag == eTag)
@@ -121,7 +119,7 @@ public class RoomsController : ControllerBase
                 _logger.LogInformation(LogMessages.RetrievedDataFromBrowserCache);
                 return StatusCode(StatusCodes.Status304NotModified);
             }
-            
+
             _logger.LogInformation(LogMessages.SendETagToClientWhenRoomUpdatedRecently);
             Response.Headers["ETag"] = eTag;
 
@@ -140,7 +138,7 @@ public class RoomsController : ControllerBase
     public async Task<IActionResult> UpdateRoom([FromRoute] int id, [FromBody] RoomPatchDto dto)
     {
         _logger.LogInformation(LogMessages.UpdateRoomRequestReceived, id);
-        
+
         try
         {
             var room = await _roomService.GetRoomAsync(id);
@@ -149,9 +147,9 @@ public class RoomsController : ControllerBase
                 _logger.LogWarning(LogMessages.GetRoomFailed, id);
                 return NotFound(new { Message = CustomMessages.RoomNotFound });
             }
-            
+
             var currentETag = $"\"{room.LastUpdated.Ticks}\"";
-            
+
             _logger.LogInformation(LogMessages.CheckIfUserTryUpdateTheLastVersionOfData);
             var clientETag = Request.Headers["If-Match"].FirstOrDefault();
             if (clientETag == null || clientETag != currentETag)
@@ -159,7 +157,7 @@ public class RoomsController : ControllerBase
                 _logger.LogWarning(LogMessages.UserTryUpdateOldVersionOfData);
                 return StatusCode(StatusCodes.Status412PreconditionFailed);
             }
-            
+
             var updatedRoom = await _roomService.UpdateRoomAsync(id, dto);
             if (updatedRoom == null)
             {
@@ -186,7 +184,7 @@ public class RoomsController : ControllerBase
             _logger.LogInformation(LogMessages.DeleteRoomRequestReceived, id);
             await _roomService.DeleteRoomAsync(id);
 
-            _logger.LogInformation(LogMessages.RoomUpdatedSuccessfully, id);
+            _logger.LogInformation(LogMessages.RoomDeletedSuccessfully, id);
             return NoContent();
         }
         catch (Exception ex)

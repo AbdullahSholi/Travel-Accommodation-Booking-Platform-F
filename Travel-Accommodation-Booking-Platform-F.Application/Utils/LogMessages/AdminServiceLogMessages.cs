@@ -11,7 +11,6 @@ public static class AdminServiceLogMessages
     public const string FetchedUsersFromRepositorySuccessfully = "Fetching users from repository successfully";
 
     public const string GetUserRequestReceived = "Get user request received for user: {UserId}";
-    public const string FailedGetUserFromRepository = "Failed to get user from repository for user: {UserId}";
 
     public const string FetchedUserFromRepositorySuccessfully =
         "Fetched user from repository successfully for user: {UserId}";
@@ -21,4 +20,8 @@ public static class AdminServiceLogMessages
 
     public const string DeleteUserRequestReceived = "Delete user request received for user: {UserId}";
     public const string UserDeletedSuccessfully = "User deleted successfully for user: {UserId}";
+
+    public const string ReturningUsersFromCache = "Returning users from cache";
+    public const string ReturningUserFromCache = "Returning user from cache";
+    public const string DeleteCachedData = "Delete cached data";
 }
