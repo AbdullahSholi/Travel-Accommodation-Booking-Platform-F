@@ -16,9 +16,12 @@ using Travel_Accommodation_Booking_Platform_F.Application.Services.TokenBlacklis
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
 using Travel_Accommodation_Booking_Platform_F.Domain.Configurations;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.FactoryPattern;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.ObserverPattern.Observer;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.ObserverPattern.Subject;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.StrategyPattern;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Utils;
+using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.NotifyUsers;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.OtpSender;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.ExternalServices.OtpSenderFactory;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
@@ -56,6 +59,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<INotifyUsersObserver, NotifyUsersEmailObserver>();
+        services.AddScoped<IHotelPublisherSubject, HotelPublisherSubject>();
         return services;
     }
 

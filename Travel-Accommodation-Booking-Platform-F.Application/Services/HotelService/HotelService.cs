@@ -7,6 +7,8 @@ using Travel_Accommodation_Booking_Platform_F.Application.Utils.CustomMessages;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.LogMessages;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.HotelExceptions;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.ObserverPattern.Observer;
+using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.ObserverPattern.Subject;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 
 namespace Travel_Accommodation_Booking_Platform_F.Application.Services.HotelService;
@@ -17,17 +19,21 @@ public class HotelService : IHotelService
     private readonly IMapper _mapper;
     private readonly ILogger<HotelService> _logger;
     private readonly IMemoryCache _memoryCache;
-
+    private readonly IHotelPublisherSubject _hotelPublisherSubject;
+    
     private const string HotelsCacheKey = "hotels-list";
     private const string HotelCacheKey = "hotel";
 
     public HotelService(IHotelRepository hotelRepository, IMapper mapper, ILogger<HotelService> logger,
-        IMemoryCache memoryCache)
+        IMemoryCache memoryCache, IHotelPublisherSubject hotelPublisherSubject, INotifyUsersObserver notifyUsersObserver)
     {
         _hotelRepository = hotelRepository;
         _mapper = mapper;
         _logger = logger;
         _memoryCache = memoryCache;
+        _hotelPublisherSubject = hotelPublisherSubject;
+
+        _hotelPublisherSubject.AddObserver(notifyUsersObserver);
     }
 
     public async Task<HotelReadDto?> CreateHotelAsync(HotelWriteDto dto)
@@ -45,6 +51,8 @@ public class HotelService : IHotelService
         var hotel = _mapper.Map<Hotel>(dto);
 
         await _hotelRepository.AddAsync(hotel);
+        
+        await _hotelPublisherSubject.NotifyObserversAsync(hotel);
 
         _logger.LogInformation(HotelServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(HotelsCacheKey);
