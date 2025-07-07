@@ -1,10 +1,12 @@
-﻿namespace Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 
 public class CityPatchDto
 {
-    public string? Name { get; set; }
-    public string? Country { get; set; }
-    public string? PostOffice { get; set; }
-    public int? NumberOfHotels { get; set; }
-    public DateTime? UpdatedAt { get; set; }
+    [MinLength(3)] public string? Name { get; set; }
+    [MinLength(3)] public string? Country { get; set; }
+    [MinLength(3)] public string? PostOffice { get; set; }
+    [Range(1, int.MaxValue)] public int? NumberOfHotels { get; set; }
+    [DataType(DataType.Date)] public DateTime? UpdatedAt { get; set; }
 }

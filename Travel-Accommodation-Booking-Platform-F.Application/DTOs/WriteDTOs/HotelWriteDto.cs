@@ -18,7 +18,7 @@ public class HotelWriteDto
     [Range(0, 5, ErrorMessage = "Star rating must be between 0 and 5")]
     public double StarRating { get; set; }
 
-    [Required] public string Location { get; set; }
-    [Required] public string Description { get; set; }
+    [Required] [MinLength(5)] public string Location { get; set; }
+    [Required] [MinLength(11)] public string Description { get; set; }
     [Required] public int CityId { get; set; }
 }

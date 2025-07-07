@@ -17,6 +17,7 @@ public class ApplicationDbContext : DbContext
     public DbSet<Room> Rooms => Set<Room>();
     public DbSet<City> Cities => Set<City>();
     public DbSet<Booking> Bookings => Set<Booking>();
+    public DbSet<Review> Reviews => Set<Review>();
     public DbSet<OtpRecord> OtpRecords => Set<OtpRecord>();
     public DbSet<BlacklistedToken> BlacklistedTokens => Set<BlacklistedToken>();
 

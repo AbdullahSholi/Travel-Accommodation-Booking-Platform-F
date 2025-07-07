@@ -12,6 +12,7 @@ public class Hotel
     public int CityId { get; set; }
     public City? City { get; set; }
     public List<Room>? Rooms { get; set; }
+    public List<Review>? Reviews { get; set; }
 
     public DateTime LastUpdated { get; set; }
 }

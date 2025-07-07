@@ -10,6 +10,7 @@ using Travel_Accommodation_Booking_Platform_F.Application.Services.AdminService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AuthService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.CityService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.HotelService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.ReviewService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.RoomService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.TokenBlacklistService;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.Generators;
@@ -53,6 +54,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICityRepository, CityRepository>();
         services.AddScoped<IRoomService, RoomService>();
         services.AddScoped<IRoomRepository, RoomRepository>();
+        services.AddScoped<IReviewService, ReviewService>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
         return services;
     }
 

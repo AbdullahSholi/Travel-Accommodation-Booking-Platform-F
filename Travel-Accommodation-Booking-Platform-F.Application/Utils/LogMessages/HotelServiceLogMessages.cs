@@ -22,4 +22,5 @@ public static class HotelServiceLogMessages
 
     public const string ReturningHotelsFromCache = "Returning hotels from cache";
     public const string ReturningHotelFromCache = "Returning hotel from cache";
+    public const string DeleteCachedData = "Delete cached data";
 }
