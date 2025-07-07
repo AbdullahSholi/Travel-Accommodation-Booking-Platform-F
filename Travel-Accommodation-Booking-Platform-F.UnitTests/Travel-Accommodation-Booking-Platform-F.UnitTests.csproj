@@ -22,4 +22,8 @@
         <ProjectReference Include="..\Travel-Accommodation-Booking-Platform-F.Infrastructure\Travel-Accommodation-Booking-Platform-F.Infrastructure.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Application\Services\AdminService\" />
+    </ItemGroup>
+
 </Project>

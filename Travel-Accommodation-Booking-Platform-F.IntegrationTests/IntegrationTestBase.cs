@@ -54,7 +54,7 @@ public abstract class IntegrationTestBase : IAsyncLifetime
 
         using var scope = Factory.Services.CreateScope();
         DbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await DbContext.Database.EnsureCreatedAsync();
+        await DbContext.Database.MigrateAsync();
     }
 
     public async Task DisposeAsync()

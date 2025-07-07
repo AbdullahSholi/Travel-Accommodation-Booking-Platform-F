@@ -58,6 +58,8 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .With(x => x.Email, _email)
             .Without(x => x.UserId)
             .Without(x => x.OtpRecords)
+            .Without(x => x.Bookings)
+            .Without(x => x.Reviews)
             .Create();
 
         await SeedUsersAsync(userMock);
@@ -103,6 +105,8 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .With(x => x.IsEmailConfirmed, true)
             .Without(x => x.UserId)
             .Without(x => x.OtpRecords)
+            .Without(x => x.Bookings)
+            .Without(x => x.Reviews)
             .Create();
 
         await SeedUsersAsync(userMock);
@@ -151,6 +155,8 @@ public class VerifyOtpIntegrationTests : IntegrationTestBase
             .With(x => x.IsEmailConfirmed, false)
             .Without(x => x.UserId)
             .Without(x => x.OtpRecords)
+            .Without(x => x.Bookings)
+            .Without(x => x.Reviews)
             .Create();
 
         await SeedUsersAsync(userMock);
