@@ -22,9 +22,6 @@ public class HotelPublisherSubject : IHotelPublisherSubject
 
     public async Task NotifyObserversAsync(Hotel hotel)
     {
-        foreach (var observer in _observers)
-        {
-            await observer.SendHotelAnnouncementAsync(hotel);
-        }
+        foreach (var observer in _observers) await observer.SendHotelAnnouncementAsync(hotel);
     }
 }

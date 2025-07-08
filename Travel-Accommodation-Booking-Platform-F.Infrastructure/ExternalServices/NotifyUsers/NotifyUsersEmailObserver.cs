@@ -19,22 +19,22 @@ public class NotifyUsersEmailObserver : INotifyUsersObserver
         _adminRepository = adminRepository;
         _emailSettings = emailSettings.Value;
     }
-    
+
     public async Task SendHotelAnnouncementAsync(Hotel hotel)
     {
         var appPassword = Environment.GetEnvironmentVariable("APP_PASSWORD") ??
                           throw new InvalidOperationException(CustomMessages.CustomMessages.UnSetAppPassword);
-        
+
         var email = new MimeMessage();
         email.From.Add(new MailboxAddress(_emailSettings.SenderName, _emailSettings.SenderEmail));
 
         var users = await _adminRepository.GetAllAsync();
         if (users == null || !users.Any()) return;
-        
+
         using var smtp = new SmtpClient();
         await smtp.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.Port, SecureSocketOptions.StartTls);
         await smtp.AuthenticateAsync(_emailSettings.Username, appPassword);
-        
+
         foreach (var user in users)
         {
             email.To.Add(MailboxAddress.Parse(user.Email));
@@ -53,10 +53,10 @@ public class NotifyUsersEmailObserver : INotifyUsersObserver
             {
                 Text = body
             };
-            
+
             await smtp.SendAsync(email);
         }
-        
+
         await smtp.DisconnectAsync(true);
     }
 }

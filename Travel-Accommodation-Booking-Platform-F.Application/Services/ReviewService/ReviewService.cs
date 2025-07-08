@@ -146,5 +146,9 @@ public class ReviewService : IReviewService
 
         await _reviewRepository.DeleteAsync(review);
         _logger.LogInformation(ReviewServiceLogMessages.ReviewDeletedSuccessfully, reviewId);
+
+        _logger.LogInformation(CityServiceLogMessages.DeleteCachedData);
+        _memoryCache.Remove(ReviewsCacheKey);
+        _memoryCache.Remove(ReviewCacheKey);
     }
 }

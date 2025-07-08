@@ -7,22 +7,22 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
-using Travel_Accommodation_Booking_Platform_F.Application.Services.CityService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.ReviewService;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Xunit;
 
-public class GetCityTests
+public class GetReviewTests
 {
     private readonly IFixture _fixture;
-    private readonly Mock<ICityRepository> _mockRepo;
+    private readonly Mock<IReviewRepository> _mockRepo;
     private readonly Mock<IMapper> _mockMapper;
-    private readonly Mock<ILogger<CityService>> _mockLogger;
+    private readonly Mock<ILogger<ReviewService>> _mockLogger;
     private readonly Mock<IMemoryCache> _mockCache;
 
-    private readonly CityService _sut;
+    private readonly ReviewService _sut;
 
-    public GetCityTests()
+    public GetReviewTests()
     {
         _fixture = new Fixture().Customize(new AutoMoqCustomization());
         _fixture.Behaviors
@@ -31,12 +31,12 @@ public class GetCityTests
             .ForEach(b => _fixture.Behaviors.Remove(b));
 
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-        _mockRepo = _fixture.Freeze<Mock<ICityRepository>>();
+        _mockRepo = _fixture.Freeze<Mock<IReviewRepository>>();
         _mockMapper = _fixture.Freeze<Mock<IMapper>>();
-        _mockLogger = _fixture.Freeze<Mock<ILogger<CityService>>>();
+        _mockLogger = _fixture.Freeze<Mock<ILogger<ReviewService>>>();
         _mockCache = _fixture.Freeze<Mock<IMemoryCache>>();
 
-        _sut = new CityService(
+        _sut = new ReviewService(
             _mockRepo.Object,
             _mockMapper.Object,
             _mockLogger.Object,
@@ -45,43 +45,43 @@ public class GetCityTests
     }
 
     [Fact]
-    [Trait("UnitTests - City", "GetCity")]
+    [Trait("UnitTests - Review", "GetReview")]
     public async Task Should_ReturnedDataFromCache_When_ThereIsValidDataAtCache()
     {
         // Arrange
-        var cityName = "Nablus";
-        var cachedCity = _fixture.Build<CityReadDto>()
-            .With(x => x.CityId, 1)
-            .With(x => x.Name, cityName)
+        var rating = 3;
+        var cachedReview = _fixture.Build<ReviewReadDto>()
+            .With(x => x.ReviewId, 1)
+            .With(x => x.Rating, rating)
             .Create();
 
-        object cachedObject = cachedCity;
+        object cachedObject = cachedReview;
         _mockCache.Setup(x => x.TryGetValue(It.IsAny<object>(), out cachedObject)).Returns(true);
 
         // Act
-        var sut = await _sut.GetCityAsync(cachedCity.CityId);
+        var sut = await _sut.GetReviewAsync(cachedReview.ReviewId);
 
         // Assert 
         Assert.NotNull(sut);
-        Assert.Equal(cityName, sut.Name);
+        Assert.Equal(rating, sut.Rating);
         _mockCache.Verify(x => x.TryGetValue(It.IsAny<object>(), out cachedObject), Times.Once);
     }
 
     [Fact]
-    [Trait("UnitTests - City", "GetCity")]
-    public async Task Should_ReturnNull_When_WeTryRetrieveInvalidCity()
+    [Trait("UnitTests - Review", "GetReview")]
+    public async Task Should_ReturnNull_When_WeTryRetrieveInvalidReview()
     {
         // Arrange
-        var cityId = 1;
-        var cityName = "Nablus";
-        var cachedCity = _fixture.Build<CityReadDto>().With(x => x.Name, cityName).Create();
+        var reviewId = 1;
+        var rating = 3;
+        var cachedReview = _fixture.Build<ReviewReadDto>().With(x => x.Rating, rating).Create();
 
-        object cachedObject = cachedCity;
+        object cachedObject = cachedReview;
         _mockCache.Setup(x => x.TryGetValue(It.IsAny<object>(), out cachedObject)).Returns(false);
-        _mockRepo.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((City)null!);
+        _mockRepo.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Review)null!);
 
         // Act
-        var sut = await _sut.GetCityAsync(cityId);
+        var sut = await _sut.GetReviewAsync(reviewId);
 
         // Assert
         Assert.Null(sut);
@@ -89,31 +89,31 @@ public class GetCityTests
     }
 
     [Fact]
-    [Trait("UnitTests - City", "GetCity")]
+    [Trait("UnitTests - Review", "GetReview")]
     public async Task Should_ReturnedDataFromDatabase_When_ThereIsNoCachedData()
     {
         // Arrange
-        var cityId = 1;
-        var cityName = "Nablus";
-        var cachedCity = _fixture.Build<CityReadDto>()
-            .With(x => x.Name, cityName)
+        var reviewId = 1;
+        var rating = 3;
+        var cachedReview = _fixture.Build<ReviewReadDto>()
+            .With(x => x.Rating, rating)
             .Create();
 
-        var city = _fixture.Build<City>()
-            .With(x => x.Name, cityName)
+        var review = _fixture.Build<Review>()
+            .With(x => x.Rating, rating)
             .Create();
 
-        object cachedObject = cachedCity;
+        object cachedObject = cachedReview;
         _mockCache.Setup(x => x.TryGetValue(It.IsAny<object>(), out cachedObject)).Returns(false);
-        _mockRepo.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(city);
-        _mockMapper.Setup(x => x.Map<CityReadDto>(It.IsAny<City>())).Returns(cachedCity);
+        _mockRepo.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(review);
+        _mockMapper.Setup(x => x.Map<ReviewReadDto>(It.IsAny<Review>())).Returns(cachedReview);
 
         // Act
-        var sut = await _sut.GetCityAsync(cityId);
+        var sut = await _sut.GetReviewAsync(reviewId);
 
         // Assert 
         Assert.NotNull(sut);
-        Assert.Equal(city.Name, sut.Name);
+        Assert.Equal(review.Rating, sut.Rating);
         _mockCache.Verify(x => x.TryGetValue(It.IsAny<object>(), out It.Ref<object>.IsAny), Times.Once);
         _mockRepo.Verify(x => x.GetByIdAsync(It.IsAny<int>()), Times.Once);
     }

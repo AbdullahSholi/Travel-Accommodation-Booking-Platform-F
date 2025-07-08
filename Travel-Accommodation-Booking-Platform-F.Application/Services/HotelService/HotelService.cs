@@ -20,12 +20,13 @@ public class HotelService : IHotelService
     private readonly ILogger<HotelService> _logger;
     private readonly IMemoryCache _memoryCache;
     private readonly IHotelPublisherSubject _hotelPublisherSubject;
-    
+
     private const string HotelsCacheKey = "hotels-list";
     private const string HotelCacheKey = "hotel";
 
     public HotelService(IHotelRepository hotelRepository, IMapper mapper, ILogger<HotelService> logger,
-        IMemoryCache memoryCache, IHotelPublisherSubject hotelPublisherSubject, INotifyUsersObserver notifyUsersObserver)
+        IMemoryCache memoryCache, IHotelPublisherSubject hotelPublisherSubject,
+        INotifyUsersObserver notifyUsersObserver)
     {
         _hotelRepository = hotelRepository;
         _mapper = mapper;
@@ -51,7 +52,7 @@ public class HotelService : IHotelService
         var hotel = _mapper.Map<Hotel>(dto);
 
         await _hotelRepository.AddAsync(hotel);
-        
+
         await _hotelPublisherSubject.NotifyObserversAsync(hotel);
 
         _logger.LogInformation(HotelServiceLogMessages.DeleteCachedData);
@@ -154,5 +155,9 @@ public class HotelService : IHotelService
 
         await _hotelRepository.DeleteAsync(hotel);
         _logger.LogInformation(HotelServiceLogMessages.HotelDeletedSuccessfully, hotelId);
+
+        _logger.LogInformation(HotelServiceLogMessages.DeleteCachedData);
+        _memoryCache.Remove(HotelsCacheKey);
+        _memoryCache.Remove(HotelCacheKey);
     }
 }

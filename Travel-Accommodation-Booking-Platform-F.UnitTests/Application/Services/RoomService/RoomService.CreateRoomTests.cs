@@ -8,24 +8,25 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
-using Travel_Accommodation_Booking_Platform_F.Application.Services.CityService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.RoomService;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.CustomMessages;
-using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.CityExceptions;
+using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.RoomExceptions;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
+using Travel_Accommodation_Booking_Platform_F.Domain.Enums;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Xunit;
 
-public class CreateCityTests
+public class CreateRoomTests
 {
     private readonly IFixture _fixture;
-    private readonly Mock<ICityRepository> _mockRepo;
+    private readonly Mock<IRoomRepository> _mockRepo;
     private readonly Mock<IMapper> _mockMapper;
-    private readonly Mock<ILogger<CityService>> _mockLogger;
+    private readonly Mock<ILogger<RoomService>> _mockLogger;
     private readonly Mock<IMemoryCache> _mockCache;
 
-    private readonly CityService _sut;
+    private readonly RoomService _sut;
 
-    public CreateCityTests()
+    public CreateRoomTests()
     {
         _fixture = new Fixture().Customize(new AutoMoqCustomization());
         _fixture.Behaviors
@@ -34,12 +35,12 @@ public class CreateCityTests
             .ForEach(b => _fixture.Behaviors.Remove(b));
 
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-        _mockRepo = _fixture.Freeze<Mock<ICityRepository>>();
+        _mockRepo = _fixture.Freeze<Mock<IRoomRepository>>();
         _mockMapper = _fixture.Freeze<Mock<IMapper>>();
-        _mockLogger = _fixture.Freeze<Mock<ILogger<CityService>>>();
+        _mockLogger = _fixture.Freeze<Mock<ILogger<RoomService>>>();
         _mockCache = _fixture.Freeze<Mock<IMemoryCache>>();
 
-        _sut = new CityService(
+        _sut = new RoomService(
             _mockRepo.Object,
             _mockMapper.Object,
             _mockLogger.Object,
@@ -48,50 +49,53 @@ public class CreateCityTests
     }
 
     [Fact]
-    [Trait("UnitTests - City", "CreateCity")]
-    public async Task Should_ThrowInvalidCityDataReceivedException_When_NullDtoRecieved()
+    [Trait("UnitTests - Room", "CreateRoom")]
+    public async Task Should_ThrowInvalidRoomDataReceivedException_When_NullDtoRecieved()
     {
         // Arrange
-        CityWriteDto? dto = null;
-        
-        // Act & ِAssert
-        var exception = await Assert.ThrowsAsync<InvalidCityDataReceivedException>(() => _sut.CreateCityAsync(dto));
+        RoomWriteDto? dto = null;
 
-        Assert.Equal(CityServiceCustomMessages.InvalidCityDataReceived, exception.Message);
+        // Act & ِAssert
+        var exception = await Assert.ThrowsAsync<InvalidRoomDataReceivedException>(() => _sut.CreateRoomAsync(dto));
+
+        Assert.Equal(RoomServiceCustomMessages.InvalidRoomDataReceived, exception.Message);
     }
 
     [Fact]
-    [Trait("UnitTests - City", "CreateCity")]
-    public async Task Should_AddedCitySuccessfully_When_ValidDataProvided()
+    [Trait("UnitTests - Room", "CreateRoom")]
+    public async Task Should_AddedRoomSuccessfully_When_ValidDataProvided()
     {
         // Arrange
-        var writeDto = _fixture.Build<CityWriteDto>()
-            .With(x => x.Name, "Nablus")
+        var writeDto = _fixture.Build<RoomWriteDto>()
+            .With(x => x.RoomType, RoomType.Luxury)
+            .Without(x => x.PricePerNight)
             .Create();
 
-        var city = _fixture.Build<City>()
-            .With(x => x.Name, "Nablus")
+        var room = _fixture.Build<Room>()
+            .With(x => x.RoomType, RoomType.Luxury)
+            .Without(x => x.PricePerNight)
             .Create();
 
-        var readDto = _fixture.Build<CityReadDto>()
-            .With(x => x.Name, "Nablus")
+        var readDto = _fixture.Build<RoomReadDto>()
+            .With(x => x.RoomType, RoomType.Luxury)
+            .Without(x => x.PricePerNight)
             .Create();
 
-        _mockMapper.Setup(x => x.Map<City>(It.IsAny<CityWriteDto>())).Returns(city);
-        _mockRepo.Setup(x => x.AddAsync(city)).Returns(Task.CompletedTask);
+        _mockMapper.Setup(x => x.Map<Room>(It.IsAny<RoomWriteDto>())).Returns(room);
+        _mockRepo.Setup(x => x.AddAsync(room)).Returns(Task.CompletedTask);
         _mockCache.Setup(x => x.Remove(It.IsAny<string>()));
-        _mockMapper.Setup(x => x.Map<CityReadDto>(city)).Returns(readDto);
+        _mockMapper.Setup(x => x.Map<RoomReadDto>(room)).Returns(readDto);
 
         // Act
-        var sut = await _sut.CreateCityAsync(writeDto);
+        var sut = await _sut.CreateRoomAsync(writeDto);
 
         // Assert
         Assert.NotNull(sut);
-        Assert.Equal(writeDto.Name, sut.Name);
+        Assert.Equal(writeDto.RoomType, sut.RoomType);
 
-        _mockMapper.Verify(x => x.Map<City>(It.IsAny<CityWriteDto>()), Times.Once);
-        _mockRepo.Verify(x => x.AddAsync(It.IsAny<City>()), Times.Once);
+        _mockMapper.Verify(x => x.Map<Room>(It.IsAny<RoomWriteDto>()), Times.Once);
+        _mockRepo.Verify(x => x.AddAsync(It.IsAny<Room>()), Times.Once);
         _mockCache.Verify(x => x.Remove(It.IsAny<string>()), Times.Exactly(2));
-        _mockMapper.Verify(x => x.Map<CityReadDto>(It.IsAny<City>()), Times.Once);
+        _mockMapper.Verify(x => x.Map<RoomReadDto>(It.IsAny<Room>()), Times.Once);
     }
 }

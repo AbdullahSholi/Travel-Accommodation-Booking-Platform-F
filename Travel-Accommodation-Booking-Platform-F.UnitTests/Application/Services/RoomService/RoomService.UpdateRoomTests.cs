@@ -8,22 +8,23 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
-using Travel_Accommodation_Booking_Platform_F.Application.Services.CityService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.RoomService;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
+using Travel_Accommodation_Booking_Platform_F.Domain.Enums;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Xunit;
 
-public class UpdateCityTests
+public class UpdateRoomTests
 {
     private readonly IFixture _fixture;
-    private readonly Mock<ICityRepository> _mockRepo;
+    private readonly Mock<IRoomRepository> _mockRepo;
     private readonly Mock<IMapper> _mockMapper;
-    private readonly Mock<ILogger<CityService>> _mockLogger;
+    private readonly Mock<ILogger<RoomService>> _mockLogger;
     private readonly Mock<IMemoryCache> _mockCache;
 
-    private readonly CityService _sut;
+    private readonly RoomService _sut;
 
-    public UpdateCityTests()
+    public UpdateRoomTests()
     {
         _fixture = new Fixture().Customize(new AutoMoqCustomization());
         _fixture.Behaviors
@@ -32,12 +33,12 @@ public class UpdateCityTests
             .ForEach(b => _fixture.Behaviors.Remove(b));
 
         _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
-        _mockRepo = _fixture.Freeze<Mock<ICityRepository>>();
+        _mockRepo = _fixture.Freeze<Mock<IRoomRepository>>();
         _mockMapper = _fixture.Freeze<Mock<IMapper>>();
-        _mockLogger = _fixture.Freeze<Mock<ILogger<CityService>>>();
+        _mockLogger = _fixture.Freeze<Mock<ILogger<RoomService>>>();
         _mockCache = _fixture.Freeze<Mock<IMemoryCache>>();
 
-        _sut = new CityService(
+        _sut = new RoomService(
             _mockRepo.Object,
             _mockMapper.Object,
             _mockLogger.Object,
@@ -46,18 +47,21 @@ public class UpdateCityTests
     }
 
     [Fact]
-    [Trait("UnitTests - City", "UpdateCity")]
-    public async Task Should_ReturnNull_When_WeRequestInvalidCity()
+    [Trait("UnitTests - Room", "UpdateRoom")]
+    public async Task Should_ReturnNull_When_WeRequestInvalidRoom()
     {
         // Arrange
-        var cityId = 1;
-        var cityName = "Nablus";
-        var cityPatchDto = _fixture.Build<CityPatchDto>().With(x => x.Name, cityName).Create();
+        var roomId = 1;
+        var roomType = RoomType.Luxury;
+        var roomPatchDto = _fixture.Build<RoomPatchDto>()
+            .With(x => x.RoomType, roomType)
+            .Without(x => x.PricePerNight)
+            .Create();
 
-        _mockRepo.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((City)null!);
+        _mockRepo.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync((Room)null!);
 
         // Act
-        var sut = await _sut.UpdateCityAsync(cityId, cityPatchDto);
+        var sut = await _sut.UpdateRoomAsync(roomId, roomPatchDto);
 
         // Assert 
         Assert.Null(sut);
@@ -65,30 +69,39 @@ public class UpdateCityTests
     }
 
     [Fact]
-    [Trait("UnitTests - City", "UpdateCity")]
-    public async Task Should_UpdateCitySuccessfully_When_WeEnterValidDetails()
+    [Trait("UnitTests - Room", "UpdateRoom")]
+    public async Task Should_UpdateRoomSuccessfully_When_WeEnterValidDetails()
     {
         // Arrange
-        var cityName = "Nablus";
-        var cityId = 1;
-        var cityPatchDto = _fixture.Build<CityPatchDto>().With(x => x.Name, cityName).Create();
-        var cityReadDto = _fixture.Build<CityReadDto>().With(x => x.Name, cityName).Create();
-        var city = _fixture.Build<City>().With(x => x.Name, cityName).Create();
+        var roomType = RoomType.Luxury;
+        var roomId = 1;
+        var roomPatchDto = _fixture.Build<RoomPatchDto>()
+            .With(x => x.RoomType, roomType)
+            .Without(x => x.PricePerNight)
+            .Create();
+        var roomReadDto = _fixture.Build<RoomReadDto>()
+            .With(x => x.RoomType, roomType)
+            .Without(x => x.PricePerNight)
+            .Create();
+        var room = _fixture.Build<Room>()
+            .With(x => x.RoomType, roomType)
+            .Without(x => x.PricePerNight)
+            .Create();
 
-        _mockRepo.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(city);
-        _mockRepo.Setup(x => x.UpdateAsync(It.IsAny<City>())).Returns(Task.CompletedTask);
+        _mockRepo.Setup(x => x.GetByIdAsync(It.IsAny<int>())).ReturnsAsync(room);
+        _mockRepo.Setup(x => x.UpdateAsync(It.IsAny<Room>())).Returns(Task.CompletedTask);
         _mockCache.Setup(x => x.Remove(It.IsAny<string>()));
-        _mockMapper.Setup(x => x.Map<CityReadDto>(It.IsAny<City>())).Returns(cityReadDto);
+        _mockMapper.Setup(x => x.Map<RoomReadDto>(It.IsAny<Room>())).Returns(roomReadDto);
 
         // Act
-        var sut = await _sut.UpdateCityAsync(cityId, cityPatchDto);
+        var sut = await _sut.UpdateRoomAsync(roomId, roomPatchDto);
 
         // Assert 
         Assert.NotNull(sut);
-        Assert.Equal(cityReadDto.Name, sut.Name);
+        Assert.Equal(roomReadDto.RoomType, sut.RoomType);
         _mockRepo.Verify(x => x.GetByIdAsync(It.IsAny<int>()), Times.Once);
-        _mockRepo.Verify(x => x.UpdateAsync(It.IsAny<City>()), Times.Once);
+        _mockRepo.Verify(x => x.UpdateAsync(It.IsAny<Room>()), Times.Once);
         _mockCache.Verify(x => x.Remove(It.IsAny<string>()), Times.Exactly(2));
-        _mockMapper.Verify(x => x.Map<CityReadDto>(It.IsAny<City>()), Times.Once);
+        _mockMapper.Verify(x => x.Map<RoomReadDto>(It.IsAny<Room>()), Times.Once);
     }
 }
