@@ -19,7 +19,6 @@ public class CityService : ICityService
     private readonly IMemoryCache _memoryCache;
 
     private const string CitiesCacheKey = "cities-list";
-    private const string CityCacheKey = "city";
 
     public CityService(ICityRepository cityRepository, IMapper mapper, ILogger<CityService> logger,
         IMemoryCache memoryCache)
@@ -48,7 +47,7 @@ public class CityService : ICityService
 
         _logger.LogInformation(CityServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(CitiesCacheKey);
-        _memoryCache.Remove(CityCacheKey);
+        _memoryCache.Remove(GetCityCacheKey(city.CityId));
 
         var cityReadDto = _mapper.Map<CityReadDto>(city);
         return cityReadDto;
@@ -88,7 +87,9 @@ public class CityService : ICityService
     {
         _logger.LogInformation(CityServiceLogMessages.GetCityRequestReceived, cityId);
 
-        if (_memoryCache.TryGetValue(CityCacheKey, out CityReadDto cachedCity))
+        var cityCacheKey = GetCityCacheKey(cityId);
+
+        if (_memoryCache.TryGetValue(cityCacheKey, out CityReadDto cachedCity))
         {
             _logger.LogInformation(CityServiceLogMessages.ReturningCityFromCache);
             return cachedCity;
@@ -106,7 +107,7 @@ public class CityService : ICityService
 
         var cityReadDto = _mapper.Map<CityReadDto>(city);
 
-        _memoryCache.Set(CityCacheKey, cityReadDto, cacheEntryOptions);
+        _memoryCache.Set(cityCacheKey, cityReadDto, cacheEntryOptions);
         return cityReadDto;
     }
 
@@ -130,7 +131,7 @@ public class CityService : ICityService
 
         _logger.LogInformation(CityServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(CitiesCacheKey);
-        _memoryCache.Remove(CityCacheKey);
+        _memoryCache.Remove(GetCityCacheKey(cityId));
 
         var cityReadDto = _mapper.Map<CityReadDto>(city);
         return cityReadDto;
@@ -148,8 +149,13 @@ public class CityService : ICityService
         await _cityRepository.DeleteAsync(city);
         _logger.LogInformation(CityServiceLogMessages.CityDeletedSuccessfully, cityId);
 
-        _logger.LogInformation(CityServiceLogMessages.DeleteCachedData);
+        _logger.LogInformation(AdminServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(CitiesCacheKey);
-        _memoryCache.Remove(CityCacheKey);
+        _memoryCache.Remove(GetCityCacheKey(cityId));
+    }
+
+    private string GetCityCacheKey(int cityId)
+    {
+        return $"city_{cityId}";
     }
 }

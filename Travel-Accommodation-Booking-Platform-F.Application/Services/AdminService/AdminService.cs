@@ -19,7 +19,6 @@ public class AdminService : IAdminService
     private readonly IMemoryCache _memoryCache;
 
     private const string UsersCacheKey = "users-list";
-    private const string UserCacheKey = "user";
 
     public AdminService(IAdminRepository adminRepository, IMapper mapper, ILogger<AdminService> logger,
         IMemoryCache memoryCache)
@@ -56,7 +55,7 @@ public class AdminService : IAdminService
 
         _logger.LogInformation(AdminServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(UsersCacheKey);
-        _memoryCache.Remove(UserCacheKey);
+        _memoryCache.Remove(GetUserCacheKey(user.UserId));
 
         var userReadDto = _mapper.Map<UserReadDto>(user);
         return userReadDto;
@@ -96,7 +95,9 @@ public class AdminService : IAdminService
     {
         _logger.LogInformation(AdminServiceLogMessages.GetUserRequestReceived, userId);
 
-        if (_memoryCache.TryGetValue(UserCacheKey, out UserReadDto cachedUser))
+        var userCacheKey = GetUserCacheKey(userId);
+
+        if (_memoryCache.TryGetValue(userCacheKey, out UserReadDto cachedUser))
         {
             _logger.LogInformation(AdminServiceLogMessages.ReturningUserFromCache);
             return cachedUser;
@@ -114,7 +115,7 @@ public class AdminService : IAdminService
 
         var userReadDto = _mapper.Map<UserReadDto>(user);
 
-        _memoryCache.Set(UserCacheKey, userReadDto, cacheEntryOptions);
+        _memoryCache.Set(userCacheKey, userReadDto, cacheEntryOptions);
         return userReadDto;
     }
 
@@ -143,7 +144,7 @@ public class AdminService : IAdminService
 
         _logger.LogInformation(AdminServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(UsersCacheKey);
-        _memoryCache.Remove(UserCacheKey);
+        _memoryCache.Remove(GetUserCacheKey(userId));
 
         var userReadDto = _mapper.Map<UserReadDto>(user);
         return userReadDto;
@@ -163,6 +164,11 @@ public class AdminService : IAdminService
 
         _logger.LogInformation(AdminServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(UsersCacheKey);
-        _memoryCache.Remove(UserCacheKey);
+        _memoryCache.Remove(GetUserCacheKey(userId));
+    }
+
+    private string GetUserCacheKey(int userId)
+    {
+        return $"user_{userId}";
     }
 }

@@ -12,5 +12,6 @@ public class UserProfile : Profile
         CreateMap<UserWriteDto, User>();
         CreateMap<UserPatchDto, User>();
         CreateMap<User, UserReadDto>();
+        CreateMap<User, UserWriteDto>();
     }
 }

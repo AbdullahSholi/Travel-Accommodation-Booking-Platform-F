@@ -22,7 +22,6 @@ public class HotelService : IHotelService
     private readonly IHotelPublisherSubject _hotelPublisherSubject;
 
     private const string HotelsCacheKey = "hotels-list";
-    private const string HotelCacheKey = "hotel";
 
     public HotelService(IHotelRepository hotelRepository, IMapper mapper, ILogger<HotelService> logger,
         IMemoryCache memoryCache, IHotelPublisherSubject hotelPublisherSubject,
@@ -57,7 +56,7 @@ public class HotelService : IHotelService
 
         _logger.LogInformation(HotelServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(HotelsCacheKey);
-        _memoryCache.Remove(HotelCacheKey);
+        _memoryCache.Remove(GetHotelCacheKey(hotel.HotelId));
 
         var hotelReadDto = _mapper.Map<HotelReadDto>(hotel);
         return hotelReadDto;
@@ -97,7 +96,9 @@ public class HotelService : IHotelService
     {
         _logger.LogInformation(HotelServiceLogMessages.GetHotelRequestReceived, hotelId);
 
-        if (_memoryCache.TryGetValue(HotelCacheKey, out HotelReadDto cachedHotel))
+        var hotelCacheKey = GetHotelCacheKey(hotelId);
+
+        if (_memoryCache.TryGetValue(hotelCacheKey, out HotelReadDto cachedHotel))
         {
             _logger.LogInformation(HotelServiceLogMessages.ReturningHotelFromCache);
             return cachedHotel;
@@ -115,7 +116,7 @@ public class HotelService : IHotelService
 
         var hotelReadDto = _mapper.Map<HotelReadDto>(hotel);
 
-        _memoryCache.Set(HotelCacheKey, hotelReadDto, cacheEntryOptions);
+        _memoryCache.Set(hotelCacheKey, hotelReadDto, cacheEntryOptions);
         return hotelReadDto;
     }
 
@@ -139,7 +140,7 @@ public class HotelService : IHotelService
 
         _logger.LogInformation(HotelServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(HotelsCacheKey);
-        _memoryCache.Remove(HotelCacheKey);
+        _memoryCache.Remove(GetHotelCacheKey(hotelId));
 
         var hotelReadDto = _mapper.Map<HotelReadDto>(hotel);
         return hotelReadDto;
@@ -158,6 +159,11 @@ public class HotelService : IHotelService
 
         _logger.LogInformation(HotelServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(HotelsCacheKey);
-        _memoryCache.Remove(HotelCacheKey);
+        _memoryCache.Remove(GetHotelCacheKey(hotelId));
+    }
+
+    private string GetHotelCacheKey(int hotelId)
+    {
+        return $"hotel_{hotelId}";
     }
 }

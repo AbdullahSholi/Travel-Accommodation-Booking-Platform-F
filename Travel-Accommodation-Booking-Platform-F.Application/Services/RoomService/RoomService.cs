@@ -19,7 +19,6 @@ public class RoomService : IRoomService
     private readonly IMemoryCache _memoryCache;
 
     private const string RoomsCacheKey = "rooms-list";
-    private const string RoomCacheKey = "room";
 
     public RoomService(IRoomRepository roomRepository, IMapper mapper, ILogger<RoomService> logger,
         IMemoryCache memoryCache)
@@ -48,7 +47,7 @@ public class RoomService : IRoomService
 
         _logger.LogInformation(RoomServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(RoomsCacheKey);
-        _memoryCache.Remove(RoomCacheKey);
+        _memoryCache.Remove(GetRoomCacheKey(room.RoomId));
 
         var roomReadDto = _mapper.Map<RoomReadDto>(room);
         return roomReadDto;
@@ -88,7 +87,9 @@ public class RoomService : IRoomService
     {
         _logger.LogInformation(RoomServiceLogMessages.GetRoomRequestReceived, roomId);
 
-        if (_memoryCache.TryGetValue(RoomCacheKey, out RoomReadDto cachedRoom))
+        var roomCacheKey = GetRoomCacheKey(roomId);
+
+        if (_memoryCache.TryGetValue(roomCacheKey, out RoomReadDto cachedRoom))
         {
             _logger.LogInformation(RoomServiceLogMessages.ReturningRoomFromCache);
             return cachedRoom;
@@ -106,7 +107,7 @@ public class RoomService : IRoomService
 
         var roomReadDto = _mapper.Map<RoomReadDto>(room);
 
-        _memoryCache.Set(RoomCacheKey, roomReadDto, cacheEntryOptions);
+        _memoryCache.Set(roomCacheKey, roomReadDto, cacheEntryOptions);
         return roomReadDto;
     }
 
@@ -132,7 +133,7 @@ public class RoomService : IRoomService
 
         _logger.LogInformation(RoomServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(RoomsCacheKey);
-        _memoryCache.Remove(RoomCacheKey);
+        _memoryCache.Remove(GetRoomCacheKey(roomId));
 
         var roomReadDto = _mapper.Map<RoomReadDto>(room);
         return roomReadDto;
@@ -151,6 +152,11 @@ public class RoomService : IRoomService
 
         _logger.LogInformation(RoomServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(RoomsCacheKey);
-        _memoryCache.Remove(RoomCacheKey);
+        _memoryCache.Remove(GetRoomCacheKey(roomId));
+    }
+
+    private string GetRoomCacheKey(int roomId)
+    {
+        return $"room_{roomId}";
     }
 }

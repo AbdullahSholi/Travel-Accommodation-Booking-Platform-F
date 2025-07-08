@@ -19,7 +19,6 @@ public class ReviewService : IReviewService
     private readonly IMemoryCache _memoryCache;
 
     private const string ReviewsCacheKey = "reviews-list";
-    private const string ReviewCacheKey = "review";
 
     public ReviewService(IReviewRepository reviewRepository, IMapper mapper, ILogger<ReviewService> logger,
         IMemoryCache memoryCache)
@@ -48,7 +47,7 @@ public class ReviewService : IReviewService
 
         _logger.LogInformation(ReviewServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(ReviewsCacheKey);
-        _memoryCache.Remove(ReviewCacheKey);
+        _memoryCache.Remove(GetReviewCacheKey(review.ReviewId));
 
         var reviewReadDto = _mapper.Map<ReviewReadDto>(review);
         return reviewReadDto;
@@ -88,7 +87,9 @@ public class ReviewService : IReviewService
     {
         _logger.LogInformation(ReviewServiceLogMessages.GetReviewRequestReceived, reviewId);
 
-        if (_memoryCache.TryGetValue(ReviewCacheKey, out ReviewReadDto cachedReview))
+        var reviewCacheKey = GetReviewCacheKey(reviewId);
+
+        if (_memoryCache.TryGetValue(reviewCacheKey, out ReviewReadDto cachedReview))
         {
             _logger.LogInformation(ReviewServiceLogMessages.ReturningReviewFromCache);
             return cachedReview;
@@ -106,7 +107,7 @@ public class ReviewService : IReviewService
 
         var reviewReadDto = _mapper.Map<ReviewReadDto>(review);
 
-        _memoryCache.Set(ReviewCacheKey, reviewReadDto, cacheEntryOptions);
+        _memoryCache.Set(reviewCacheKey, reviewReadDto, cacheEntryOptions);
         return reviewReadDto;
     }
 
@@ -130,7 +131,7 @@ public class ReviewService : IReviewService
 
         _logger.LogInformation(ReviewServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(ReviewsCacheKey);
-        _memoryCache.Remove(ReviewCacheKey);
+        _memoryCache.Remove(GetReviewCacheKey(reviewId));
 
         var reviewReadDto = _mapper.Map<ReviewReadDto>(review);
         return reviewReadDto;
@@ -149,6 +150,11 @@ public class ReviewService : IReviewService
 
         _logger.LogInformation(CityServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(ReviewsCacheKey);
-        _memoryCache.Remove(ReviewCacheKey);
+        _memoryCache.Remove(GetReviewCacheKey(reviewId));
+    }
+
+    private string GetReviewCacheKey(int reviewId)
+    {
+        return $"review_{reviewId}";
     }
 }

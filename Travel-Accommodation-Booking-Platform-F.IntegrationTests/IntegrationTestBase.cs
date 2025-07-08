@@ -44,6 +44,8 @@ public abstract class IntegrationTestBase : IAsyncLifetime
                     {
                         options.UseSqlServer(_sqlContainer.GetConnectionString());
                     });
+
+                    services.AddMemoryCache();
                     services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Warning));
                 });
 
