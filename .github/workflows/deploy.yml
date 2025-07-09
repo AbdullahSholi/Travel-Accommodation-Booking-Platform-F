@@ -70,9 +70,47 @@ jobs:
       with:
         context: .
         file: ./Travel-Accommodation-Booking-Platform-F.API/Dockerfile
-        push: true
+        push: false
         tags: abdullahgsholi/myproject-api:latest
 
+    - name: Run Trivy secrets scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: fs
+        scan-ref: .
+        scanners: secret
+        format: table
+        exit-code: 1
+
+    - name: Run Trivy vulnerability scan on Docker image
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: abdullahgsholi/myproject-api:latest
+        format: table
+        exit-code: 1
+        ignore-unfixed: true
+        severity: HIGH,CRITICAL
+
+    - name: Run Trivy SARIF report
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: abdullahgsholi/myproject-api:latest
+        format: sarif
+        output: trivy-results.sarif
+
+    - name: Upload Trivy SARIF to GitHub Security
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: trivy-results.sarif
+
+    - name: Push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Travel-Accommodation-Booking-Platform-F.API/Dockerfile
+        push: true
+        tags: abdullahgsholi/myproject-api:latest
+        
     - name: SSH and deploy to EC2
       uses: appleboy/ssh-action@v0.1.7
       with:
