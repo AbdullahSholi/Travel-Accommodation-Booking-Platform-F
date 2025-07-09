@@ -147,3 +147,29 @@ jobs:
           }
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Send Slack notification on Failure
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        fields: repo,message,commit,author
+        custom_payload: |
+          {
+            "text": "❌ *Failure:* Deployment to Docker Swarm failed. Please check the pipeline logs. 🚨"
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Send Slack notification on Cancelled
+      if: cancelled()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: cancelled
+        fields: repo,message,commit,author
+        custom_payload: |
+          {
+            "text": "⚠️ *Cancelled:* The deployment process was cancelled."
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
