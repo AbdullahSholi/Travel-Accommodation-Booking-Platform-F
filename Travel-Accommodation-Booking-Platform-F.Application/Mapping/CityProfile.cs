@@ -12,5 +12,6 @@ public class CityProfile : Profile
         CreateMap<CityWriteDto, City>();
         CreateMap<CityPatchDto, City>();
         CreateMap<City, CityReadDto>();
+        CreateMap<City, CityWriteDto>();
     }
 }

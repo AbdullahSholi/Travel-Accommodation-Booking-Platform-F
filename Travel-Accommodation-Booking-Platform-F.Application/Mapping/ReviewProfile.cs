@@ -12,5 +12,6 @@ public class ReviewProfile : Profile
         CreateMap<ReviewWriteDto, Review>();
         CreateMap<ReviewPatchDto, Review>();
         CreateMap<Review, ReviewReadDto>();
+        CreateMap<Review, ReviewWriteDto>();
     }
 }

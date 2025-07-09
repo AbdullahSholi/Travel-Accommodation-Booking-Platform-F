@@ -12,5 +12,6 @@ public class RoomProfile : Profile
         CreateMap<RoomWriteDto, Room>();
         CreateMap<RoomWriteDto, Room>();
         CreateMap<Room, RoomReadDto>();
+        CreateMap<Room, RoomWriteDto>();
     }
 }

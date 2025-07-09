@@ -93,12 +93,92 @@ public abstract class IntegrationTestBase : IAsyncLifetime
         await context.SaveChangesAsync();
     }
 
+    protected async Task SeedCitiesAsync(params City[] cities)
+    {
+        using var context = GetDbContext();
+        foreach (var city in cities)
+        {
+            var cityEntity = new City
+            {
+                Name = city.Name,
+                Country = city.Country,
+                PostOffice = city.PostOffice,
+                NumberOfHotels = city.NumberOfHotels,
+                CreatedAt = city.CreatedAt,
+                UpdatedAt = city.UpdatedAt,
+                LastUpdated = city.LastUpdated
+            };
+            context.Cities.Add(cityEntity);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    protected async Task SeedRoomsAsync(params Room[] rooms)
+    {
+        using var context = GetDbContext();
+        foreach (var room in rooms)
+        {
+            var roomEntity = new Room
+            {
+                RoomType = room.RoomType,
+                Images = room.Images,
+                Description = room.Description,
+                PricePerNight = room.PricePerNight,
+                IsAvailable = room.IsAvailable,
+                AdultCapacity = room.AdultCapacity,
+                ChildrenCapacity = room.ChildrenCapacity,
+                CreatedAt = room.CreatedAt,
+                UpdatedAt = room.UpdatedAt,
+                HotelId = room.HotelId,
+                LastUpdated = room.LastUpdated
+            };
+            context.Rooms.Add(roomEntity);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    protected async Task SeedReviewsAsync(params Review[] reviews)
+    {
+        using var context = GetDbContext();
+        context.Reviews.AddRange(reviews);
+        await context.SaveChangesAsync();
+    }
+
+    protected async Task SeedHotelsAsync(params Hotel[] hotels)
+    {
+        // We do this to enforce database to make the hotelId auto increment
+        using var context = GetDbContext();
+        foreach (var hotel in hotels)
+        {
+            var hotelEntity = new Hotel
+            {
+                HotelName = hotel.HotelName,
+                OwnerName = hotel.OwnerName,
+                StarRating = hotel.StarRating,
+                Location = hotel.Location,
+                Description = hotel.Description,
+                CityId = hotel.CityId,
+                LastUpdated = hotel.LastUpdated
+            };
+            context.Hotels.Add(hotelEntity);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
 
     protected async Task ClearDatabaseAsync()
     {
         using var context = GetDbContext();
-        context.Users.RemoveRange(context.Users);
         context.OtpRecords.RemoveRange(context.OtpRecords);
+        context.Bookings.RemoveRange(context.Bookings);
+        context.Reviews.RemoveRange(context.Reviews);
+        context.Rooms.RemoveRange(context.Rooms);
+        context.Hotels.RemoveRange(context.Hotels);
+        context.Users.RemoveRange(context.Users);
+        context.Cities.RemoveRange(context.Cities);
         context.BlacklistedTokens.RemoveRange(context.BlacklistedTokens);
         await context.SaveChangesAsync();
     }

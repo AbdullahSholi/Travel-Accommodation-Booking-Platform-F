@@ -12,5 +12,6 @@ public class HotelProfile : Profile
         CreateMap<HotelWriteDto, Hotel>();
         CreateMap<HotelPatchDto, Hotel>();
         CreateMap<Hotel, HotelReadDto>();
+        CreateMap<Hotel, HotelWriteDto>();
     }
 }
