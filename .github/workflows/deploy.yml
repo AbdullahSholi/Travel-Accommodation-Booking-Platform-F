@@ -5,6 +5,10 @@ on:
     branches:
       - feat/setup-ci-cd-pipeline
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -99,7 +103,7 @@ jobs:
         output: trivy-results.sarif
 
     - name: Upload Trivy SARIF to GitHub Security
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: trivy-results.sarif
 
