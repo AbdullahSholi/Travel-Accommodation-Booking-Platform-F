@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoFixture;
-using AutoMapper;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Travel_Accommodation_Booking_Platform_F.Application;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
-using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.CityService;
-using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.AdminExceptions;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
-using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
-using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,7 +16,7 @@ public class GetCitiesIntegrationTests : IntegrationTestBase
     private ICityService _cityService;
     private IMemoryCache _memoryCache;
 
-    public GetCitiesIntegrationTests(ITestOutputHelper output)
+    public GetCitiesIntegrationTests()
     {
         _fixture = new Fixture();
         _fixture.Behaviors

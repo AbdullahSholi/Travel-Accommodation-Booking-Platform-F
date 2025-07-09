@@ -132,7 +132,6 @@ public class HotelService : IHotelService
         hotel.HotelName = dto.HotelName ?? hotel.HotelName;
         hotel.OwnerName = dto.OwnerName ?? hotel.OwnerName;
         hotel.Location = dto.Location ?? hotel.Location;
-        hotel.CityId = dto.CityId ?? hotel.CityId;
         hotel.Description = dto.Description ?? hotel.Description;
         hotel.LastUpdated = DateTime.UtcNow;
 

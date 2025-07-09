@@ -142,7 +142,19 @@ public abstract class IntegrationTestBase : IAsyncLifetime
     protected async Task SeedReviewsAsync(params Review[] reviews)
     {
         using var context = GetDbContext();
-        context.Reviews.AddRange(reviews);
+        foreach (var review in reviews)
+        {
+            var reviewEntity = new Review
+            {
+                Comment = review.Comment,
+                CreatedAt = review.CreatedAt,
+                HotelId = review.HotelId,
+                LastUpdated = review.LastUpdated,
+                Rating = review.Rating,
+                UserId = review.UserId,
+            };
+            context.Reviews.Add(reviewEntity);
+        }
         await context.SaveChangesAsync();
     }
 

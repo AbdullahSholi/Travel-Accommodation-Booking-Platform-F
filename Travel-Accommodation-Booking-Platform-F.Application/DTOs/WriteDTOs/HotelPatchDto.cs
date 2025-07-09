@@ -8,6 +8,4 @@ public class HotelPatchDto
     [MaxLength(50)] [MinLength(3)] public string? OwnerName { get; set; }
     [MinLength(5)] public string? Location { get; set; }
     [MinLength(11)] public string? Description { get; set; }
-
-    public int? CityId { get; set; }
 }

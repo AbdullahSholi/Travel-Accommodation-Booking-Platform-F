@@ -22,11 +22,9 @@ public class CreateUserIntegrationTests : IntegrationTestBase
     private IAdminService _adminService;
     private IMapper _mapper;
     private IMemoryCache _memoryCache;
-    private readonly ITestOutputHelper _output;
 
-    public CreateUserIntegrationTests(ITestOutputHelper output)
+    public CreateUserIntegrationTests()
     {
-        _output = output;
         _fixture = new Fixture();
         _fixture.Behaviors
             .OfType<ThrowingRecursionBehavior>()

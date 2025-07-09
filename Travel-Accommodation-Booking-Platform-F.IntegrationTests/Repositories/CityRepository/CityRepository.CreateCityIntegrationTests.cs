@@ -8,8 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.CityService;
-using Travel_Accommodation_Booking_Platform_F.Application.Utils.CustomMessages;
-using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.AdminExceptions;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Xunit;
@@ -22,11 +20,9 @@ public class CreateCityIntegrationTests : IntegrationTestBase
     private ICityService _cityService;
     private IMapper _mapper;
     private IMemoryCache _memoryCache;
-    private readonly ITestOutputHelper _output;
 
-    public CreateCityIntegrationTests(ITestOutputHelper output)
+    public CreateCityIntegrationTests()
     {
-        _output = output;
         _fixture = new Fixture();
         _fixture.Behaviors
             .OfType<ThrowingRecursionBehavior>()

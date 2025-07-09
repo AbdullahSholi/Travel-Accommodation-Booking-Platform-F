@@ -17,13 +17,10 @@ public class DeleteUserIntegrationTests : IntegrationTestBase
     private readonly IFixture _fixture;
     private IAdminRepository _adminRepository;
     private IAdminService _adminService;
-    private IMapper _mapper;
     private IMemoryCache _memoryCache;
-    private readonly ITestOutputHelper _output;
 
-    public DeleteUserIntegrationTests(ITestOutputHelper output)
+    public DeleteUserIntegrationTests()
     {
-        _output = output;
         _fixture = new Fixture();
         _fixture.Behaviors
             .OfType<ThrowingRecursionBehavior>()
@@ -42,7 +39,6 @@ public class DeleteUserIntegrationTests : IntegrationTestBase
 
         _adminRepository = provider.GetRequiredService<IAdminRepository>();
         _adminService = provider.GetRequiredService<IAdminService>();
-        _mapper = provider.GetRequiredService<IMapper>();
 
         _memoryCache = provider.GetRequiredService<IMemoryCache>();
     }

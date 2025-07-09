@@ -122,9 +122,6 @@ public class ReviewService : IReviewService
 
         review.Rating = dto.Rating ?? review.Rating;
         review.Comment = dto.Comment ?? review.Comment;
-        review.UserId = dto.UserId ?? review.UserId;
-        review.HotelId = dto.HotelId ?? review.HotelId;
-
         review.LastUpdated = DateTime.UtcNow;
 
         await _reviewRepository.UpdateAsync(review);

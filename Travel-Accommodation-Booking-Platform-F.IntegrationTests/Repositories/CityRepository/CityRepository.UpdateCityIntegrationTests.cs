@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoMapper;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
-using Travel_Accommodation_Booking_Platform_F.Application;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.CityService;
-using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.CityExceptions;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
-using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Utils;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -24,13 +18,10 @@ public class UpdateCityIntegrationTests : IntegrationTestBase
     private readonly IFixture _fixture;
     private ICityRepository _cityRepository;
     private ICityService _cityService;
-    private IMapper _mapper;
     private IMemoryCache _memoryCache;
-    private readonly ITestOutputHelper _output;
 
-    public UpdateCityIntegrationTests(ITestOutputHelper output)
+    public UpdateCityIntegrationTests()
     {
-        _output = output;
         _fixture = new Fixture();
         _fixture.Behaviors
             .OfType<ThrowingRecursionBehavior>()
@@ -49,7 +40,6 @@ public class UpdateCityIntegrationTests : IntegrationTestBase
 
         _cityRepository = provider.GetRequiredService<ICityRepository>();
         _cityService = provider.GetRequiredService<ICityService>();
-        _mapper = provider.GetRequiredService<IMapper>();
 
         _memoryCache = provider.GetRequiredService<IMemoryCache>();
     }

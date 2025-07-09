@@ -2,28 +2,25 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
-using AutoMapper;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
-using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
-using Travel_Accommodation_Booking_Platform_F.Application.Services.RoomService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.ReviewService;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
-using Travel_Accommodation_Booking_Platform_F.Domain.Enums;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Xunit;
-using Xunit.Abstractions;
 
-public class UpdateRoomIntegrationTests : IntegrationTestBase
+public class DeleteReviewIntegrationTests : IntegrationTestBase
 {
     private readonly IFixture _fixture;
-    private IRoomRepository _roomRepository;
+    private IReviewRepository _reviewRepository;
     private ICityRepository _cityRepository;
     private IHotelRepository _hotelRepository;
-    private IRoomService _roomService;
+    private IAdminRepository _adminRepository;
+    private IReviewService _reviewService;
     private IMemoryCache _memoryCache;
 
-    public UpdateRoomIntegrationTests()
+    public DeleteReviewIntegrationTests()
     {
         _fixture = new Fixture();
         _fixture.Behaviors
@@ -41,24 +38,22 @@ public class UpdateRoomIntegrationTests : IntegrationTestBase
         var scope = Factory.Services.CreateScope();
         var provider = scope.ServiceProvider;
 
-        _roomRepository = provider.GetRequiredService<IRoomRepository>();
+        _reviewRepository = provider.GetRequiredService<IReviewRepository>();
         _cityRepository = provider.GetRequiredService<ICityRepository>();
         _hotelRepository = provider.GetRequiredService<IHotelRepository>();
-        _roomService = provider.GetRequiredService<IRoomService>();
+        _adminRepository = provider.GetRequiredService<IAdminRepository>();
+        _reviewService = provider.GetRequiredService<IReviewService>();
 
         _memoryCache = provider.GetRequiredService<IMemoryCache>();
     }
 
     [Fact]
-    [Trait("IntegrationTests - Room", "UpdateRoom")]
-    public async Task Should_UpdateRoomSuccessfully_When_CorrectDataProvided()
+    [Trait("IntegrationTests - Review", "DeleteReview")]
+    public async Task Should_DeleteReviewSuccessfully_When_CorrectDataProvided()
     {
         // Arrange
-        var roomsCacheKey = "rooms-list";
-
         await ClearDatabaseAsync();
-
-        var roomType = RoomType.Luxury;
+        var cacheKey = "reviews-list";
 
         var cityMock = _fixture.Build<City>()
             .Without(c => c.CityId)
@@ -72,10 +67,24 @@ public class UpdateRoomIntegrationTests : IntegrationTestBase
 
         var cityId = city.CityId;
 
+        var userMock = _fixture.Build<User>()
+            .Without(u => u.UserId)
+            .Without(u => u.OtpRecords)
+            .Without(u => u.Bookings)
+            .Without(u => u.Reviews)
+            .Create();
+
+        await SeedUsersAsync(userMock);
+
+        var user = (await _adminRepository.GetAllAsync()).First();
+        Assert.NotNull(user);
+
+        var userId = user.UserId;
+
         var hotelMock = _fixture.Build<Hotel>()
             .Without(h => h.HotelId)
-            .Without(h => h.Rooms)
             .Without(h => h.Reviews)
+            .Without(h => h.Rooms)
             .With(h => h.CityId, cityId)
             .Create();
 
@@ -86,41 +95,37 @@ public class UpdateRoomIntegrationTests : IntegrationTestBase
 
         var hotelId = hotel.HotelId;
 
-        var roomMock = _fixture.Build<Room>()
-            .Without(x => x.RoomId)
-            .Without(x => x.Bookings)
+        var reviewMock = _fixture.Build<Review>()
+            .Without(x => x.ReviewId)
+            .With(x => x.UserId, userId)
             .With(x => x.HotelId, hotelId)
-            .With(x => x.RoomType, roomType)
             .Create();
 
-        await SeedRoomsAsync(roomMock);
 
-        var existingRoom = (await _roomRepository.GetAllAsync()).First();
-        var roomId = existingRoom.RoomId;
+        await SeedReviewsAsync(reviewMock);
 
-        var roomPatchDto = _fixture.Build<RoomPatchDto>()
-            .With(x => x.RoomType, roomType)
-            .With(x => x.PricePerNight, 100m)
-            .Create();
+        var existingReview = (await _reviewRepository.GetAllAsync()).First();
+        var reviewId = existingReview.ReviewId;
+
+        var review = await _reviewRepository.GetByIdAsync(reviewId);
+        Assert.NotNull(review);
 
         // Act
-        await _roomService.UpdateRoomAsync(roomId, roomPatchDto);
+        await _reviewService.DeleteReviewAsync(reviewId);
 
         // Assert
-        var updatedRoom = await _roomRepository.GetByIdAsync(roomId);
+        var reviews = await _reviewRepository.GetAllAsync();
+        Assert.Empty(reviews);
 
-        Assert.NotNull(updatedRoom);
-        Assert.Equal(roomPatchDto.RoomType, updatedRoom.RoomType);
-
-        var cacheHit1 = _memoryCache.TryGetValue(roomsCacheKey, out List<RoomReadDto> cachedRooms);
-        var cacheHit2 = _memoryCache.TryGetValue(GetRoomCacheKey(roomId), out RoomReadDto cachedRoom);
+        var cacheHit1 = _memoryCache.TryGetValue(cacheKey, out List<ReviewReadDto> cachedReviews);
+        var cacheHit2 = _memoryCache.TryGetValue(GetReviewCacheKey(reviewId), out ReviewReadDto cachedReview);
 
         Assert.False(cacheHit1);
         Assert.False(cacheHit2);
     }
 
-    private string GetRoomCacheKey(int roomId)
+    private string GetReviewCacheKey(int reviewId)
     {
-        return $"room_{roomId}";
+        return $"review_{reviewId}";
     }
 }

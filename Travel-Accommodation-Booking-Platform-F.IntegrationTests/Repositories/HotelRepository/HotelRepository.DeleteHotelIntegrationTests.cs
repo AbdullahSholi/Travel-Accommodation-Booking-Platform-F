@@ -2,29 +2,23 @@
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
-using AutoMapper;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
-using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
-using Travel_Accommodation_Booking_Platform_F.Application.Services.RoomService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.HotelService;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
-using Travel_Accommodation_Booking_Platform_F.Domain.Enums;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Xunit;
-using Xunit.Abstractions;
 
-public class CreateRoomIntegrationTests : IntegrationTestBase
+public class DeleteHotelIntegrationTests : IntegrationTestBase
 {
     private readonly IFixture _fixture;
-    private IRoomRepository _roomRepository;
-    private IHotelRepository _hotelRepository;
+    private IHotelRepository _adminRepository;
     private ICityRepository _cityRepository;
-    private IRoomService _roomService;
-    private IMapper _mapper;
+    private IHotelService _adminService;
     private IMemoryCache _memoryCache;
 
-    public CreateRoomIntegrationTests()
+    public DeleteHotelIntegrationTests()
     {
         _fixture = new Fixture();
         _fixture.Behaviors
@@ -42,24 +36,20 @@ public class CreateRoomIntegrationTests : IntegrationTestBase
         var scope = Factory.Services.CreateScope();
         var provider = scope.ServiceProvider;
 
-        _roomRepository = provider.GetRequiredService<IRoomRepository>();
-        _hotelRepository = provider.GetRequiredService<IHotelRepository>();
+        _adminRepository = provider.GetRequiredService<IHotelRepository>();
         _cityRepository = provider.GetRequiredService<ICityRepository>();
-        _roomService = provider.GetRequiredService<IRoomService>();
-        _mapper = provider.GetRequiredService<IMapper>();
+        _adminService = provider.GetRequiredService<IHotelService>();
 
         _memoryCache = provider.GetRequiredService<IMemoryCache>();
     }
 
-
     [Fact]
-    [Trait("IntegrationTests - Room", "CreateRoom")]
-    public async Task Should_AddNewRoomCorrectly_When_CorrectCredentialsAreProvided()
+    [Trait("IntegrationTests - Hotel", "DeleteHotel")]
+    public async Task Should_DeleteHotelSuccessfully_When_CorrectDataProvided()
     {
         // Arrange
         await ClearDatabaseAsync();
-        var roomType = RoomType.Luxury;
-        var cacheKey = "rooms-list";
+        var cacheKey = "hotels-list";
 
         var cityMock = _fixture.Build<City>()
             .Without(c => c.CityId)
@@ -82,34 +72,28 @@ public class CreateRoomIntegrationTests : IntegrationTestBase
 
         await SeedHotelsAsync(hotelMock);
 
-        var hotel = (await _hotelRepository.GetAllAsync()).First();
+        var existingHotel = (await _adminRepository.GetAllAsync()).First();
+        var hotelId = existingHotel.HotelId;
+
+        var hotel = await _adminRepository.GetByIdAsync(hotelId);
         Assert.NotNull(hotel);
 
-        var hotelId = hotel.HotelId;
-        var roomMock = _fixture.Build<Room>()
-            .Without(x => x.RoomId)
-            .Without(x => x.Bookings)
-            .With(x => x.HotelId, hotelId)
-            .With(x => x.RoomType, roomType)
-            .Create();
-
-        var roomWriteDto = _mapper.Map<RoomWriteDto>(roomMock);
-
         // Act
-        await _roomService.CreateRoomAsync(roomWriteDto);
+        await _adminService.DeleteHotelAsync(hotelId);
 
         // Assert
-        var room = (await _roomRepository.GetAllAsync()).First();
-        var roomId = room.RoomId;
+        var hotels = await _adminRepository.GetAllAsync();
+        Assert.Empty(hotels);
 
-        var cacheHit1 = _memoryCache.TryGetValue(cacheKey, out List<RoomReadDto> cachedRooms);
-        var cacheHit2 = _memoryCache.TryGetValue(GetRoomCacheKey(roomId), out RoomReadDto cachedRoom);
+        var cacheHit1 = _memoryCache.TryGetValue(cacheKey, out List<HotelReadDto> cachedHotels);
+        var cacheHit2 = _memoryCache.TryGetValue(GetHotelCacheKey(hotelId), out HotelReadDto cachedHotel);
+
         Assert.False(cacheHit1);
         Assert.False(cacheHit2);
     }
 
-    private string GetRoomCacheKey(int roomId)
+    private string GetHotelCacheKey(int hotelId)
     {
-        return $"room_{roomId}";
+        return $"hotel_{hotelId}";
     }
 }

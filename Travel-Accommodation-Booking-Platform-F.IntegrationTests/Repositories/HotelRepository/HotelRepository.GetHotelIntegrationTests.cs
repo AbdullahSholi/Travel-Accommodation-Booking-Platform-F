@@ -5,23 +5,21 @@ using AutoMapper;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
-using Travel_Accommodation_Booking_Platform_F.Application.Services.RoomService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.HotelService;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
-using Travel_Accommodation_Booking_Platform_F.Domain.Enums;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 using Xunit;
 using Xunit.Abstractions;
 
-public class GetRoomIntegrationTests : IntegrationTestBase
+public class GetHotelIntegrationTests : IntegrationTestBase
 {
     private readonly IFixture _fixture;
-    private IRoomRepository _roomRepository;
     private ICityRepository _cityRepository;
     private IHotelRepository _hotelRepository;
-    private IRoomService _roomService;
+    private IHotelService _hotelService;
     private IMemoryCache _memoryCache;
 
-    public GetRoomIntegrationTests()
+    public GetHotelIntegrationTests()
     {
         _fixture = new Fixture();
         _fixture.Behaviors
@@ -39,23 +37,20 @@ public class GetRoomIntegrationTests : IntegrationTestBase
         var scope = Factory.Services.CreateScope();
         var provider = scope.ServiceProvider;
 
-        _roomRepository = provider.GetRequiredService<IRoomRepository>();
         _cityRepository = provider.GetRequiredService<ICityRepository>();
         _hotelRepository = provider.GetRequiredService<IHotelRepository>();
-        _roomService = provider.GetRequiredService<IRoomService>();
+        _hotelService = provider.GetRequiredService<IHotelService>();
 
         _memoryCache = provider.GetRequiredService<IMemoryCache>();
     }
 
     [Fact]
-    [Trait("IntegrationTests - Room", "GetRoom")]
+    [Trait("IntegrationTests - Hotel", "GetHotel")]
     public async Task Should_ReturnDataFromCache_When_ThereIsValidDataAtCache()
     {
         // Arrange
         await ClearDatabaseAsync();
 
-        var roomType = RoomType.Luxury;
-
         var cityMock = _fixture.Build<City>()
             .Without(c => c.CityId)
             .Without(c => c.Hotels)
@@ -77,46 +72,30 @@ public class GetRoomIntegrationTests : IntegrationTestBase
 
         await SeedHotelsAsync(hotelMock);
 
-        var hotel = (await _hotelRepository.GetAllAsync()).First();
-        Assert.NotNull(hotel);
+        var existingHotel = (await _hotelRepository.GetAllAsync()).First();
+        Assert.NotNull(existingHotel);
 
-        var hotelId = hotel.HotelId;
-
-        var roomMock = _fixture.Build<Room>()
-            .Without(x => x.RoomId)
-            .Without(x => x.Bookings)
-            .With(x => x.HotelId, hotelId)
-            .With(x => x.RoomType, roomType)
-            .Create();
-
-        await SeedRoomsAsync(roomMock);
-
-        var existingRoom = (await _roomRepository.GetAllAsync()).FirstOrDefault(u => u.RoomType == roomMock.RoomType);
-        Assert.NotNull(existingRoom);
-
-        var roomId = existingRoom.RoomId;
+        var hotelId = existingHotel.HotelId;
 
         // Act
-        var room = await _roomService.GetRoomAsync(roomId);
+        var hotel = await _hotelService.GetHotelAsync(hotelId);
 
         // Assert
-        Assert.NotNull(room);
+        Assert.NotNull(hotel);
 
-        var roomCacheKey = GetRoomCacheKey(roomId);
+        var hotelCacheKey = GetHotelCacheKey(hotelId);
 
-        var cacheHit = _memoryCache.TryGetValue(roomCacheKey, out RoomReadDto cachedRoom);
+        var cacheHit = _memoryCache.TryGetValue(hotelCacheKey, out HotelReadDto cachedHotel);
         Assert.True(cacheHit);
-        Assert.NotNull(cachedRoom);
-        Assert.Equal(room.RoomId, cachedRoom.RoomId);
+        Assert.NotNull(cachedHotel);
+        Assert.Equal(hotel.HotelId, cachedHotel.HotelId);
     }
 
     [Fact]
-    [Trait("IntegrationTests - Room", "GetRoom")]
+    [Trait("IntegrationTests - Hotel", "GetHotel")]
     public async Task Should_ReturnDataFromDatabase_When_ThereIsNoValidDataAtCache()
     {
         // Arrange
-        var roomType = RoomType.Luxury;
-
         var cityMock = _fixture.Build<City>()
             .Without(c => c.CityId)
             .Without(c => c.Hotels)
@@ -138,40 +117,26 @@ public class GetRoomIntegrationTests : IntegrationTestBase
 
         await SeedHotelsAsync(hotelMock);
 
-        var hotel = (await _hotelRepository.GetAllAsync()).First();
-        Assert.NotNull(hotel);
+        var existingHotel = (await _hotelRepository.GetAllAsync()).First();
+        var hotelId = existingHotel.HotelId;
+        var hotelCacheKey = GetHotelCacheKey(hotelId);
 
-        var hotelId = hotel.HotelId;
-
-        var roomMock = _fixture.Build<Room>()
-            .Without(x => x.RoomId)
-            .Without(x => x.Bookings)
-            .With(x => x.HotelId, hotelId)
-            .With(x => x.RoomType, roomType)
-            .Create();
-
-        await SeedRoomsAsync(roomMock);
-
-        var existingRoom = (await _roomRepository.GetAllAsync()).First();
-        var roomId = existingRoom.RoomId;
-        var roomCacheKey = GetRoomCacheKey(roomId);
-
-        var cacheHit = _memoryCache.TryGetValue(roomCacheKey, out RoomReadDto cachedRoom);
+        var cacheHit = _memoryCache.TryGetValue(hotelCacheKey, out HotelReadDto cachedHotel);
         Assert.False(cacheHit);
 
         // Act
-        var room = await _roomService.GetRoomAsync(roomId);
+        var hotel = await _hotelService.GetHotelAsync(hotelId);
 
         // Assert
-        Assert.NotNull(room);
+        Assert.NotNull(hotel);
 
-        cacheHit = _memoryCache.TryGetValue(roomCacheKey, out RoomReadDto cachedRoom1);
+        cacheHit = _memoryCache.TryGetValue(hotelCacheKey, out HotelReadDto cachedHotel1);
         Assert.True(cacheHit);
-        Assert.NotNull(cachedRoom1);
+        Assert.NotNull(cachedHotel1);
     }
 
-    private string GetRoomCacheKey(int roomId)
+    private string GetHotelCacheKey(int hotelId)
     {
-        return $"room_{roomId}";
+        return $"hotel_{hotelId}";
     }
 }
