@@ -26,6 +26,14 @@ services:
     image: grafana/loki:main-dfba28c
     ports:
       - "3100:3100"
+
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+    
     networks:
       - monitoring
 
@@ -34,6 +42,14 @@ services:
     volumes:
       - ./Logs:/var/log/myapp
       - ./promtail-config.yml:/etc/promtail/config.yml
+
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+    
     networks:
       - monitoring
 
