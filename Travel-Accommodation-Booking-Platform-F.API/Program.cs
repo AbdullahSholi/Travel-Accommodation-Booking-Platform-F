@@ -1,5 +1,6 @@
 ﻿using AspNetCoreRateLimit;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Travel_Accommodation_Booking_Platform_F.Extensions;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
 using Travel_Accommodation_Booking_Platform_F.Utils.Auth;
@@ -25,6 +26,15 @@ builder.Services.AddDatabase();
 builder.Services.AddRateLimiting(builder.Configuration);
 
 builder.Services.AddCors();
+
+var logPath = Environment.GetEnvironmentVariable("LOG_PATH") ?? "./Logs";
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File($"{logPath}/log-.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 var app = builder.Build();
 

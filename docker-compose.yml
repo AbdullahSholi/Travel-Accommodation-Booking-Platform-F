@@ -7,6 +7,10 @@ services:
       - APP_PASSWORD
       - CAR_RENTAL_CONNECTION_STRING
       - SECRET_KEY
+      - LOG_PATH=/app/Logs
+
+    volumes: 
+      - ./Logs:/app/Logs
 
     deploy:
       replicas: 1
@@ -14,3 +18,24 @@ services:
         limits:
           cpus: "0.5"
           memory: 256M
+    
+    networks:
+      - monitoring
+
+  loki:
+    image: grafana/loki:main-dfba28c
+    ports:
+      - "3100:3100"
+    networks:
+      - monitoring
+
+  promtail:
+    image: grafana/promtail:main-dfba28c
+    volumes:
+      - ./Logs:/var/log/myapp
+      - ./promtail-config.yml:/etc/promtail/config.yml
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
