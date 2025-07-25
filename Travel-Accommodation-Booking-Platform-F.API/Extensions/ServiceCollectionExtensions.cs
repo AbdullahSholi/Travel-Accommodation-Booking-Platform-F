@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Travel_Accommodation_Booking_Platform_F.Application.Mapping;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AdminService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AuthService;
+using Travel_Accommodation_Booking_Platform_F.Application.Services.BookingService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.CityService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.HotelService;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.ReviewService;
@@ -59,6 +60,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IReviewService, ReviewService>();
         services.AddScoped<IReviewRepository, ReviewRepository>();
+        services.AddScoped<IBookingService, BookingService>();
+        services.AddScoped<IBookingRepository, BookingRepository>();
         services.AddScoped<INotifyUsersObserver, NotifyUsersEmailObserver>();
         services.AddScoped<IHotelPublisherSubject, HotelPublisherSubject>();
         return services;
