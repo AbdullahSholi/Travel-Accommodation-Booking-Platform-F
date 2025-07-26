@@ -72,8 +72,38 @@ public class BookingRepository : IBookingRepository
 
     public async Task UpdateAsync(Booking booking)
     {
-        _context.Bookings.Update(booking);
-        await _context.SaveChangesAsync();
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            var room = await _context.Rooms
+                .FromSqlInterpolated($"SELECT * FROM Rooms WITH (UPDLOCK) WHERE RoomId = {booking.RoomId}")
+                .FirstOrDefaultAsync();
+            
+            if (room == null)
+                throw new InvalidOperationException(CustomMessages.CustomMessages.RoomNotFound);
+            
+            var isOverlapping = await _context.Bookings.AnyAsync(r =>
+                r.RoomId == booking.RoomId &&
+                booking.CheckInDate < r.CheckOutDate &&
+                booking.CheckOutDate > r.CheckInDate
+            );
+
+            if (isOverlapping)
+                throw new InvalidOperationException(CustomMessages.CustomMessages.RoomAlreadyBooked);
+            
+            var totalDays = (int)(booking.CheckOutDate - booking.CheckInDate).TotalDays;
+            booking.TotalPrice = room.PricePerNight * totalDays;
+            booking.LastUpdated = DateTime.UtcNow;
+            
+            _context.Bookings.Update(booking);
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+        }
+        catch (Exception e)
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
     }
 
     public async Task DeleteAsync(Booking booking)
