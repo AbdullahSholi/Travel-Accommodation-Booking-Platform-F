@@ -42,8 +42,7 @@ public class BookingService : IBookingService
         _logger.LogInformation(BookingServiceLogMessages.CorrectBookingInformationSent);
 
         var booking = _mapper.Map<Booking>(dto);
-        
-        booking.CheckInDate = DateTime.Now;
+
         await _bookingRepository.AddAsync(booking);
 
         _logger.LogInformation(BookingServiceLogMessages.DeleteCachedData);

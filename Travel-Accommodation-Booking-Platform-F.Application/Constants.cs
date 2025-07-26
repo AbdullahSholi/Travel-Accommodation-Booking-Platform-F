@@ -9,7 +9,7 @@ public static class Constants
     public const int AbsoluteExpirationForRetrieveCitiesMinutes = 60;
     public const int AbsoluteExpirationForRetrieveReviewsMinutes = 60;
     public const int AbsoluteExpirationForRetrieveBookingsMinutes = 10;
-    
+
 
     public const int SlidingExpirationMinutes = 60;
     public const int CachingUnitSize = 1;

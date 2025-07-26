@@ -15,7 +15,9 @@ public class BookingServiceLogMessages
         "Fetched booking from repository successfully for booking: {BookingId}";
 
     public const string UpdateBookingRequestReceived = "Update booking request received for booking: {BookingId}";
-    public const string RetrieveBookingSuccessfullyFromRepository = "Retrieve booking with id: {BookingId} successfully";
+
+    public const string RetrieveBookingSuccessfullyFromRepository =
+        "Retrieve booking with id: {BookingId} successfully";
 
     public const string DeleteBookingRequestReceived = "Delete booking request received for booking: {BookingId}";
     public const string BookingDeletedSuccessfully = "Booking deleted successfully for booking: {BookingId}";

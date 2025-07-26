@@ -14,11 +14,15 @@ public static class LogMessages
     public const string GetBookingFailed = "Get Booking failed for Booking with id: {BookingId}";
     public const string GetBookingSuccess = "Get Booking success for Booking with id: {BookingId}";
 
-    public const string UpdateBookingRequestReceived = "Update Booking request received for Booking with id: {BookingId}";
+    public const string UpdateBookingRequestReceived =
+        "Update Booking request received for Booking with id: {BookingId}";
+
     public const string UpdateBookingFailed = "Update Booking failed for Booking with id: {BookingId}";
     public const string BookingUpdatedSuccessfully = "Updated successfully, for Booking with id: {BookingId}";
 
-    public const string DeleteBookingRequestReceived = "Delete Booking request received for Booking with id: {BookingId}";
+    public const string DeleteBookingRequestReceived =
+        "Delete Booking request received for Booking with id: {BookingId}";
+
     public const string DeleteBookingFailed = "Delete Booking failed for Booking with id: {BookingId}";
     public const string BookingDeletedSuccessfully = "Booking deleted successfully for booking with id: {BookingId}";
 

@@ -6,8 +6,9 @@ public class BookingWriteDto
 {
     [Required] [Range(1, int.MaxValue)] public int UserId { get; set; }
     [Required] [Range(1, int.MaxValue)] public int RoomId { get; set; }
-    
-    public DateTime CheckOutDate { get; set; } = DateTime.Now + TimeSpan.FromDays(1);
+
+    [Required] public DateTime CheckInDate { get; set; } = DateTime.Now;
+    [Required] public DateTime CheckOutDate { get; set; } = DateTime.Now + TimeSpan.FromDays(1);
 
     public DateTime CreatedAt { get; set; }
     public decimal TotalPrice { get; set; }
