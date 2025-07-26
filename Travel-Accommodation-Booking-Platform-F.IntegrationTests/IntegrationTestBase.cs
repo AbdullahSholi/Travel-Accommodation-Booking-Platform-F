@@ -151,10 +151,11 @@ public abstract class IntegrationTestBase : IAsyncLifetime
                 HotelId = review.HotelId,
                 LastUpdated = review.LastUpdated,
                 Rating = review.Rating,
-                UserId = review.UserId,
+                UserId = review.UserId
             };
             context.Reviews.Add(reviewEntity);
         }
+
         await context.SaveChangesAsync();
     }
 

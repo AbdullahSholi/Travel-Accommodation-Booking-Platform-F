@@ -7,4 +7,8 @@ public static class CustomMessages
 
     public const string NonSetConnectionStringAtEnvironmentVariables =
         "Environment variable 'TRAVEL_ACCOMMODATION_CONNECTION_STRING' is not set.";
+
+    public const string RoomNotFound = "Room not found.";
+    public const string CheckoutMessage = "Check-out date must be after check-in date.";
+    public const string RoomAlreadyBooked = "The room is already booked during the selected dates.";
 }
