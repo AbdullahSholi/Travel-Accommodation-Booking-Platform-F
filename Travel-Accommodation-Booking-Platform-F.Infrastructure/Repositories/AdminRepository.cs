@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
+using Travel_Accommodation_Booking_Platform_F.Domain.QueryDTOs;
 using Travel_Accommodation_Booking_Platform_F.Infrastructure.Persistence;
 
 namespace Travel_Accommodation_Booking_Platform_F.Infrastructure.Repositories;
@@ -50,7 +51,8 @@ public class AdminRepository : IAdminRepository
     {
         var topCityIds = await _context.Bookings
             .GroupBy(b => b.Room.Hotel.CityId)
-            .Select(g => new {
+            .Select(g => new
+            {
                 CityId = g.Key,
                 Count = g.Count()
             })
@@ -67,6 +69,37 @@ public class AdminRepository : IAdminRepository
         cities = cities.OrderBy(c => topCityIds.IndexOf(c.CityId)).ToList();
 
         return cities;
+    }
+
+    public async Task<List<Room>> SearchRoomAsync(RoomQueryDto dto)
+    {
+        var query = _context.Rooms.AsQueryable();
+
+        if (dto.RoomType.HasValue)
+            query = query.Where(c => c.RoomType == dto.RoomType.Value);
+
+        if (dto.MinPrice.HasValue)
+            query = query.Where(c => c.PricePerNight >= dto.MinPrice.Value);
+
+        if (dto.MaxPrice.HasValue)
+            query = query.Where(c => c.PricePerNight <= dto.MaxPrice.Value);
+
+
+        if (dto.IsAvailable.HasValue)
+            query = query.Where(c => c.IsAvailable == dto.IsAvailable.Value);
+
+        if (dto.AdultCapacity.HasValue)
+            query = query.Where(c => c.AdultCapacity == dto.AdultCapacity.Value);
+
+        if (dto.ChildrenCapacity.HasValue)
+            query = query.Where(c => c.ChildrenCapacity == dto.ChildrenCapacity.Value);
+
+        if (dto.CreatedAt.HasValue)
+            query = query.Where(c => c.CreatedAt == dto.CreatedAt.Value);
+
+        var rooms = await query.ToListAsync();
+
+        return rooms;
     }
 
     public async Task UpdateAsync(User user)

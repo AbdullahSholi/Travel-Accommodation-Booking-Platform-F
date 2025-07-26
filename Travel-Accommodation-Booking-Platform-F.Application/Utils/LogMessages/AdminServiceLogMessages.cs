@@ -24,9 +24,14 @@ public static class AdminServiceLogMessages
     public const string ReturningUsersFromCache = "Returning users from cache";
     public const string ReturningUserFromCache = "Returning user from cache";
     public const string DeleteCachedData = "Delete cached data";
-    
+
     public const string FetchingCitiesFromRepository = "Fetching cities from repository";
-    public const string ReturningCitiesFromCache  = "Returning cities from cache";
+    public const string ReturningCitiesFromCache = "Returning cities from cache";
     public const string FailedFetchingCitiesFromRepository = "Failed fetching cities from repository";
     public const string FetchedCitiesFromRepositorySuccessfully = $"Fetched cities from repository successfully";
+
+    public const string FetchingRoomsFromRepository = "Fetching rooms from repository";
+    public const string ReturningRoomsFromCache = "Returning rooms from cache";
+    public const string FailedFetchingRoomsFromRepository = "Failed fetching rooms from repository";
+    public const string FetchedRoomsFromRepositorySuccessfully = "Fetched rooms from repository successfully";
 }

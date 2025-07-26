@@ -4,6 +4,7 @@ using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AdminService;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.AdminExceptions;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.CityExceptions;
+using Travel_Accommodation_Booking_Platform_F.Domain.QueryDTOs;
 using Travel_Accommodation_Booking_Platform_F.Utils.Admin;
 using CustomMessages = Travel_Accommodation_Booking_Platform_F.Utils.Admin.CustomMessages;
 
@@ -199,7 +200,7 @@ public class AdminsController : ControllerBase
             return StatusCode(500, new { Message = CustomMessages.InternalServerError });
         }
     }
-    
+
     [Authorize(Roles = "Admin")]
     [HttpGet("top-visited-cities")]
     public async Task<IActionResult> GetTopVisitedCities()
@@ -241,6 +242,31 @@ public class AdminsController : ControllerBase
         {
             _logger.LogError(ex, LogMessages.GetTopVisitedCitiesFailed);
             return StatusCode(500, new { Message = CustomMessages.InternalServerError });
+        }
+    }
+
+    [Authorize(Roles = "User,Admin")]
+    [HttpGet("search")]
+    public async Task<IActionResult> SearchRooms([FromQuery] RoomQueryDto dto)
+    {
+        _logger.LogInformation(LogMessages.SearchAboutRoomsRequestReceived);
+
+        try
+        {
+            var rooms = await _adminService.SearchRoomAsync(dto);
+            if (rooms == null)
+            {
+                _logger.LogWarning(LogMessages.SearchRoomsFailed);
+                return NotFound(new { Message = CustomMessages.ListOfRoomsIsNotFound });
+            }
+
+            _logger.LogInformation(LogMessages.SearchRoomsSuccess);
+            return Ok(rooms);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, CustomMessages.FailedToDisplayFilteredRooms);
+            return StatusCode(500, new { message = CustomMessages.InternalServerError });
         }
     }
 }

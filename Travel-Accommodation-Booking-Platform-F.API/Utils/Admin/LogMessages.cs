@@ -37,6 +37,14 @@ public static class LogMessages
     public const string GetTopVisitedCitiesRequestReceived = "Get Top Visited Cities request received";
     public const string GetTopVisitedCitiesFailed = "Get Top Visited Cities failed";
     public const string GetTopVisitedCitiesSuccess = "Get Top Visited Cities success";
-    public const string SendETagToClientWhenListOfTopVisitedCitiesUpdatedRecently  = "Send ETag to client if list of top visited cities updated recently";
-    public const string CheckIfListOfTopVisitedCitiesNotUpdatedRecently  = "Check if list of top visited cities not updated";
+
+    public const string SendETagToClientWhenListOfTopVisitedCitiesUpdatedRecently =
+        "Send ETag to client if list of top visited cities updated recently";
+
+    public const string CheckIfListOfTopVisitedCitiesNotUpdatedRecently =
+        "Check if list of top visited cities not updated";
+
+    public const string SearchAboutRoomsRequestReceived = "Search about rooms request received";
+    public const string SearchRoomsFailed = "Search rooms failed";
+    public const string SearchRoomsSuccess = "Search rooms success";
 }

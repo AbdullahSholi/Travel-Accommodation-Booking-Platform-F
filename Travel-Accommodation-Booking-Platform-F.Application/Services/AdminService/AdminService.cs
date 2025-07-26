@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.ReadDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.CustomMessages;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.LogMessages;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.AdminExceptions;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.CityExceptions;
+using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.RoomExceptions;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
+using Travel_Accommodation_Booking_Platform_F.Domain.QueryDTOs;
 
 namespace Travel_Accommodation_Booking_Platform_F.Application.Services.AdminService;
 
@@ -21,6 +24,7 @@ public class AdminService : IAdminService
 
     private const string UsersCacheKey = "users-list";
     private const string CitiesCacheKey = "cities-list";
+    private const string RoomsCacheKey = "rooms-list";
 
     public AdminService(IAdminRepository adminRepository, IMapper mapper, ILogger<AdminService> logger,
         IMemoryCache memoryCache)
@@ -173,7 +177,7 @@ public class AdminService : IAdminService
     {
         _logger.LogInformation(AdminServiceLogMessages.FetchingCitiesFromRepository);
 
-        if (_memoryCache.TryGetValue(UsersCacheKey, out List<CityReadDto> cachedCities))
+        if (_memoryCache.TryGetValue(CitiesCacheKey, out List<CityReadDto> cachedCities))
         {
             _logger.LogInformation(AdminServiceLogMessages.ReturningCitiesFromCache);
             return cachedCities;
@@ -183,7 +187,8 @@ public class AdminService : IAdminService
         if (cities == null)
         {
             _logger.LogWarning(AdminServiceLogMessages.FailedFetchingCitiesFromRepository);
-            throw new FailedToFetchCitiesException(AdminServiceCustomMessages.FailedFetchingTopVisitedCitiesFromRepository);
+            throw new FailedToFetchCitiesException(AdminServiceCustomMessages
+                .FailedFetchingTopVisitedCitiesFromRepository);
         }
 
         _logger.LogInformation(AdminServiceLogMessages.FetchedCitiesFromRepositorySuccessfully);
@@ -197,6 +202,40 @@ public class AdminService : IAdminService
 
         _memoryCache.Set(CitiesCacheKey, citiesReadDto, cacheEntryOptions);
         return citiesReadDto;
+    }
+
+    public async Task<List<RoomReadDto>?> SearchRoomAsync(RoomQueryDto dto)
+    {
+        _logger.LogInformation(AdminServiceLogMessages.FetchingRoomsFromRepository);
+        
+        var cacheKey = $"{RoomsCacheKey}_{JsonConvert.SerializeObject(dto)}";
+
+        if (_memoryCache.TryGetValue(cacheKey, out List<RoomReadDto> cachedRooms))
+        {
+            _logger.LogInformation(AdminServiceLogMessages.ReturningRoomsFromCache);
+            return cachedRooms;
+        }
+
+        var rooms = await _adminRepository.SearchRoomAsync(dto);
+
+        if (rooms == null)
+        {
+            _logger.LogWarning(AdminServiceLogMessages.FailedFetchingRoomsFromRepository);
+            throw new FailedToFetchRoomsException(AdminServiceCustomMessages.FailedFetchingRoomsFromRepository);
+        }
+
+        _logger.LogInformation(AdminServiceLogMessages.FetchedRoomsFromRepositorySuccessfully);
+
+        var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(Constants.AbsoluteExpirationForRetrieveRoomsMinutes))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(Constants.SlidingExpirationMinutes))
+            .SetSize(Constants.CachingUnitSize);
+
+        var roomsReadDto = rooms.Select(room => _mapper.Map<RoomReadDto>(room)).ToList();
+
+        _memoryCache.Set(cacheKey, roomsReadDto, cacheEntryOptions);
+
+        return roomsReadDto;
     }
 
     private string GetUserCacheKey(int userId)
