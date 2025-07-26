@@ -46,6 +46,29 @@ public class AdminRepository : IAdminRepository
         return isExist;
     }
 
+    public async Task<List<City>> GetTopVisitedCitiesAsync()
+    {
+        var topCityIds = await _context.Bookings
+            .GroupBy(b => b.Room.Hotel.CityId)
+            .Select(g => new {
+                CityId = g.Key,
+                Count = g.Count()
+            })
+            .OrderByDescending(g => g.Count)
+            .Take(5)
+            .Select(g => g.CityId)
+            .ToListAsync();
+
+        var cities = await _context.Cities
+            .Where(c => topCityIds.Contains(c.CityId))
+            .AsNoTracking()
+            .ToListAsync();
+
+        cities = cities.OrderBy(c => topCityIds.IndexOf(c.CityId)).ToList();
+
+        return cities;
+    }
+
     public async Task UpdateAsync(User user)
     {
         _context.Users.Update(user);

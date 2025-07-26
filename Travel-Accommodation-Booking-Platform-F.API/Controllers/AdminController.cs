@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.Services.AdminService;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.AdminExceptions;
+using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.CityExceptions;
 using Travel_Accommodation_Booking_Platform_F.Utils.Admin;
 using CustomMessages = Travel_Accommodation_Booking_Platform_F.Utils.Admin.CustomMessages;
 
@@ -195,6 +196,50 @@ public class AdminsController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, LogMessages.DeleteUserFailed, id);
+            return StatusCode(500, new { Message = CustomMessages.InternalServerError });
+        }
+    }
+    
+    [Authorize(Roles = "Admin")]
+    [HttpGet("top-visited-cities")]
+    public async Task<IActionResult> GetTopVisitedCities()
+    {
+        _logger.LogInformation(LogMessages.GetTopVisitedCitiesRequestReceived);
+
+        try
+        {
+            var cities = await _adminService.GetTopVisitedCitiesAsync();
+            if (cities == null)
+            {
+                _logger.LogWarning(LogMessages.GetTopVisitedCitiesFailed);
+                return NotFound(new { Message = CustomMessages.ListOfTopVisitedCitiesIsNotFound });
+            }
+
+            var lastUpdated = cities.Max(u => u.LastUpdated);
+            var eTag = $"\"{lastUpdated.Ticks}\"";
+
+            _logger.LogInformation(LogMessages.CheckIfListOfTopVisitedCitiesNotUpdatedRecently);
+            var clientETag = Request.Headers["If-None-Match"].FirstOrDefault();
+            if (clientETag == eTag)
+            {
+                _logger.LogInformation(LogMessages.RetrievedDataFromBrowserCache);
+                return StatusCode(StatusCodes.Status304NotModified);
+            }
+
+            _logger.LogInformation(LogMessages.SendETagToClientWhenListOfTopVisitedCitiesUpdatedRecently);
+            Response.Headers["ETag"] = eTag;
+
+            _logger.LogInformation(LogMessages.GetTopVisitedCitiesSuccess);
+            return Ok(cities);
+        }
+        catch (FailedToFetchCitiesException ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return StatusCode(500, new { Message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, LogMessages.GetTopVisitedCitiesFailed);
             return StatusCode(500, new { Message = CustomMessages.InternalServerError });
         }
     }

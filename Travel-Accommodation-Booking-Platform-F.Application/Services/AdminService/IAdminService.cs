@@ -10,4 +10,5 @@ public interface IAdminService
     public Task<UserReadDto?> GetUserAsync(int userId);
     public Task<UserReadDto?> UpdateUserAsync(int id, UserPatchDto dto);
     public Task DeleteUserAsync(int userId);
+    public Task<List<CityReadDto>?> GetTopVisitedCitiesAsync();
 }

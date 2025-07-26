@@ -6,4 +6,5 @@ public static class CustomMessages
     public const string InternalServerError = "Internal Server Error";
     public const string ListOfUsersIsNotFound = "List of admins not found";
     public const string UserNotFound = "Admin not found";
+    public const string ListOfTopVisitedCitiesIsNotFound = "Top visited cities not found";
 }

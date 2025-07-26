@@ -6,6 +6,7 @@ using Travel_Accommodation_Booking_Platform_F.Application.DTOs.WriteDTOs;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.CustomMessages;
 using Travel_Accommodation_Booking_Platform_F.Application.Utils.LogMessages;
 using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.AdminExceptions;
+using Travel_Accommodation_Booking_Platform_F.Domain.CustomExceptions.CityExceptions;
 using Travel_Accommodation_Booking_Platform_F.Domain.Entities;
 using Travel_Accommodation_Booking_Platform_F.Domain.Interfaces.Repositories;
 
@@ -19,6 +20,7 @@ public class AdminService : IAdminService
     private readonly IMemoryCache _memoryCache;
 
     private const string UsersCacheKey = "users-list";
+    private const string CitiesCacheKey = "cities-list";
 
     public AdminService(IAdminRepository adminRepository, IMapper mapper, ILogger<AdminService> logger,
         IMemoryCache memoryCache)
@@ -165,6 +167,36 @@ public class AdminService : IAdminService
         _logger.LogInformation(AdminServiceLogMessages.DeleteCachedData);
         _memoryCache.Remove(UsersCacheKey);
         _memoryCache.Remove(GetUserCacheKey(userId));
+    }
+
+    public async Task<List<CityReadDto>?> GetTopVisitedCitiesAsync()
+    {
+        _logger.LogInformation(AdminServiceLogMessages.FetchingCitiesFromRepository);
+
+        if (_memoryCache.TryGetValue(UsersCacheKey, out List<CityReadDto> cachedCities))
+        {
+            _logger.LogInformation(AdminServiceLogMessages.ReturningCitiesFromCache);
+            return cachedCities;
+        }
+
+        var cities = await _adminRepository.GetTopVisitedCitiesAsync();
+        if (cities == null)
+        {
+            _logger.LogWarning(AdminServiceLogMessages.FailedFetchingCitiesFromRepository);
+            throw new FailedToFetchCitiesException(AdminServiceCustomMessages.FailedFetchingTopVisitedCitiesFromRepository);
+        }
+
+        _logger.LogInformation(AdminServiceLogMessages.FetchedCitiesFromRepositorySuccessfully);
+
+        var cacheEntryOptions = new MemoryCacheEntryOptions()
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(Constants.AbsoluteExpirationForRetrieveCitiesMinutes))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(Constants.SlidingExpirationMinutes))
+            .SetSize(Constants.CachingUnitSize);
+
+        var citiesReadDto = _mapper.Map<List<CityReadDto>>(cities);
+
+        _memoryCache.Set(CitiesCacheKey, citiesReadDto, cacheEntryOptions);
+        return citiesReadDto;
     }
 
     private string GetUserCacheKey(int userId)
