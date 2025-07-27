@@ -112,14 +112,6 @@ public interface IBookingRepository
 - Easy unit testing with mock repositories
 - Consistent data access patterns
 
-### 2. CQRS (Command Query Responsibility Segregation)
-**Purpose**: Separate read and write operations for better scalability
-
-**Implementation**:
-- **Commands**: Write operations (Create, Update, Delete)
-- **Queries**: Read operations (Get, Search, Filter)
-- **MediatR**: Mediator pattern for request/response handling
-
 ### 3. Observer Pattern
 **Purpose**: Implement event-driven notifications
 
@@ -201,19 +193,8 @@ public interface IOtpSenderFactory
 ## 🗄️ Database Architecture
 
 ### Entity Relationships
-```
-User (1) ←→ (N) Booking (N) ←→ (1) Room (N) ←→ (1) Hotel (N) ←→ (1) City
-User (1) ←→ (N) Review (N) ←→ (1) Hotel
-User (1) ←→ (N) OtpRecord
-```
+<img width="672" height="944" alt="image" src="https://github.com/user-attachments/assets/85773129-f761-4871-a12c-2f41f84d6090" />
 
-### Key Relationships
-- **User to Booking**: One-to-Many (Users can have multiple bookings)
-- **Room to Booking**: One-to-Many (Rooms can have multiple bookings)
-- **Hotel to Room**: One-to-Many (Hotels have multiple rooms)
-- **City to Hotel**: One-to-Many (Cities have multiple hotels)
-- **User to Review**: One-to-Many (Users can write multiple reviews)
-- **Hotel to Review**: One-to-Many (Hotels can have multiple reviews)
 
 ## 🔧 Dependency Injection
 
@@ -246,7 +227,7 @@ services.AddScoped<IOtpSenderFactory, OtpSenderFactory>();
 ### Caching Strategy
 - **Memory Caching**: Frequently accessed data (cities, hotels)
 - **Response Caching**: API response caching with ETags
-- **Query Optimization**: Efficient database queries with proper indexing
+- **Query Optimization**: Efficient database queries
 
 ### Async/Await Pattern
 - All I/O operations use async/await for better scalability
