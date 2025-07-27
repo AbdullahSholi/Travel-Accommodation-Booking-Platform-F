@@ -13,46 +13,8 @@ The Travel Accommodation Booking Platform uses **SQL Server** as the primary dat
 ## 📊 Database Schema
 
 ### Entity Relationship Diagram
-```
-┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-│    City     │    │   Hotel     │    │    Room     │    │   Booking   │
-│             │    │             │    │             │    │             │
-│ CityId (PK) │◄──┤ CityId (FK) │    │ HotelId(FK) │◄──┤ RoomId (FK) │
-│ Name        │    │ HotelId(PK) │◄──┤ RoomId (PK) │    │ BookingId   │
-│ Country     │    │ HotelName   │    │ RoomType    │    │ UserId (FK) │
-│ PostOffice  │    │ OwnerName   │    │ PricePerNight│    │ CheckInDate │
-│ ...         │    │ StarRating  │    │ IsAvailable │    │ CheckOutDate│
-└─────────────┘    │ Location    │    │ ...         │    │ TotalPrice  │
-                   │ Description │    └─────────────┘    │ ...         │
-                   │ ...         │                       └─────────────┘
-                   └─────────────┘                              ▲
-                          ▲                                     │
-                          │                                     │
-                   ┌─────────────┐                       ┌─────────────┐
-                   │   Review    │                       │    User     │
-                   │             │                       │             │
-                   │ ReviewId(PK)│                       │ UserId (PK) │
-                   │ HotelId(FK) │──────────────────────►│ Username    │
-                   │ UserId (FK) │──────────────────────►│ FirstName   │
-                   │ Rating      │                       │ LastName    │
-                   │ Comment     │                       │ Email       │
-                   │ ...         │                       │ Password    │
-                   └─────────────┘                       │ PhoneNumber │
-                                                         │ Role        │
-                                                         │ ...         │
-                                                         └─────────────┘
-                                                                ▲
-                                                                │
-                                                         ┌─────────────┐
-                                                         │  OtpRecord  │
-                                                         │             │
-                                                         │ Id (PK)     │
-                                                         │ UserId (FK) │
-                                                         │ Email       │
-                                                         │ Code        │
-                                                         │ Expiration  │
-                                                         └─────────────┘
-```
+<img width="676" height="937" alt="image" src="https://github.com/user-attachments/assets/83cb83dd-9ea0-4690-9733-12da6c52c880" />
+
 
 ## 🏗️ Core Entities
 
@@ -324,11 +286,6 @@ public enum RoomType
 6. **User → OtpRecord**: One-to-Many (CASCADE DELETE)
 7. **Room → Booking**: One-to-Many (CASCADE DELETE)
 
-### Cascade Delete Behavior
-- Deleting a **City** removes all associated **Hotels**, **Rooms**, **Bookings**, and **Reviews**
-- Deleting a **Hotel** removes all associated **Rooms**, **Bookings**, and **Reviews**
-- Deleting a **User** removes all associated **Bookings**, **Reviews**, and **OtpRecords**
-- Deleting a **Room** removes all associated **Bookings**
 
 ## 📈 Database Indexing
 
@@ -345,29 +302,6 @@ Entity Framework automatically creates indexes for foreign keys:
 - `IX_Reviews_UserId`
 - `IX_Reviews_HotelId`
 - `IX_OtpRecords_UserId`
-
-### Recommended Additional Indexes
-For optimal performance, consider adding these indexes:
-
-```sql
--- User email lookup (authentication)
-CREATE INDEX IX_Users_Email ON Users(Email);
-
--- Room availability and pricing queries
-CREATE INDEX IX_Rooms_IsAvailable_PricePerNight ON Rooms(IsAvailable, PricePerNight);
-
--- Booking date range queries
-CREATE INDEX IX_Bookings_CheckInDate_CheckOutDate ON Bookings(CheckInDate, CheckOutDate);
-
--- Review ratings for hotels
-CREATE INDEX IX_Reviews_HotelId_Rating ON Reviews(HotelId, Rating);
-
--- OTP expiration cleanup
-CREATE INDEX IX_OtpRecords_Expiration ON OtpRecords(Expiration);
-
--- Blacklisted token cleanup
-CREATE INDEX IX_BlacklistedTokens_Expiration ON BlacklistedTokens(Expiration);
-```
 
 ## 🔄 Database Migrations
 
@@ -414,40 +348,6 @@ dotnet ef migrations script
 - Room images stored as JSON array in string field
 - Consider using SQL Server JSON functions for complex queries
 
-## 🔍 Query Patterns
-
-### Common Query Examples
-
-**Find available rooms in a city**:
-```sql
-SELECT r.* FROM Rooms r
-INNER JOIN Hotels h ON r.HotelId = h.HotelId
-INNER JOIN Cities c ON h.CityId = c.CityId
-WHERE c.Name = 'New York'
-  AND r.IsAvailable = 1
-  AND r.PricePerNight BETWEEN 100 AND 300;
-```
-
-**Get user bookings with hotel information**:
-```sql
-SELECT b.*, h.HotelName, c.Name as CityName
-FROM Bookings b
-INNER JOIN Rooms r ON b.RoomId = r.RoomId
-INNER JOIN Hotels h ON r.HotelId = h.HotelId
-INNER JOIN Cities c ON h.CityId = c.CityId
-WHERE b.UserId = @UserId;
-```
-
-**Calculate average hotel rating**:
-```sql
-SELECT h.HotelName, AVG(CAST(rv.Rating AS FLOAT)) as AverageRating
-FROM Hotels h
-LEFT JOIN Reviews rv ON h.HotelId = rv.HotelId
-GROUP BY h.HotelId, h.HotelName;
-```
-
-## 🧹 Database Maintenance
-
 ### Cleanup Procedures
 
 **Remove expired OTP records**:
@@ -455,24 +355,6 @@ GROUP BY h.HotelId, h.HotelName;
 DELETE FROM OtpRecords
 WHERE Expiration < GETUTCDATE();
 ```
-
-**Remove expired blacklisted tokens**:
-```sql
-DELETE FROM BlacklistedTokens
-WHERE Expiration < GETUTCDATE();
-```
-
-### Backup Strategy
-- **Full Backup**: Daily during off-peak hours
-- **Differential Backup**: Every 6 hours
-- **Transaction Log Backup**: Every 15 minutes
-- **Point-in-time Recovery**: Supported
-
-### Performance Monitoring
-- Monitor query execution plans
-- Track index usage statistics
-- Monitor database growth and fragmentation
-- Set up alerts for long-running queries
 
 ---
 
