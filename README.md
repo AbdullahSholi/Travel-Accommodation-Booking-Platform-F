@@ -1,149 +1,101 @@
-# Project Overview
+# Travel Accommodation Booking Platform Documentation
 
-## 🌟 Introduction
+Welcome to the comprehensive documentation for the Travel Accommodation Booking Platform - a modern, scalable web API built with .NET 9.0 and Clean Architecture principles.
 
-The Travel Accommodation Booking Platform is a modern, enterprise-grade web API designed to facilitate hotel and accommodation bookings. Built with .NET 9.0 and following Clean Architecture principles, this system provides a robust foundation for travel and hospitality businesses.
+## 📚 Documentation Structure
 
-## 🎯 Project Goals
+This documentation is organized into multiple focused sections to help you understand, develop, and maintain the system:
 
-- **Scalability**: Handle high volumes of concurrent bookings and searches
-- **Security**: Implement industry-standard security practices
-- **Maintainability**: Clean, well-documented, and testable codebase
-- **Performance**: Optimized for fast response times and efficient resource usage
-- **Reliability**: Robust error handling and comprehensive logging
+### Core Documentation
 
-## 🏗️ System Architecture Overview
+- **[Project Overview](01-project-overview.md)** - Introduction, features, and getting started
+- **[Architecture](02-architecture.md)** - System architecture, design patterns, and project structure
+- **[API Documentation](03-api-documentation.md)** - Comprehensive API reference and usage examples
 
-The system follows **Clean Architecture** principles with clear separation of concerns:
+### Technical Documentation
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        Presentation Layer                   │
-│                     (API Controllers)                       │
-├─────────────────────────────────────────────────────────────┤
-│                      Application Layer                      │
-│                  (Services, DTOs, Mapping)                  │
-├─────────────────────────────────────────────────────────────┤
-│                        Domain Layer                         │
-│              (Entities, Interfaces, Exceptions)             │
-├─────────────────────────────────────────────────────────────┤
-│                    Infrastructure Layer                     │
-│            (Repositories, External Services, DB)            │
-└─────────────────────────────────────────────────────────────┘
-```
+- **[Database](04-database.md)** - Database schema, entities, and relationships
+- **[Development Guide](05-development.md)** - Setup, coding standards, and contribution guidelines
+- **[Deployment](06-deployment.md)** - Docker, CI/CD, and production deployment
 
-## 🚀 Key Features
+### Operations Documentation
 
-### User Management
+- **[Security](07-security.md)** - Authentication, authorization, and security best practices
+- **[Testing](08-testing.md)** - Testing strategies, structure, and execution
+- **[Monitoring & Logging](09-monitoring-logging.md)** - Logging configuration and troubleshooting
 
-- **Registration & Authentication**: Secure user registration with email verification
-- **JWT Authentication**: Stateless authentication with role-based access control
-- **Password Security**: Argon2 password hashing for maximum security
+## 🚀 Quick Start
 
-### Hotel & Accommodation Management
+1. **New to the project?** Start with [Project Overview](01-project-overview.md)
+2. **Setting up development?** Check [Development Guide](05-development.md)
+3. **Need API reference?** See [API Documentation](03-api-documentation.md)
+4. **Deploying the system?** Follow [Deployment Guide](06-deployment.md)
 
-- **Hotel Inventory**: Comprehensive hotel and room management system
-- **City-based Organization**: Hotels organized by cities for easy navigation
-- **Rich Metadata**: Detailed hotel information including ratings, descriptions, and amenities
-- **Room Types**: Support for different room types with varying capacities and pricing
+## 🏗️ System Overview
 
-### Booking System
+The Travel Accommodation Booking Platform is a comprehensive booking system that enables:
 
-- **Real-time Availability**: Live availability checking to prevent overbooking
-- **Flexible Search**: Advanced search capabilities with multiple filters
-- **Booking Lifecycle**: Complete booking workflow from search to confirmation
-- **Price Calculation**: Dynamic pricing with transparent cost breakdown
-
-### Review & Rating System
-
-- **User Reviews**: Authenticated users can leave reviews for hotels
-- **Rating System**: Star-based rating system for quality assessment
-- **Review Management**: Moderation capabilities for review content
-
-### Administrative Features
-
-- **User Administration**: Complete user management for administrators
-- **Content Management**: Hotel and room content management
-- **Analytics**: System usage analytics and reporting
-- **System Monitoring**: Comprehensive logging and monitoring capabilities
+- **User Management** - Registration, authentication, and profile management
+- **Hotel & Room Management** - Complete hotel and room inventory system
+- **Booking System** - End-to-end booking workflow with real-time availability
+- **Review System** - User reviews and ratings for hotels
+- **Admin Panel** - Administrative functions and system management
 
 ## 🛠️ Technology Stack
 
-### Core Technologies
+- **Backend**: .NET 9.0, ASP.NET Core Web API
+- **Database**: SQL Server with Entity Framework Core
+- **Authentication**: RBAC JWT with Argon2 password hashing
+- **Architecture**: Clean Architecture
+- **Containerization**: Docker, DockerHub
+- **Orchestration**: Docker Swarm
+- **Infrastructure**: AWS EC2
+- **CI/CD**: GitHub Actions
+- **Monitoring**: Serilog, Promethues, and Grafana
+- **Caching**: In-Memory Cache, and HTTP Cache
 
-- **.NET 9.0**: Latest Microsoft development platform
-- **ASP.NET Core**: High-performance web API framework
-- **Entity Framework Core**: Modern ORM with code-first approach
-- **SQL Server**: Enterprise-grade relational database
+## 📋 Key Features
 
-### Security & Authentication
+### For Users
 
-- **JWT (JSON Web Tokens)**: Stateless authentication
-- **Argon2**: Advanced password hashing algorithm
-- **NWebsec**: Security headers and protection middleware
-- **Rate Limiting**: API rate limiting for DDoS protection
+- Secure registration and authentication
+- Hotel and room search with filters
+- Real-time booking with availability checking
+- Review and rating system
 
-### Development & Quality
+### For Administrators
 
-- **AutoMapper**: Object-to-object mapping
-- **xUnit**: Unit testing framework
-- **TestContainers**: Integration testing with containers
+- User management and administration
+- Hotel and room inventory management
+- Booking oversight and management
 
-### DevOps & Monitoring
+### For Developers
 
-- **Docker**: Containerization for consistent deployments
-- **GitHub Actions**: CI/CD pipeline automation
-- **Serilog**: Structured logging framework
-- **Promethues & Grafana: For Collect, Query and Display Server Metrics
+- Clean, maintainable codebase
+- Comprehensive test coverage
+- API versioning and documentation
+- Security best practices
+- Scalable architecture
 
-### Scalability Features
+## 🔧 Development Principles
 
-- **Horizontal Scaling**: Stateless design enables easy horizontal scaling
-- **Caching**: Multi-level caching strategy for optimal performance
-- **Database Optimization**: Efficient queries
-- **Load Balancing**: Ready for load balancer deployment
+- **Clean Architecture** - Separation of concerns and dependency inversion
+- **Domain-Driven Design** - Rich domain models and ubiquitous language
+- **SOLID Principles** - Maintainable and extensible code
 
-## 🔒 Security Features
+## 📞 Support
 
-### Authentication & Authorization
+For questions, issues, or contributions:
 
-- **Multi-factor Authentication**: OTP-based email verification
-- **Role-based Access Control**: User and Admin roles with appropriate permissions
-- **Token Management**: Secure JWT token generation and validation
-- **Session Management**: Token blacklisting for secure logout
+1. Check the relevant documentation section
+2. Review existing issues in the repository
+3. Create a new issue with detailed information
+4. Follow the contribution guidelines in [Development Guide](05-development.md)
 
-### Data Protection
+## 📄 License
 
-- **Input Validation**: Comprehensive input validation and sanitization
-- **SQL Injection Prevention**: Parameterized queries and ORM protection
-- **XSS Protection**: Built-in cross-site scripting protection
-
-### Security Monitoring
-
-- **Audit Logging**: Comprehensive audit trail for all operations
-- **Security Headers**: OWASP-recommended security headers
-- **Vulnerability Scanning**: Automated security scanning in CI/CD
-- **Rate Limiting**: Protection against brute force and DDoS attacks
-
-### System Administrators
-
-- **Hotel Managers**: Managing hotel inventory and bookings
-- **System Administrators**: Overall system management and monitoring
-
-### Developers
-
-- **Backend Developers**: API development and maintenance
-- **DevOps Engineers**: Deployment and infrastructure management
-
-## 📈 Business Value
-
-### For Customers
-
-- **Easy Booking**: Intuitive and fast booking process
-- **Real-time Information**: Up-to-date availability and pricing
-- **Secure Transactions**: Safe and secure payment processing
-- **Review System**: Make informed decisions based on other users' experiences
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
 
-**Next**: Learn about the [System Architecture](02-architecture.md) in detail.
+**Next Steps**: Start with [Project Overview](01-project-overview.md) to understand the system in detail.
