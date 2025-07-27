@@ -8,28 +8,28 @@ This documentation is organized into multiple focused sections to help you under
 
 ### Core Documentation
 
-- **[Project Overview](01-project-overview.md)** - Introduction, features, and getting started
-- **[Architecture](02-architecture.md)** - System architecture, design patterns, and project structure
-- **[API Documentation](03-api-documentation.md)** - Comprehensive API reference and usage examples
+- **[Project Overview](docs/01-project-overview.md)** - Introduction, features, and getting started
+- **[Architecture](docs/02-architecture.md)** - System architecture, design patterns, and project structure
+- **[API Documentation](docs/03-api-documentation.md)** - Comprehensive API reference and usage examples
 
 ### Technical Documentation
 
-- **[Database](04-database.md)** - Database schema, entities, and relationships
-- **[Development Guide](05-development.md)** - Setup, coding standards, and contribution guidelines
-- **[Deployment](06-deployment.md)** - Docker, CI/CD, and production deployment
+- **[Database](docs/04-database.md)** - Database schema, entities, and relationships
+- **[Development Guide](docs/05-development.md)** - Setup, coding standards, and contribution guidelines
+- **[Deployment](docs/06-deployment.md)** - Docker, CI/CD, and production deployment
 
 ### Operations Documentation
 
-- **[Security](07-security.md)** - Authentication, authorization, and security best practices
-- **[Testing](08-testing.md)** - Testing strategies, structure, and execution
-- **[Monitoring & Logging](09-monitoring-logging.md)** - Logging configuration and troubleshooting
+- **[Security](docs/07-security.md)** - Authentication, authorization, and security best practices
+- **[Testing](docs/08-testing.md)** - Testing strategies, structure, and execution
+- **[Monitoring & Logging](docs/09-monitoring-logging.md)** - Logging configuration and troubleshooting
 
 ## 🚀 Quick Start
 
-1. **New to the project?** Start with [Project Overview](01-project-overview.md)
-2. **Setting up development?** Check [Development Guide](05-development.md)
-3. **Need API reference?** See [API Documentation](03-api-documentation.md)
-4. **Deploying the system?** Follow [Deployment Guide](06-deployment.md)
+1. **New to the project?** Start with [Project Overview](docs/01-project-overview.md)
+2. **Setting up development?** Check [Development Guide](docs/05-development.md)
+3. **Need API reference?** See [API Documentation](docs/03-api-documentation.md)
+4. **Deploying the system?** Follow [Deployment Guide](docs/06-deployment.md)
 
 ## 🏗️ System Overview
 
@@ -90,7 +90,7 @@ For questions, issues, or contributions:
 1. Check the relevant documentation section
 2. Review existing issues in the repository
 3. Create a new issue with detailed information
-4. Follow the contribution guidelines in [Development Guide](05-development.md)
+4. Follow the contribution guidelines in [Development Guide](docs/05-development.md)
 
 ## 📄 License
 
