@@ -3,7 +3,7 @@ name: Deploy to Docker Swarm on EC2
 on:
   push:
     branches:
-      - feat/setup-ci-cd-pipeline
+      - main
 
 permissions:
   contents: read
