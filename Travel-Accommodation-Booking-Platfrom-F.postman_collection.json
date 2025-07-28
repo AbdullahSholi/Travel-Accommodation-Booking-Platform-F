@@ -1,0 +1,1377 @@
+{
+	"info": {
+		"_postman_id": "31f33781-b1f7-4365-8c5c-c1f06dc1afca",
+		"name": "Travel-Accommodation-Booking-Platfrom-F",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "32720335"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "create user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"abdullah.ghassan.sholi7@gmail.com\",\r\n    \"username\": \"aliham\",\r\n    \"password\": \"Sholi@971\",\r\n    \"confirmPassword\": \"Sholi@971\",\r\n    \"firstName\": \"Ali\",\r\n    \"lastName\": \"Sholi\",\r\n    \"phoneNumber\": \"+970592659066\",\r\n    \"dateOfBirth\": \"2002-08-06T00:00:00\",\r\n    \"address1\": \"Asira\",\r\n    \"address2\": \"Asira\",\r\n    \"city\": \"Nablus\",\r\n    \"country\": \"Palestine\",\r\n    \"driverLicense\": \"None\",\r\n    \"Role\": \"User\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admins/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admins",
+								"users"
+							]
+						},
+						"description": "Allow admin to create user directly"
+					},
+					"response": []
+				},
+				{
+					"name": "get user by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"0\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"abdullah.ghassan.sholi1@gmail.com\",\r\n    \"username\": \"aliham\",\r\n    \"password\": \"Sholi@971\",\r\n    \"confirmPassword\": \"Sholi@971\",\r\n    \"firstName\": \"Ali\",\r\n    \"lastName\": \"Sholi\",\r\n    \"phoneNumber\": \"+970592659066\",\r\n    \"dateOfBirth\": \"2002-08-06T00:00:00\",\r\n    \"address1\": \"Asira\",\r\n    \"address2\": \"Asira\",\r\n    \"city\": \"Nablus\",\r\n    \"country\": \"Palestine\",\r\n    \"driverLicense\": \"None\",\r\n    \"Role\": \"User\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admins/users/7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admins",
+								"users",
+								"7"
+							]
+						},
+						"description": "Allow admin to get specific user by Id"
+					},
+					"response": []
+				},
+				{
+					"name": "get all users",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"638874315265631469\"",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"abdullah.ghassan.sholi1@gmail.com\",\r\n    \"username\": \"aliham\",\r\n    \"password\": \"Sholi@971\",\r\n    \"confirmPassword\": \"Sholi@971\",\r\n    \"firstName\": \"Ali\",\r\n    \"lastName\": \"Sholi\",\r\n    \"phoneNumber\": \"+970592659066\",\r\n    \"dateOfBirth\": \"2002-08-06T00:00:00\",\r\n    \"address1\": \"Asira\",\r\n    \"address2\": \"Asira\",\r\n    \"city\": \"Nablus\",\r\n    \"country\": \"Palestine\",\r\n    \"driverLicense\": \"None\",\r\n    \"Role\": \"User\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admins/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admins",
+								"users"
+							]
+						},
+						"description": "Allow admin to get the list of users"
+					},
+					"response": []
+				},
+				{
+					"name": "update specific user data",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-Match",
+								"value": "\"0\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"abdullah.ghassan.sholi3@gmail.com\",\r\n    \"username\": \"alihamad\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admins/users/7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admins",
+								"users",
+								"7"
+							]
+						},
+						"description": "Allow admin to update specific user data"
+					},
+					"response": []
+				},
+				{
+					"name": "delete user",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admins/users/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admins",
+								"users",
+								"3"
+							]
+						},
+						"description": "Allow admin to delete specific user"
+					},
+					"response": []
+				},
+				{
+					"name": "top visited cities",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"0\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/admins/top-visited-cities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admins",
+								"top-visited-cities"
+							]
+						},
+						"description": "Allow user to display top 5 visited cities"
+					},
+					"response": []
+				},
+				{
+					"name": "search rooms",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/admins/search?roomType=Luxury&isAvailable=false",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"admins",
+								"search"
+							],
+							"query": [
+								{
+									"key": "roomType",
+									"value": "Luxury"
+								},
+								{
+									"key": "isAvailable",
+									"value": "false"
+								}
+							]
+						},
+						"description": "Allow user to search about rooms by several filters as RoomType, Minimum Price, Maximum Price, Availability, Adult Capacity, Children Capacity and Creation Date"
+					},
+					"response": []
+				}
+			],
+			"description": "User and Admin Functionalities"
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"abdullah.ghassan.sholi@gmail.com\",\r\n    \"username\": \"abdullahsholi\",\r\n    \"password\": \"Sholi@971\",\r\n    \"confirmPassword\": \"Sholi@971\",\r\n    \"firstName\": \"Abdullah\",\r\n    \"lastName\": \"Sholi\",\r\n    \"phoneNumber\": \"+970592659066\",\r\n    \"dateOfBirth\": \"2002-08-06T00:00:00\",\r\n    \"address1\": \"Asira\",\r\n    \"address2\": \"Asira\",\r\n    \"city\": \"Nablus\",\r\n    \"country\": \"Palestine\",\r\n    \"driverLicense\": \"None\",\r\n    \"Role\": \"Admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "allow us to register new user"
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"abdullah.ghassan.sholi@gmail.com\",\r\n    \"password\": \"Sholi@971\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "allow users to login to our API"
+					},
+					"response": []
+				},
+				{
+					"name": "email-verification",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"abdullah.ghassan.sholi@gmail.com\",\r\n    \"otpCode\": \"465850\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/verify-otp",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"verify-otp"
+							]
+						},
+						"description": "Email Verification by send otp to user email ( to verify it's a valid email )"
+					},
+					"response": []
+				},
+				{
+					"name": "forgot-password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"groupgroup060@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/forgot-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"forgot-password"
+							]
+						},
+						"description": "Forgot Password endpoint to send otp for reset password to user email"
+					},
+					"response": []
+				},
+				{
+					"name": "reset-password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"groupgroup060@gmail.com\",\r\n    \"otp\": \"819780\",\r\n    \"newPassword\": \"Sholi@991\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/reset-password",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"reset-password"
+							]
+						},
+						"description": "reset password by using correct otp"
+					},
+					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"groupgroup060@gmail.com\",\r\n    \"username\": \"abdullahsholi\",\r\n    \"password\": \"Sholi@971\",\r\n    \"confirmPassword\": \"Sholi@971\",\r\n    \"firstName\": \"Ahmed\",\r\n    \"lastName\": \"Morshed\",\r\n    \"phoneNumber\": \"+970568347481\",\r\n    \"dateOfBirth\": \"2002-08-06T00:00:00\",\r\n    \"address1\": \"Asira\",\r\n    \"address2\": \"Asira\",\r\n    \"city\": \"Nablus\",\r\n    \"country\": \"Palestine\",\r\n    \"driverLicense\": \"None\"\r\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"logout"
+							]
+						},
+						"description": "logout user by use token blacklisting"
+					},
+					"response": []
+				},
+				{
+					"name": "verify-otp",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"groupgroup060@gmail.com\",\r\n    \"otpCode\": \"620045\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/verify-otp",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"verify-otp"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Here the authentication APIs"
+		},
+		{
+			"name": "Hotel",
+			"item": [
+				{
+					"name": "hotel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"hotelName\": \"Grand Royal Hotel\",\r\n  \"ownerName\": \"Ali Hamadneh\",\r\n  \"starRating\": 3,\r\n  \"location\": \"Downtown, Paris\",\r\n  \"description\": \"A luxurious hotel in the heart of the city.\",\r\n  \"cityId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/hotels",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hotels"
+							]
+						},
+						"description": "Create new hotel"
+					},
+					"response": []
+				},
+				{
+					"name": "hotels",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"638874718482756659\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"starRating\": 4.5,\r\n    \"location\": \"123 Beach Road, Seaside City\",\r\n    \"description\": \"A beautiful beachfront hotel with excellent amenities.\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/hotels",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hotels"
+							]
+						},
+						"description": "Get list of hotels"
+					},
+					"response": []
+				},
+				{
+					"name": "hotel",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"638874719933870936\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"starRating\": 4.5,\r\n    \"location\": \"123 Beach Road, Seaside City\",\r\n    \"description\": \"A beautiful beachfront hotel with excellent amenities.\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/hotels/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hotels",
+								"5"
+							]
+						},
+						"description": "get specific hotel by id"
+					},
+					"response": []
+				},
+				{
+					"name": "hotel",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-Match",
+								"value": "\"638874719933870936\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"Abddullah Shol\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/hotels/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hotels",
+								"5"
+							]
+						},
+						"description": "update specific hotel data"
+					},
+					"response": []
+				},
+				{
+					"name": "hotel",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"location\": \"31.9522,35.2332\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/hotels/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"hotels",
+								"2"
+							]
+						},
+						"description": "Delete specific hotel"
+					},
+					"response": []
+				}
+			],
+			"description": "Hotel endpoints"
+		},
+		{
+			"name": "City",
+			"item": [
+				{
+					"name": "city",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Paris\",\r\n  \"country\": \"France\",\r\n  \"postOffice\": \"Central Post Office\",\r\n  \"numberOfHotels\": 105\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cities"
+							]
+						},
+						"description": "Add new City"
+					},
+					"response": []
+				},
+				{
+					"name": "cities",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"638876720029440933\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"starRating\": 4.5,\r\n    \"location\": \"123 Beach Road, Seaside City\",\r\n    \"description\": \"A beautiful beachfront hotel with excellent amenities.\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cities"
+							]
+						},
+						"description": "Get a list of all cities"
+					},
+					"response": []
+				},
+				{
+					"name": "city",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"638874366126058140\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"starRating\": 4.5,\r\n    \"location\": \"123 Beach Road, Seaside City\",\r\n    \"description\": \"A beautiful beachfront hotel with excellent amenities.\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cities/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cities",
+								"3"
+							]
+						},
+						"description": "get specific city by id"
+					},
+					"response": []
+				},
+				{
+					"name": "city",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-Match",
+								"value": "\"638874366126058140\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Paris\",\r\n  \"postOffice\": \"Central Post Office\",\r\n  \"numberOfHotels\": 70\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cities/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cities",
+								"3"
+							]
+						},
+						"description": "Update specific city data"
+					},
+					"response": []
+				},
+				{
+					"name": "city",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"location\": \"31.9522,35.2332\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cities/6",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"cities",
+								"6"
+							]
+						},
+						"description": "Delete specific city"
+					},
+					"response": []
+				}
+			],
+			"description": "City Endpoints"
+		},
+		{
+			"name": "Room",
+			"item": [
+				{
+					"name": "room",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"roomType\": 1,\r\n  \"images\": [\r\n    \"https://example.com/image1.jpg\",\r\n    \"https://example.com/image2.jpg\"\r\n  ],\r\n  \"description\": \"Sea View\",\r\n  \"pricePerNight\": 110.75,\r\n  \"isAvailable\": true,\r\n  \"adultCapacity\": 2,\r\n  \"childrenCapacity\": 1,\r\n  \"hotelId\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rooms",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rooms"
+							]
+						},
+						"description": "Add new room"
+					},
+					"response": []
+				},
+				{
+					"name": "rooms",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"638874725713278270\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"starRating\": 4.5,\r\n    \"location\": \"123 Beach Road, Seaside City\",\r\n    \"description\": \"A beautiful beachfront hotel with excellent amenities.\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rooms",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rooms"
+							]
+						},
+						"description": "Get list of all rooms"
+					},
+					"response": []
+				},
+				{
+					"name": "room",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"638874365986030672\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"starRating\": 4.5,\r\n    \"location\": \"123 Beach Road, Seaside City\",\r\n    \"description\": \"A beautiful beachfront hotel with excellent amenities.\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rooms/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rooms",
+								"3"
+							]
+						},
+						"description": "Get specific room by Id"
+					},
+					"response": []
+				},
+				{
+					"name": "room",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-Match",
+								"value": "\"638874365986030672\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"roomType\": 2\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rooms/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rooms",
+								"3"
+							]
+						},
+						"description": "Update specific room data"
+					},
+					"response": []
+				},
+				{
+					"name": "room",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"location\": \"31.9522,35.2332\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rooms/6",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rooms",
+								"6"
+							]
+						},
+						"description": "Delete specific room"
+					},
+					"response": []
+				}
+			],
+			"description": "Room Endpoints"
+		},
+		{
+			"name": "Review",
+			"item": [
+				{
+					"name": "review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": 1,\r\n  \"hotelId\": 1,\r\n  \"rating\": 3,\r\n  \"comment\": \"Great stay, really enjoyed the service!\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reviews",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reviews"
+							]
+						},
+						"description": "Allow user to add a review to specific hotel"
+					},
+					"response": []
+				},
+				{
+					"name": "reviews",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"638876721046345465\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"starRating\": 4.5,\r\n    \"location\": \"123 Beach Road, Seaside City\",\r\n    \"description\": \"A beautiful beachfront hotel with excellent amenities.\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reviews",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reviews"
+							]
+						},
+						"description": "Display all reviews"
+					},
+					"response": []
+				},
+				{
+					"name": "review",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-None-Match",
+								"value": "\"638874876540226492\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"starRating\": 4.5,\r\n    \"location\": \"123 Beach Road, Seaside City\",\r\n    \"description\": \"A beautiful beachfront hotel with excellent amenities.\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reviews/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reviews",
+								"2"
+							]
+						},
+						"description": "display specific review by Id"
+					},
+					"response": []
+				},
+				{
+					"name": "review",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-Match",
+								"value": "\"638874878312008871\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": 1,\r\n  \"hotelId\": 5,\r\n  \"rating\": 3,\r\n  \"comment\": \"Great stay, really enjoyed the service!\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reviews/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reviews",
+								"2"
+							]
+						},
+						"description": "Update specifc review"
+					},
+					"response": []
+				},
+				{
+					"name": "review",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"hotelName\": \"Sunrise Resort\",\r\n    \"ownerName\": \"John Doe\",\r\n    \"location\": \"31.9522,35.2332\",\r\n    \"cityId\": 1\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/reviews/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"reviews",
+								"2"
+							]
+						},
+						"description": "Delete specific review"
+					},
+					"response": []
+				}
+			],
+			"description": "Reviews endpoints"
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": 1,\r\n  \"roomId\": 3,\r\n  \"checkInDate\": \"2029-12-12T14:00:00\",\r\n  \"checkOutDate\": \"2030-12-18T11:00:00\",\r\n  \"totalPrice\": 300\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bookings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookings"
+							]
+						},
+						"description": "Allow user to book a specific room at hotel"
+					},
+					"response": []
+				},
+				{
+					"name": "booking",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							},
+							{
+								"key": "If-Match",
+								"value": "\"638891270782485043\"",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": 1,\r\n  \"roomId\": 3,\r\n  \"checkInDate\": \"2025-12-12T14:00:00\",\r\n  \"checkOutDate\": \"2026-12-18T11:00:00\",\r\n  \"totalPrice\": 300\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bookings/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookings",
+								"1"
+							]
+						},
+						"description": "Update specific booking information"
+					},
+					"response": []
+				},
+				{
+					"name": "booking",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bookings/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookings",
+								"1"
+							]
+						},
+						"description": "Get specific booking information by Id"
+					},
+					"response": []
+				},
+				{
+					"name": "booking",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{userAuthorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/bookings/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"bookings",
+								"1"
+							]
+						},
+						"description": "Delete specific booking"
+					},
+					"response": []
+				}
+			],
+			"description": "Booking endpoints"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "userAuthorization",
+			"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJncm91cGdyb3VwMDUxQGdtYWlsLmNvbSIsImp0aSI6IjQ1MWJjODUyLTViMGMtNDdmNi1hYzlhLWVjNmVmZTJmZWIwZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJncm91cGdyb3VwMDUxQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJleHAiOjE3NTE0NTE4NjUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMCIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMCJ9.3KWta3nTwSwz-rAac30SHLDgAhCLTXKuXJigM0Nj-QU",
+			"type": "string"
+		}
+	]
+}

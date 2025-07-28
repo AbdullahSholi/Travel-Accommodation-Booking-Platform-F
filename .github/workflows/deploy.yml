@@ -1,0 +1,175 @@
+name: Deploy to Docker Swarm on EC2
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    env:
+      DOTNET_VERSION: '9.0.203'
+      TRAVEL_ACCOMMODATION_CONNECTION_STRING: ${{ secrets.SQLSERVER_CONNECTIONSTRING }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v3
+    
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build solution
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Run Unit Tests
+      run: dotnet test --no-build --configuration Release --filter "Category~UnitTests"
+      env:
+        ConnectionStrings__DefaultConnection: ${{ env.TRAVEL_ACCOMMODATION_CONNECTION_STRING }}
+
+    - name: Run Integration Tests
+      run: dotnet test --no-build --configuration Release --filter "Category~IntegrationTests"
+      env:
+        ConnectionStrings__DefaultConnection: ${{ env.TRAVEL_ACCOMMODATION_CONNECTION_STRING }}
+    
+    - name: Publish application for Linux
+      run: dotnet publish ./Travel-Accommodation-Booking-Platform-F.API/Travel-Accommodation-Booking-Platform-F.API.csproj -c Release -o ./publish --runtime linux-x64 --self-contained false
+
+    - name: Upload published app
+      uses: actions/upload-artifact@v4
+      with:
+        name: published-app
+        path: ./publish
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to DockerHub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Travel-Accommodation-Booking-Platform-F.API/Dockerfile
+        push: false
+        tags: abdullahgsholi/myproject-api:latest
+
+    - name: Run Trivy secrets scan
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: fs
+        scan-ref: .
+        scanners: secret
+        format: table
+        exit-code: 1
+
+    - name: Run Trivy vulnerability scan on Docker image
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: abdullahgsholi/myproject-api:latest
+        format: table
+        exit-code: 1
+        ignore-unfixed: true
+        severity: HIGH,CRITICAL
+
+    - name: Run Trivy SARIF report
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: abdullahgsholi/myproject-api:latest
+        format: sarif
+        output: trivy-results.sarif
+
+    - name: Upload Trivy SARIF to GitHub Security
+      if: github.ref == 'refs/heads/main'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: trivy-results.sarif
+
+
+    - name: Push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Travel-Accommodation-Booking-Platform-F.API/Dockerfile
+        push: true
+        tags: abdullahgsholi/myproject-api:latest
+        
+    - name: SSH and deploy to EC2
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ubuntu
+        key: ${{ secrets.EC2_SSH_KEY }}
+        script: |
+          docker service update \
+            --env SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            --env TRAVEL_ACCOMMODATION_CONNECTION_STRING="${{ secrets.SQLSERVER_CONNECTIONSTRING }}" \
+            --env APP_PASSWORD=${{ secrets.APP_PASSWORD }} \
+            --image abdullahgsholi/myproject-api:latest myproject_api || \
+          docker service create --name myproject_api --replicas 1 -p 5000:80 \
+            --env SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            --env TRAVEL_ACCOMMODATION_CONNECTION_STRING="${{ secrets.SQLSERVER_CONNECTIONSTRING }}" \
+            --env APP_PASSWORD=${{ secrets.APP_PASSWORD }} \
+            abdullahgsholi/myproject-api:latest
+          
+    - name: Send Slack notification
+      if: success()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: success
+        fields: repo,message,commit,author
+        custom_payload: |
+          {
+            "text": "🚀 The update was successfully deployed to Docker Swarm!"
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Send Slack notification on Failure
+      if: failure()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: failure
+        fields: repo,message,commit,author
+        custom_payload: |
+          {
+            "text": "❌ *Failure:* Deployment to Docker Swarm failed. Please check the pipeline logs. 🚨"
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Send Slack notification on Cancelled
+      if: cancelled()
+      uses: 8398a7/action-slack@v3
+      with:
+        status: cancelled
+        fields: repo,message,commit,author
+        custom_payload: |
+          {
+            "text": "⚠️ *Cancelled:* The deployment process was cancelled."
+          }
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
