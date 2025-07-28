@@ -1370,7 +1370,7 @@
 		},
 		{
 			"key": "userAuthorization",
-			"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJncm91cGdyb3VwMDUxQGdtYWlsLmNvbSIsImp0aSI6IjQ1MWJjODUyLTViMGMtNDdmNi1hYzlhLWVjNmVmZTJmZWIwZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJncm91cGdyb3VwMDUxQGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IlVzZXIiLCJleHAiOjE3NTE0NTE4NjUsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMCIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NTAwMCJ9.3KWta3nTwSwz-rAac30SHLDgAhCLTXKuXJigM0Nj-QU",
+			"value": "",
 			"type": "string"
 		}
 	]
