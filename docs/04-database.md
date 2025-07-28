@@ -173,6 +173,9 @@ CREATE TABLE Bookings (
 - Many-to-One with `User`
 - Many-to-One with `Room`
 
+**Locking**:
+- Apply pessimistic locking for booking write operations
+
 ### 6. Review Entity
 **Table**: `Reviews`
 **Purpose**: Store user reviews and ratings for hotels
