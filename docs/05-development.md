@@ -14,13 +14,6 @@ Before you begin, ensure you have the following installed:
 - **Git** - For version control
 - **Docker** (optional) - For containerized development
 
-### System Requirements
-
-- **OS**: Windows 10/11, macOS, or Linux
-- **RAM**: Minimum 8GB, recommended 16GB
-- **Storage**: At least 5GB free space
-- **.NET Version**: 9.0 or later
-
 ## 🛠️ Development Environment Setup
 
 ### 1. Clone the Repository
@@ -34,30 +27,15 @@ cd Travel-Accommodation-Booking-Platform-F
 
 #### Option A: Local SQL Server
 1. Install SQL Server or SQL Server Express
-2. Create a new database named `TravelBookingDB`
-3. Update connection string in `appsettings.Development.json`:
+2. Create a new database named `TravelAccommodationPlatformDb`
+3. set the connectionString at Environment Variables
+  setx TRAVEL_ACCOMMODATION_CONNECTION_STRING ""
 
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=TravelBookingDB;Trusted_Connection=true;MultipleActiveResultSets=true"
-  }
-}
-```
-
-#### Option B: Docker SQL Server
+#### Option B: Docker SQL Server at AWS EC2 Server
 ```bash
 docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=YourPassword123!" -p 1433:1433 --name sqlserver -d mcr.microsoft.com/mssql/server:2022-latest
 ```
-
-Update connection string:
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost,1433;Database=TravelBookingDB;User Id=sa;Password=YourPassword123!;TrustServerCertificate=true"
-  }
-}
-```
+  also you need to update the host name or ip address at connection string
 
 ### 3. Install Dependencies
 
@@ -76,7 +54,7 @@ dotnet ef database update
 
 ### 5. Configure Application Settings
 
-Create `appsettings.Development.json` in the API project:
+Create `appsettings.json` in the API project:
 
 ```json
 {
@@ -90,7 +68,7 @@ Create `appsettings.Development.json` in the API project:
     "DefaultConnection": "Your-Connection-String-Here"
   },
   "Jwt": {
-    "Key": "your-super-secret-jwt-key-here-minimum-32-characters",
+    "Key": "",
     "Issuer": "http://localhost:5000",
     "Audience": "http://localhost:5000",
     "ExpiresInMinutes": 60
@@ -105,7 +83,9 @@ Create `appsettings.Development.json` in the API project:
   }
 }
 ```
-
+* set JWT Key at Environment Variables by
+    setx SECRET_KEY ""
+  
 ### 6. Run the Application
 
 ```bash
@@ -114,8 +94,6 @@ dotnet run
 
 The API will be available at:
 - **HTTP**: `http://localhost:5000`
-- **HTTPS**: `https://localhost:5001`
-- **Swagger UI**: `http://localhost:5000/swagger` (Development only)
 
 ## 🏗️ Project Structure
 
@@ -213,7 +191,6 @@ public class BookingsController : ControllerBase
 #### Async/Await Guidelines
 - Always use `async`/`await` for I/O operations
 - Append `Async` suffix to async method names
-- Use `ConfigureAwait(false)` in library code (not in ASP.NET Core controllers)
 
 ```csharp
 public async Task<UserReadDto?> GetUserAsync(int userId)
@@ -278,7 +255,6 @@ _logger.LogError(ex, "Failed to process booking {BookingId}", bookingId);
 - **Information**: General application flow
 - **Warning**: Unexpected situations that don't stop the application
 - **Error**: Error events that might still allow the application to continue
-- **Critical**: Serious errors that might cause the application to abort
 
 ## 🧪 Testing Guidelines
 
@@ -324,19 +300,6 @@ public class IntegrationTestBase : IDisposable
     }
 }
 ```
-
-## 🔧 Development Tools
-
-### Recommended Extensions (VS Code)
-- **C# Dev Kit** - Microsoft C# support
-- **REST Client** - API testing
-- **GitLens** - Git integration
-- **SonarLint** - Code quality analysis
-
-### Recommended Extensions (Visual Studio)
-- **SonarLint** - Code quality
-- **Productivity Power Tools** - Enhanced IDE features
-- **CodeMaid** - Code cleanup and organization
 
 ### Useful Commands
 
