@@ -2,13 +2,13 @@
 
 ## 🚀 Deployment Overview
 
-The Travel Accommodation Booking Platform supports multiple deployment strategies including Docker containers, cloud platforms, and traditional server deployments. This guide covers the recommended deployment approaches for different environments.
+The Travel Accommodation Booking Platform is designed exclusively for cloud deployment using Docker Swarm on AWS EC2. This guide covers the deployment process and CI/CD pipeline configuration.
 
-## 🐳 Docker Deployment
+## 🐳 Docker Configuration
 
-### Dockerfile Configuration
+### Dockerfile
 
-The application includes a multi-stage Dockerfile for optimized production builds:
+The application uses a multi-stage Dockerfile for production builds:
 
 ```dockerfile
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
@@ -33,374 +33,182 @@ COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "Travel-Accommodation-Booking-Platform-F.API.dll"]
 ```
 
-### Docker Compose Setup
-
-Create `docker-compose.yml` for local development:
+### Docker Compose Configuration
 
 ```yaml
-version: '3.8'
-
 services:
   api:
-    build: .
+    image: myproject-api
     ports:
-      - "5000:8080"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=TravelBookingDB;User Id=sa;Password=YourPassword123!;TrustServerCertificate=true
-    depends_on:
-      - sqlserver
-    networks:
-      - travel-network
-
-  sqlserver:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourPassword123!
-    ports:
-      - "1433:1433"
-    volumes:
-      - sqlserver_data:/var/opt/mssql
-    networks:
-      - travel-network
-
-volumes:
-  sqlserver_data:
-
-networks:
-  travel-network:
-    driver: bridge
+      - "5000:80"
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
 ```
 
-### Docker Commands
+## ☁️ AWS EC2 Setup
+
+### Prerequisites
+
+- AWS EC2 instance (t3.medium or larger)
+- Ubuntu 20.04 LTS
+- Security group allowing ports: 22 (SSH), 5000 (API), 2377, 7946, 4789 (Docker Swarm)
+
+### Installation Steps
+
+**1. Connect to EC2 Instance:**
 
 ```bash
-# Build the image
-docker build -t travel-booking-api .
-
-# Run the container
-docker run -p 5000:8080 travel-booking-api
-
-# Run with Docker Compose
-docker-compose up -d
-
-# View logs
-docker-compose logs -f api
-
-# Stop services
-docker-compose down
+ssh -i your-key.pem ubuntu@your-ec2-public-ip
 ```
 
-## ☁️ Cloud Deployment
+**2. Install Docker:**
 
-### AWS EC2 Deployment
-
-#### Prerequisites
-- AWS EC2 instance (t3.medium or larger recommended)
-- Ubuntu 20.04 LTS or Amazon Linux 2
-- Security group allowing HTTP (80), HTTPS (443), and SSH (22)
-
-#### Setup Steps
-
-1. **Connect to EC2 Instance**:
 ```bash
-ssh -i your-key.pem ubuntu@your-ec2-ip
-```
-
-2. **Install Docker**:
-```bash
-sudo apt update
-sudo apt install docker.io docker-compose -y
+sudo apt update && sudo apt upgrade -y
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
 sudo systemctl start docker
 sudo systemctl enable docker
 sudo usermod -aG docker ubuntu
+exit
 ```
 
-3. **Clone Repository**:
+**3. Initialize Docker Swarm:**
+
 ```bash
-git clone https://github.com/your-org/Travel-Accommodation-Booking-Platform-F.git
-cd Travel-Accommodation-Booking-Platform-F
+docker swarm init
+docker node ls
 ```
 
-4. **Configure Environment**:
+**4. Configure Firewall:**
+
 ```bash
-# Create production environment file
-sudo nano .env
-```
-
-```env
-ASPNETCORE_ENVIRONMENT=Production
-ConnectionStrings__DefaultConnection=Server=sqlserver;Database=TravelBookingDB;User Id=sa;Password=YourSecurePassword123!;TrustServerCertificate=true
-Jwt__Key=your-super-secret-jwt-key-here-minimum-32-characters-for-production
-EmailSettings__Password=your-email-app-password
-```
-
-5. **Deploy with Docker Compose**:
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-### Azure App Service Deployment
-
-#### Using Azure CLI
-
-1. **Login to Azure**:
-```bash
-az login
-```
-
-2. **Create Resource Group**:
-```bash
-az group create --name travel-booking-rg --location "East US"
-```
-
-3. **Create App Service Plan**:
-```bash
-az appservice plan create --name travel-booking-plan --resource-group travel-booking-rg --sku B1 --is-linux
-```
-
-4. **Create Web App**:
-```bash
-az webapp create --resource-group travel-booking-rg --plan travel-booking-plan --name travel-booking-api --deployment-container-image-name your-registry/travel-booking-api:latest
-```
-
-5. **Configure App Settings**:
-```bash
-az webapp config appsettings set --resource-group travel-booking-rg --name travel-booking-api --settings ConnectionStrings__DefaultConnection="your-connection-string"
+sudo ufw allow ssh
+sudo ufw allow 5000
+sudo ufw allow 2377
+sudo ufw allow 7946
+sudo ufw allow 4789/udp
+sudo ufw --force enable
 ```
 
 ## 🔄 CI/CD Pipeline
 
 ### GitHub Actions Workflow
 
-The project includes a comprehensive GitHub Actions workflow (`.github/workflows/deploy.yml`):
+The deployment pipeline (`deploy.yml`) performs these steps:
 
-```yaml
-name: CI/CD Pipeline
+1. **Build and Test**: Runs unit and integration tests
+2. **Security Scanning**: Uses Trivy for vulnerability scanning
+3. **Docker Build**: Creates and pushes Docker image to Docker Hub
+4. **Deploy**: SSH to EC2 and update Docker service
+5. **Notifications**: Sends Slack notifications
 
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 9.0.x
-        
-    - name: Restore dependencies
-      run: dotnet restore
-      
-    - name: Build
-      run: dotnet build --no-restore
-      
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-
-  security-scan:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Run Trivy secrets scan
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: fs
-        scan-ref: .
-        scanners: secret
-        format: table
-        exit-code: 1
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [test, security-scan]
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-
-    - name: Login to DockerHub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: ./Travel-Accommodation-Booking-Platform-F.API/Dockerfile
-        push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/travel-booking-api:latest
-
-    - name: Run Trivy vulnerability scan
-      uses: aquasecurity/trivy-action@master
-      with:
-        image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/travel-booking-api:latest
-        format: table
-        exit-code: 1
-        ignore-unfixed: true
-        severity: HIGH,CRITICAL
-```
-
-### Required Secrets
-
-Configure these secrets in your GitHub repository:
+### Required GitHub Secrets
 
 - `DOCKERHUB_USERNAME`: Docker Hub username
 - `DOCKERHUB_TOKEN`: Docker Hub access token
-- `AWS_ACCESS_KEY_ID`: AWS access key (if deploying to AWS)
-- `AWS_SECRET_ACCESS_KEY`: AWS secret key
-- `DATABASE_CONNECTION_STRING`: Production database connection string
+- `EC2_HOST`: EC2 instance public IP
+- `EC2_SSH_KEY`: Private SSH key for EC2 access
+- `SQLSERVER_CONNECTIONSTRING`: Database connection string
+- `SECRET_KEY`: JWT secret key
+- `APP_PASSWORD`: Email service password
+- `SLACK_WEBHOOK_URL`: Slack webhook URL
 
-## 🔧 Production Configuration
+### Deployment Command
 
-### Environment Variables
+The pipeline deploys using this command:
 
 ```bash
-# Application Settings
-ASPNETCORE_ENVIRONMENT=Production
-ASPNETCORE_URLS=http://+:8080
-
-# Database
-ConnectionStrings__DefaultConnection=your-production-connection-string
-
-# JWT Configuration
-Jwt__Key=your-super-secret-jwt-key-minimum-32-characters
-Jwt__Issuer=https://your-domain.com
-Jwt__Audience=https://your-domain.com
-Jwt__ExpiresInMinutes=60
-
-# Email Settings
-EmailSettings__SmtpServer=smtp.gmail.com
-EmailSettings__Port=587
-EmailSettings__SenderEmail=noreply@your-domain.com
-EmailSettings__Password=your-app-password
-
-# Logging
-LOG_PATH=/app/logs
+docker service update \
+  --env SECRET_KEY=$SECRET_KEY \
+  --env TRAVEL_ACCOMMODATION_CONNECTION_STRING="$CONNECTION_STRING" \
+  --env APP_PASSWORD=$APP_PASSWORD \
+  --image abdullahgsholi/myproject-api:latest myproject_api || \
+docker service create --name myproject_api --replicas 1 -p 5000:80 \
+  --env SECRET_KEY=$SECRET_KEY \
+  --env TRAVEL_ACCOMMODATION_CONNECTION_STRING="$CONNECTION_STRING" \
+  --env APP_PASSWORD=$APP_PASSWORD \
+  abdullahgsholi/myproject-api:latest
 ```
 
-### SSL/TLS Configuration
+## 🛠️ Service Management
 
-#### Using Let's Encrypt with Nginx
+### Basic Commands
 
-1. **Install Nginx**:
 ```bash
-sudo apt install nginx certbot python3-certbot-nginx
+# Check service status
+docker service ls
+
+# View service logs
+docker service logs myproject_api
+
+# Update service image
+docker service update --image abdullahgsholi/myproject-api:latest myproject_api
+
+# Scale service
+docker service scale myproject_api=2
+
+# Remove service
+docker service rm myproject_api
 ```
 
-2. **Configure Nginx**:
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
+### Using Docker Compose
 
-    location / {
-        proxy_pass http://localhost:5000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection keep-alive;
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-
-3. **Obtain SSL Certificate**:
 ```bash
-sudo certbot --nginx -d your-domain.com
+# Deploy stack
+docker stack deploy -c docker-compose.yml myproject
+
+# Check stack status
+docker stack services myproject
+
+# Remove stack
+docker stack rm myproject
 ```
 
-### Health Checks
+## 📱 Slack Notifications
 
-Add health check endpoints for monitoring:
+The pipeline sends deployment status notifications to Slack:
 
-```csharp
-// In Program.cs
-app.MapHealthChecks("/health");
-app.MapHealthChecks("/health/ready");
-app.MapHealthChecks("/health/live");
+- ✅ **Success**: "🚀 The update was successfully deployed to Docker Swarm!"
+- ❌ **Failure**: "❌ Deployment failed. Check pipeline logs."
+- ⚠️ **Cancelled**: "⚠️ Deployment was cancelled."
+
+### Setup Slack Integration
+
+1. Create Slack app at https://api.slack.com/apps
+2. Enable Incoming Webhooks
+3. Add webhook URL to GitHub secrets as `SLACK_WEBHOOK_URL`
+
+## 🧪 Testing
+
+The pipeline runs two test categories:
+
+**Unit Tests:**
+
+```bash
+dotnet test --filter "Category~UnitTests"
 ```
 
-### Monitoring Setup
+**Integration Tests:**
 
-#### Application Insights (Azure)
-```csharp
-builder.Services.AddApplicationInsightsTelemetry();
+```bash
+dotnet test --filter "Category~IntegrationTests"
 ```
 
-#### Prometheus Metrics
-```csharp
-builder.Services.AddPrometheusMetrics();
-app.UsePrometheusMetrics();
-```
+## 🔒 Security Scanning
 
-## 📊 Performance Optimization
+The pipeline includes Trivy security scanning:
 
-### Production Optimizations
+- **Secrets scanning**: Detects exposed secrets in code
+- **Vulnerability scanning**: Scans Docker images for vulnerabilities
+- **SARIF reports**: Uploads security reports to GitHub Security tab
 
-1. **Enable Response Compression**:
-```csharp
-builder.Services.AddResponseCompression();
-app.UseResponseCompression();
-```
+## 📊 Monitoring
 
-2. **Configure Caching**:
-```csharp
-builder.Services.AddMemoryCache();
-builder.Services.AddResponseCaching();
-app.UseResponseCaching();
-```
-
-3. **Database Connection Pooling**:
-```csharp
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString, sqlOptions =>
-    {
-        sqlOptions.EnableRetryOnFailure();
-        sqlOptions.CommandTimeout(30);
-    }));
-```
-
-### Load Balancing
-
-For high-traffic scenarios, consider:
-- **Application Load Balancer** (AWS ALB)
-- **Azure Load Balancer**
-- **Nginx Load Balancer**
-
-Example Nginx load balancer configuration:
-```nginx
-upstream api_servers {
-    server 10.0.1.10:5000;
-    server 10.0.1.11:5000;
-    server 10.0.1.12:5000;
-}
-
-server {
-    listen 80;
-    location / {
-        proxy_pass http://api_servers;
-    }
-}
-```
+Install Prometheus and Grafana on the EC2 server to collect and display application metrics.
 
 ---
-
-**Continue to**: [Security Documentation](07-security.md) for security best practices.
